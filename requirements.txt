@@ -1,0 +1,24 @@
+# A11y Investigator — MVP (V0.2) Python 패키지
+# Node 정적 분석기 패키지는 analyzer-js/package.json에서 관리한다.
+
+# 공통
+python-dotenv
+pyyaml                      # project.yaml, rule-wcag-map.yaml, 정책 frontmatter
+
+# LLM / 임베딩: 교육 과정에서 제공받은 AWS Bedrock 사용 (모델 선택은 SERVICE_MVP.md D1·D2)
+boto3
+langchain-aws
+
+# Agent / Workflow
+langchain
+langgraph
+
+# RAG
+langchain-chroma
+langchain-text-splitters
+
+# CLI
+typer
+
+# Test / Eval
+pytest
