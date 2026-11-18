@@ -58,6 +58,8 @@ class Settings:
 
     # ── Analyzer (5.1) ──────────────────────────────────────
     analyzer_timeout_sec: int = 20
+    # Explicit Node.js path; when empty, PATH and the default Windows install dir are searched.
+    node_bin: str = field(default_factory=lambda: _env("NODE_BIN", ""))
 
     # ── Fix loop (5.3) ──────────────────────────────────────
     max_fix_retries: int = 2  # total attempts = 1 + retries

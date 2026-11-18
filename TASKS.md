@@ -105,8 +105,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - 결과에 분석기 버전 포함
 - **완료 조건:** 터미널에서 Scenario A 코드를 파이프로 넣으면 `jsx-a11y/click-events-have-key-events`가 포함된 JSON이 나온다. 깨진 코드는 `parse_ok=false`가 나온다.
 
-### T06. Python ↔ Node 연동 · 1h
-- [ ] **참조:** 5.1 (Python ↔ Node 인터페이스)
+### T06. Python ↔ Node 연동 · 1h ✅ 완료 (2026-11-18)
+- [x] **참조:** 5.1 (Python ↔ Node 인터페이스) — 테스트: `tests/test_static_analysis.py` 8개
 - **의존:** T05
 - **작업**
   - `tools/static_analysis.py`: subprocess 실행, stdin 전달, JSON → `AnalyzerResult` 변환
