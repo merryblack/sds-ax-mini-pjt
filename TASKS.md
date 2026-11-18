@@ -114,8 +114,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - Windows 경로 처리 (`pathlib`)
 - **완료 조건:** pytest에서 JSX / TSX 샘플의 분석 결과가 `AnalyzerResult`로 돌아온다. 타임아웃 케이스 테스트가 통과한다.
 
-### T07. 규칙–WCAG 매핑 · 1h
-- [ ] **참조:** 6.3
+### T07. 규칙–WCAG 매핑 · 1h ✅ 완료 (2026-11-18)
+- [x] **참조:** 6.3 — recommended 규칙 31개 전체 매핑, 테스트: `tests/test_rule_mapping.py` 10개. "매핑의 모든 SC가 인덱스에 존재" 테스트는 T08에서 추가
 - **의존:** T06 (실제로 검출되는 규칙 ID를 확인한 뒤 작성)
 - **작업**
   - `knowledge/manifests/rule-wcag-map.yaml`: 4개 컴포넌트 관련 jsx-a11y 규칙

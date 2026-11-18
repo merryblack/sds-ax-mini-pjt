@@ -1,0 +1,187 @@
+# Rule → WCAG mapping (SERVICE_MVP.md 6.3)
+#
+# Covers all 31 rules enabled in eslint-plugin-jsx-a11y 6.10.2 `recommended`.
+# Hand-curated from each rule's documentation and the WCAG 2.2 success criteria.
+#
+# Fields
+#   rule_id           ESLint rule ID as reported by the analyzer
+#   tool              analyzer that reports the rule
+#   wcag              WCAG 2.2 success criteria (empty = no direct SC; vector search only)
+#   apg_pattern       APG pattern key used for exact lookup (button | dialog | tabs | combobox | null)
+#   default_severity  critical | serious | moderate | minor
+#   note              why this mapping (optional)
+#
+# Every SC listed here must exist in the indexed WCAG documents (checked by a test after T08).
+
+version: 1
+rules:
+  # ── Text alternatives / media ───────────────────────────
+  - rule_id: jsx-a11y/alt-text
+    tool: eslint-jsx-a11y
+    wcag: ["1.1.1"]
+    apg_pattern: null
+    default_severity: critical
+  - rule_id: jsx-a11y/img-redundant-alt
+    tool: eslint-jsx-a11y
+    wcag: ["1.1.1"]
+    apg_pattern: null
+    default_severity: minor
+    note: Redundant words like "image" or "photo" in alt text.
+  - rule_id: jsx-a11y/media-has-caption
+    tool: eslint-jsx-a11y
+    wcag: ["1.2.2"]
+    apg_pattern: null
+    default_severity: critical
+  - rule_id: jsx-a11y/no-distracting-elements
+    tool: eslint-jsx-a11y
+    wcag: ["2.2.2"]
+    apg_pattern: null
+    default_severity: serious
+    note: <marquee> and <blink> move without a pause control.
+
+  # ── Keyboard / focus ────────────────────────────────────
+  - rule_id: jsx-a11y/click-events-have-key-events
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1"]
+    apg_pattern: button
+    default_severity: serious
+  - rule_id: jsx-a11y/mouse-events-have-key-events
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/interactive-supports-focus
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1"]
+    apg_pattern: button
+    default_severity: serious
+    note: An element with an interactive role and handlers must be focusable.
+  - rule_id: jsx-a11y/no-static-element-interactions
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1", "4.1.2"]
+    apg_pattern: button
+    default_severity: serious
+  - rule_id: jsx-a11y/no-noninteractive-element-interactions
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1", "4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/anchor-is-valid
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1", "4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+    note: Anchors without a valid href are not keyboard-focusable links.
+  - rule_id: jsx-a11y/aria-activedescendant-has-tabindex
+    tool: eslint-jsx-a11y
+    wcag: ["2.1.1"]
+    apg_pattern: combobox
+    default_severity: serious
+    note: aria-activedescendant is used by combobox/listbox focus management.
+  - rule_id: jsx-a11y/tabindex-no-positive
+    tool: eslint-jsx-a11y
+    wcag: ["2.4.3"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/no-noninteractive-tabindex
+    tool: eslint-jsx-a11y
+    wcag: ["2.4.3"]
+    apg_pattern: null
+    default_severity: moderate
+  - rule_id: jsx-a11y/no-autofocus
+    tool: eslint-jsx-a11y
+    wcag: ["2.4.3", "3.2.1"]
+    apg_pattern: null
+    default_severity: moderate
+    note: Unexpected focus moves can disorient keyboard and screen reader users.
+  - rule_id: jsx-a11y/no-access-key
+    tool: eslint-jsx-a11y
+    wcag: []
+    apg_pattern: null
+    default_severity: minor
+    note: accesskey can conflict with assistive-technology shortcuts; no single SC applies directly.
+
+  # ── Name, role, value ───────────────────────────────────
+  - rule_id: jsx-a11y/aria-props
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: critical
+  - rule_id: jsx-a11y/aria-proptypes
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: critical
+  - rule_id: jsx-a11y/aria-role
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: critical
+  - rule_id: jsx-a11y/aria-unsupported-elements
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/role-has-required-aria-props
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: critical
+    note: Pattern depends on the role (e.g. combobox needs aria-expanded); resolved by component_hint.
+  - rule_id: jsx-a11y/role-supports-aria-props
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/no-interactive-element-to-noninteractive-role
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/no-noninteractive-element-to-interactive-role
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/no-redundant-roles
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: minor
+  - rule_id: jsx-a11y/anchor-has-content
+    tool: eslint-jsx-a11y
+    wcag: ["2.4.4", "4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/iframe-has-title
+    tool: eslint-jsx-a11y
+    wcag: ["4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+
+  # ── Structure / forms / language ────────────────────────
+  - rule_id: jsx-a11y/heading-has-content
+    tool: eslint-jsx-a11y
+    wcag: ["1.3.1", "2.4.6"]
+    apg_pattern: null
+    default_severity: moderate
+  - rule_id: jsx-a11y/scope
+    tool: eslint-jsx-a11y
+    wcag: ["1.3.1"]
+    apg_pattern: null
+    default_severity: moderate
+  - rule_id: jsx-a11y/label-has-associated-control
+    tool: eslint-jsx-a11y
+    wcag: ["1.3.1", "3.3.2", "4.1.2"]
+    apg_pattern: null
+    default_severity: serious
+  - rule_id: jsx-a11y/autocomplete-valid
+    tool: eslint-jsx-a11y
+    wcag: ["1.3.5"]
+    apg_pattern: null
+    default_severity: moderate
+  - rule_id: jsx-a11y/html-has-lang
+    tool: eslint-jsx-a11y
+    wcag: ["3.1.1"]
+    apg_pattern: null
+    default_severity: serious

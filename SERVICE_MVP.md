@@ -311,7 +311,7 @@ related_wcag: ["4.1.2", "2.1.1"]
 
 ## 6.3. 규칙–WCAG 매핑
 
-정적 분석 규칙에는 WCAG 정보가 없으므로 `knowledge/manifests/rule-wcag-map.yaml`을 수작업으로 작성한다.
+정적 분석 규칙에는 WCAG 정보가 없으므로 `knowledge/manifests/rule-wcag-map.yaml`을 수작업으로 작성한다. jsx-a11y `recommended`에서 켜진 규칙 31개 전체를 `rules:` 목록으로 매핑한다(아래는 일부).
 
 ```yaml
 - rule_id: jsx-a11y/click-events-have-key-events
