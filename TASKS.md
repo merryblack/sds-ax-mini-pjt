@@ -194,7 +194,7 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **완료 조건:** 통과 케이스, 새 위반 케이스, `eslint-disable` 삽입 케이스 각각의 판정 테스트가 통과한다. (LLM 없이 테스트 가능)
 
 ### T15. 그래프 조립과 보고서
-- [ ] **참조:** 4장, 3.2, 7.2
+- [ ] **참조:** 4장, 3.2, 7.2, 6.2(자동 재인덱싱)
 - **의존:** T04, T14
 - **작업**
   - `agent/nodes.py`, `agent/graph.py`: 9개 노드와 조건부 분기
@@ -202,19 +202,23 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
     - `needs_improvement=false` → `report`
     - 재검증 실패 & `retry_count < 2` → `generate_fix`
   - `recursion_limit=25`
+  - 목표 레벨 결정: CLI `--level` > 요청 문구(`requested_level`) > 프로젝트 `target_level` > 기본 AA
+  - **정책 자동 재인덱싱:** `project_id`가 있으면 `project.yaml`과 정책 파일의 해시를 `data/chroma/policy-hashes.json`과 비교해, 바뀌었으면 그 프로젝트 정책만 다시 인덱싱한 뒤 진행
   - `report` 노드: `outcome` 결정, 근거 URL을 메타데이터에서 채움, `fix_failed`일 때 "검증되지 않은 코드" 경고, 재현성 필드(model, index_version, analyzer_versions, trace_id)
-- **완료 조건:** **M2 점검** — Scenario A → `improved`, Scenario B → `no_issue_detected` 또는 `no_change_needed`, 300줄 초과 입력 → `analysis_failed`가 나온다.
+- **완료 조건:** **M2 점검** — Scenario A → `improved`, Scenario B → `no_issue_detected` 또는 `no_change_needed`, 300줄 초과 입력 → `analysis_failed`가 나온다. 정책 파일을 고친 뒤 `ingest` 없이 분석해도 바뀐 정책이 검색된다(해시 비교 단위 테스트 포함).
 
 ### T16. CLI와 Trace
 - [ ] **참조:** 2.2, 3.1, 9.1
 - **의존:** T15
 - **작업**
-  - `cli.py` (Typer): `analyze` 명령, `--file`, `--project`, `--level`, `--json`, stdin 입력
+  - `cli.py` (Typer): `analyze` 명령, `--file`, `--project`, `--level`(기본값 `None`: 지정하지 않으면 T15의 우선순위를 따름), `--json`, stdin 입력
+  - `policies check <project_id>` 명령: `load_policies` 검증 결과와 `related_wcag`가 인덱스에 있는 SC인지(`is_indexed_sc`) 확인해 문제 목록을 출력, 문제가 있으면 종료 코드 1
   - Markdown 보고서 렌더링 (3.1의 9개 항목)
   - Trace: LangSmith 연동 또는 로컬 JSON Trace (D4). 노드별 시간, 토큰, 예상 비용 기록
-- **완료 조건:** 아래 명령이 Markdown 보고서를 출력하고, `--json`은 `DiagnosisReport` JSON을 출력한다. Trace에서 노드별 실행 기록을 확인할 수 있다.
+- **완료 조건:** 아래 명령이 Markdown 보고서를 출력하고, `--json`은 `DiagnosisReport` JSON을 출력한다. Trace에서 노드별 실행 기록을 확인할 수 있다. `policies check demo-ds`는 통과하고, 잘못된 정책 폴더에는 문제를 출력한다. README "내 프로젝트 지침 추가하기" 절차대로 새 프로젝트를 만들어 분석할 수 있다.
   ```bash
   a11y-investigator analyze --file examples/save_button.jsx --project demo-ds
+  a11y-investigator policies check demo-ds
   ```
 
 ---

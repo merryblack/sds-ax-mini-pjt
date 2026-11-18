@@ -317,6 +317,16 @@ related_wcag: ["4.1.2", "2.1.1"]
 클릭 가능한 요소는 `@demo-ds/ui`의 `<Button>`을 사용한다. 네이티브 `<button>` 직접 사용은 금지한다.
 ```
 
+### 사용자 지침 추가 절차
+
+사용자는 위 형식대로 자기 프로젝트 폴더를 만들기만 하면 된다. 별도 입력 방식(`--policy-file` 등)은 MVP 범위가 아니다(ROADMAP V0.3 후보).
+
+1. `docs/policy-template/`의 `project.yaml`, `policy-example.md`를 `knowledge/project-policies/<project_id>/`로 복사해 작성한다. 템플릿은 `knowledge/` 밖에 두어 실제 프로젝트로 인식되지 않게 한다.
+2. `a11y-investigator policies check <project_id>`로 검증한다(T16). 형식, `project_id`와 폴더 이름 일치, `policy_id` 중복, `applies_to` 값, `related_wcag`가 인덱스에 있는 SC인지 확인한다.
+3. `a11y-investigator analyze --project <project_id>`로 분석한다.
+
+**자동 재인덱싱 (T15):** `--project`로 분석할 때 해당 프로젝트의 `project.yaml`과 정책 파일 내용으로 해시를 계산한다. 마지막 인덱싱 때의 해시(`data/chroma/policy-hashes.json`)와 다르면 그 프로젝트의 정책만 다시 인덱싱한 뒤 진행한다. 사용자가 `ingest --policies`를 잊어 예전 정책으로 진단되는 일을 막기 위한 것이다.
+
 ## 6.3. 규칙–WCAG 매핑
 
 정적 분석 규칙에는 WCAG 정보가 없으므로 `knowledge/manifests/rule-wcag-map.yaml`을 수작업으로 작성한다. jsx-a11y `recommended`에서 켜진 규칙 31개 전체를 `rules:` 목록으로 매핑한다(아래는 일부).

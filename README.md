@@ -74,6 +74,39 @@ cd analyzer-js; npm test; cd ..       # 정적 분석기 테스트
 a11y-investigator analyze --file Component.tsx --project demo-ds
 ```
 
+### 6. 내 프로젝트 지침 추가하기
+
+팀의 디자인 시스템 규칙이나 접근성 지침을 추가하면, Agent가 WCAG와 **별도로** 정책 적합성을 평가하고 수정 코드에도 반영한다. 정책과 WCAG가 충돌하면 WCAG를 우선하고 충돌 사실을 보고한다. 예제는 `knowledge/project-policies/demo-ds/`를 참고한다.
+
+**1) 폴더 만들고 템플릿 복사**
+
+```powershell
+mkdir knowledge\project-policies\my-project
+copy docs\policy-template\project.yaml knowledge\project-policies\my-project\
+copy docs\policy-template\policy-example.md knowledge\project-policies\my-project\btn-001.md
+```
+
+**2) 파일 작성**
+
+- `project.yaml`: `project_id`(폴더 이름과 같게), 목표 레벨, 디자인 시스템 컴포넌트 매핑
+- 정책 Markdown(규칙 하나당 파일 하나): frontmatter에 `policy_id`, `project_id`, `title`, `applies_to`(button / dialog / tabs / combobox), `related_wcag`를 쓰고 본문에 규칙을 쓴다
+
+**3) 검증** (T16에서 구현 예정)
+
+```powershell
+a11y-investigator policies check my-project
+```
+
+형식 오류, 폴더와 다른 `project_id`, 중복 `policy_id`, 지원하지 않는 컴포넌트, 인덱스에 없는 WCAG 번호를 알려 준다.
+
+**4) 분석**
+
+```powershell
+a11y-investigator analyze --file Component.tsx --project my-project
+```
+
+정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(T15에서 구현 예정). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
+
 ## RAGAS 평가 결과
 - context_recall: 0.XX
 - context_precision: 0.XX
@@ -91,6 +124,46 @@ a11y-investigator analyze --file Component.tsx --project demo-ds
 - 남은 한계 · 향후 개선 방향
 
 ## 핵심 코드 위치
-- `src/agent.py:NN` — 메인 에이전트 그래프
-- `src/tools.py` — 도메인 도구
-- `src/retriever.py` — RAG 파이프라인
+
+> 진행 중(Phase 1 완료). ✅ 구현됨 · ⏳ 예정(괄호 안은 담당 Task, [TASKS.md](TASKS.md) 참조)
+
+```text
+mini-project/
+├── src/a11y_investigator/
+│   ├── cli.py                  ⏳ CLI 진입점 `a11y-investigator` (T16)
+│   ├── config.py               ✅ 모델 ID·경로·한도 설정
+│   ├── agent/
+│   │   ├── state.py            ✅ LangGraph 상태
+│   │   ├── graph.py, nodes.py  ⏳ 메인 에이전트 그래프 (T15)
+│   │   └── prompts.py          ⏳ 진단·수정 프롬프트 (T11, T13)
+│   ├── chains/
+│   │   ├── diagnosis.py        ⏳ 진단 체인 (T11)
+│   │   └── improvement.py      ⏳ 수정 체인 (T13)
+│   ├── tools/
+│   │   ├── input_parser.py     ✅ 코드 추출, JSX/TSX 판별, 컴포넌트 힌트
+│   │   ├── static_analysis.py  ✅ Node 정적 분석기 호출
+│   │   ├── rule_mapping.py     ✅ 규칙 → WCAG SC / APG 매핑
+│   │   ├── guideline_search.py ✅ WCAG 기준 조회, 공식 문서 검색
+│   │   ├── policy_lookup.py    ✅ 프로젝트 정책 로딩·검증
+│   │   └── code_validation.py  ⏳ 수정 코드 재검증 (T14)
+│   ├── rag/
+│   │   ├── fetch.py            ✅ W3C 문서 수집
+│   │   ├── chunker.py          ✅ 문서 유형별 청킹
+│   │   ├── metadata.py         ✅ 청크 메타데이터
+│   │   ├── store.py            ✅ Titan 임베딩 + Chroma
+│   │   ├── ingest.py           ✅ 인덱싱
+│   │   └── retriever.py        ✅ 정확 조회 + 벡터 검색 + 정책 선택
+│   ├── schemas/                ✅ 정적 분석·근거·진단·보고서 스키마
+│   └── middleware/safety.py    ⏳ 인용 검증, 린트 우회 차단 (T12, T14)
+├── analyzer-js/analyze.mjs     ✅ ESLint 9 + jsx-a11y 정적 분석기 (stdin → JSON)
+├── knowledge/
+│   ├── official/               ✅ WCAG·Understanding·Techniques·APG 원문 (W3C)
+│   ├── project-policies/       ✅ 프로젝트 정책 (예제: demo-ds)
+│   └── manifests/              ✅ 규칙–WCAG 매핑, 문서 출처·커밋 해시
+├── docs/
+│   ├── decisions.md            ✅ 모델 선택 등 결정 기록
+│   └── policy-template/        ✅ 내 프로젝트 지침 템플릿
+├── evals/                      ⏳ 평가 데이터셋·실행기 (T17, T18)
+├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`)
+└── data/chroma/                검색 인덱스 (생성물, 커밋하지 않음)
+```
