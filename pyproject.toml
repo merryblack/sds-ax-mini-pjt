@@ -22,4 +22,4 @@ markers = [
     "eval: runs the evaluation dataset (run explicitly with -m eval)",
 ]
 addopts = "-m 'not llm and not eval'"
-filterwarnings = ["ignore::DeprecationWarning:langsmith.*"]
+filterwarnings = ["ignore::DeprecationWarning:langsmith.*", "ignore::DeprecationWarning:chromadb.*"]

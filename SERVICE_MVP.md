@@ -274,12 +274,12 @@ parse_input ─(실패)───────────────────
 
 | 문서 | 범위 | 출처 |
 |---|---|---|
-| WCAG 2.2 | 4개 컴포넌트와 매핑 테이블에 등장하는 SC (약 20~30개) | GitHub `w3c/wcag` |
-| Understanding | 위 SC에 해당하는 문서 | GitHub `w3c/wcag` |
-| Techniques | 위 SC의 Sufficient Techniques 중 ARIA / Script / HTML | GitHub `w3c/wcag` |
+| WCAG 2.2 | 매핑 테이블의 SC 13개 + 컴포넌트 관련 SC 7개(1.4.3, 1.4.11, 2.1.2, 2.4.7, 2.4.11, 2.5.3, 4.1.3) = 20개 | W3C 공식 JSON (`https://www.w3.org/WAI/WCAG22/wcag.json`) |
+| Understanding | 위 SC 20개의 문서 | GitHub `w3c/wcag` |
+| Techniques | 위 SC의 Sufficient Techniques 중 ARIA / Script / HTML (57개) | GitHub `w3c/wcag` |
 | APG | Button, Dialog (Modal), Tabs, Combobox | GitHub `w3c/aria-practices` |
 
-모든 근거에 출처 URL을 표기한다(W3C Document License). 수집 출처와 커밋 해시는 `knowledge/manifests/sources.yaml`에 기록한다.
+모든 근거에 출처 URL을 표기한다(W3C Document License). 수집은 `python -m a11y_investigator.rag.fetch`로 하고, 수집 출처와 커밋 해시는 `knowledge/manifests/sources.yaml`에 자동 기록한다. 결과는 청크 340개다(WCAG 20, Understanding 150, Techniques 145, APG 25).
 
 ## 6.2. 프로젝트 정책
 
@@ -613,7 +613,7 @@ a11y-investigator/
 │   ├── config.py                # 모델·경로·한도
 │   ├── agent/                   # graph.py, state.py, nodes.py, prompts.py
 │   ├── chains/                  # diagnosis.py, improvement.py
-│   ├── rag/                     # ingest.py, chunker.py, retriever.py, metadata.py
+│   ├── rag/                     # fetch.py, chunker.py, metadata.py, store.py, ingest.py, retriever.py
 │   ├── tools/                   # input_parser.py, static_analysis.py, rule_mapping.py,
 │   │                            # guideline_search.py, policy_lookup.py, code_validation.py
 │   ├── schemas/                 # analyzer.py, diagnosis.py

@@ -122,8 +122,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `tools/rule_mapping.py`: `StaticFinding.wcag_refs` 채우기, 매핑 없는 규칙은 경고 로그
 - **완료 조건:** 매핑 적용 테스트 통과. T08 이후 "매핑의 모든 SC가 인덱스에 존재" 테스트를 추가해 통과시킨다.
 
-### T08. 공식 문서 수집·인덱싱 · 3h
-- [ ] **참조:** 6.1, 6.4, 6.6
+### T08. 공식 문서 수집·인덱싱 · 3h ✅ 완료 (2026-11-18)
+- [x] **참조:** 6.1, 6.4, 6.6 — SC 20 / Understanding 20 / Techniques 57 / APG 4 → 청크 340개, 인덱싱 약 110초. 테스트: `tests/test_official_index.py` 12개(Bedrock 검색 1개는 `-m llm`)
 - **의존:** T03, T01(D2 임베딩 모델)
 - **작업**
   - `w3c/wcag`, `w3c/aria-practices`에서 6.1 범위 문서 수집 → `knowledge/official/`
