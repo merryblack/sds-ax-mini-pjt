@@ -498,12 +498,13 @@ class FixOutput(BaseModel):
 # ── 최종 보고서 (일반 코드가 조립) ────────────────
 class ValidationResult(BaseModel):
     status: Literal["passed", "failed", "not_run"]
-    attempts: int                       # 1~3
+    attempts: int                       # not_run이면 0, 그 외 1~3
     findings_before: int
     findings_after: int
     new_findings: list[StaticFinding]
     remaining_rule_ids: list[str]
     blocked_patterns: list[str]
+    changed_lines: int                  # 불필요한 변경 추적 (8장)
 
 class FindingResult(Finding):
     will_fix: bool                      # decide 노드가 설정
@@ -520,6 +521,7 @@ class DiagnosisReport(BaseModel):
     changes: list[CodeChange]
     validation: ValidationResult
     manual_checks: list[str]
+    sources: dict[str, str]             # document_id → source_url (report가 메타데이터에서 채움)
     overall_summary: str
     error: str | None = None
     # 재현성

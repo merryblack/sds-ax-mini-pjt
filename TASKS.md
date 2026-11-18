@@ -75,8 +75,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
 
 # Phase 1. 분석과 지식
 
-### T03. 스키마 정의 · 1h
-- [ ] **참조:** 7장
+### T03. 스키마 정의 · 1h ✅ 완료 (2026-11-18)
+- [x] **참조:** 7장 — 테스트: `tests/test_schemas.py` 15개
 - **의존:** T02
 - **작업**
   - `schemas/analyzer.py`: `StaticFinding`, `AnalyzerResult`
