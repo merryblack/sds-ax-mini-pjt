@@ -84,8 +84,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `agent/state.py`: `AnalysisState` (`errors` reducer, `component_hint` 포함)
 - **완료 조건:** 각 모델을 예시 데이터로 생성·직렬화하는 단위 테스트가 통과한다. Evidence 판별자(`kind`)가 동작한다.
 
-### T04. Input Parser · 1.5h
-- [ ] **참조:** 2장 (2.1, 2.3, 2.4, 2.6)
+### T04. Input Parser · 1.5h ✅ 완료 (2026-11-18)
+- [x] **참조:** 2장 (2.1, 2.3, 2.4, 2.5, 2.6) — 테스트: `tests/test_input_parser.py` 31개
 - **의존:** T03
 - **작업**
   - 코드 추출 규칙 4가지 (`--file`, 코드 펜스, 펜스 여러 개 거부, 펜스 없는 경우)
