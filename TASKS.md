@@ -94,8 +94,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `component_hint` 추정
 - **완료 조건:** 규칙별 단위 테스트 통과. Scenario A 입력에서 `code_type=jsx`, `component_hint=["button"]`이 나온다. 순수 HTML 입력은 `analysis_failed`가 나온다.
 
-### T05. Node 정적 분석기 · 1.5h
-- [ ] **참조:** 5.1
+### T05. Node 정적 분석기 · 1.5h ✅ 완료 (2026-11-18)
+- [x] **참조:** 5.1 — 테스트: `analyzer-js/analyze.test.mjs` 8개 (`npm test`). 1회 실행 약 1.2초(Node 기동 + ESLint 로딩)
 - **의존:** T03
 - **작업**
   - `analyze.mjs`: `--type jsx|tsx`, stdin으로 코드 입력, stdout으로 `AnalyzerResult` JSON 출력
