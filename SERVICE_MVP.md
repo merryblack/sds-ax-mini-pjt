@@ -374,11 +374,13 @@ related_wcag: ["4.1.2", "2.1.1"]
 
 ## 6.5. 검색 (`retrieve`)
 
-1. `wcag_refs`와 APG 패턴으로 **정확 조회**한다.
-2. `component_hint`, 규칙 ID, 정적 분석 메시지로 **영어 쿼리**를 만들어 벡터 검색한다(공식 문서가 영어이므로). 쿼리는 LLM 없이 템플릿으로 만든다. 예: `"{component} accessibility {rule_id} {message}"`. 정적 분석 결과가 없으면 `"{component} keyboard interaction ARIA"`로 검색한다.
-3. `project_id`가 있으면 정책 컬렉션을 검색한다(한국어 원문 그대로).
+1. `wcag_refs`와 APG 패턴으로 **정확 조회**한다(임베딩 호출 없음). APG 패턴은 규칙에서 나온 것과 `component_hint`를 합친다. 우선순위는 `wcag-<SC>` → `apg-<패턴>-keyboard` → `apg-<패턴>-roles` → `understanding-<SC>-intent`이며, 벡터 검색 몫을 남기기 위해 **정확 조회는 최대 4개**까지만 쓴다.
+2. `component_hint`, 규칙 ID, 정적 분석 메시지로 **영어 쿼리**를 만들어 벡터 검색한다(공식 문서가 영어이므로). 쿼리는 LLM 없이 템플릿으로 만들고, 규칙당 1개씩 최대 3개다. 예: `"{component} accessibility {rule_id} {message}"`. 정적 분석 결과가 없으면 `"{component} keyboard interaction ARIA"`로 검색한다. 정확 조회로 이미 찾은 문서는 제외하고 남은 자리를 채운다.
+3. `project_id`가 있으면 해당 프로젝트 정책 중 `applies_to`가 관련 컴포넌트와 겹치는 것을 고른다(더 구체적인 정책 먼저). 관련 컴포넌트를 모를 때만 벡터 검색을 쓴다. 다른 프로젝트의 정책은 절대 섞이지 않는다.
 
 LLM에는 공식 문서 최대 6개, 정책 최대 4개 청크를 전달한다.
+
+Scenario A 결과 예: 정확 조회 `wcag-2.1.1`, `wcag-4.1.2`, `apg-button-keyboard`, `apg-button-roles` + 벡터 `technique-SCR35-description`, `understanding-2.1.1-intent-p3` / 정책 `demo-ds-btn-001`, `demo-ds-icon-001`, `demo-ds-focus-001`.
 
 ## 6.6. 인덱싱
 
