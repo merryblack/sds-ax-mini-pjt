@@ -39,10 +39,16 @@ copy .env.example .env
 
 ### 3. 검색 인덱스 만들기 (최초 1회)
 
-검색 인덱스(`data/chroma/`)는 저장소에 포함되지 않는다(`.gitignore`). 처음 받은 환경에서는 아래 명령으로 만든다. Bedrock 임베딩을 호출하며 약 2분 걸린다.
+검색 인덱스(`data/chroma/`)는 저장소에 포함되지 않는다(`.gitignore`). 처음 받은 환경에서는 아래 명령으로 만든다. 공식 문서(`official` 컬렉션)와 프로젝트 정책(`project_policies` 컬렉션)을 함께 인덱싱하며, Bedrock 임베딩을 호출해 약 2분 걸린다.
 
 ```powershell
 python -m a11y_investigator.rag.ingest
+```
+
+프로젝트 정책(`knowledge/project-policies/`)만 고쳤다면 정책만 다시 인덱싱하면 된다(수 초).
+
+```powershell
+python -m a11y_investigator.rag.ingest --policies
 ```
 
 공식 문서 원본(`knowledge/official/`)은 저장소에 포함되어 있다. W3C 최신본으로 다시 받고 싶을 때만 아래를 실행한 뒤 인덱스를 다시 만든다. 출처와 커밋 해시는 `knowledge/manifests/sources.yaml`에 자동 기록된다.

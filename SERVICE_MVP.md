@@ -283,7 +283,15 @@ parse_input ─(실패)───────────────────
 
 ## 6.2. 프로젝트 정책
 
-`knowledge/project-policies/<project_id>/`에 둔다. 시연용 프로젝트는 `demo-ds`이다.
+`knowledge/project-policies/<project_id>/`에 둔다. 시연용 프로젝트는 가상 디자인 시스템 `demo-ds`이며 정책 5개를 둔다.
+
+| policy_id | 내용 | 용도 |
+|---|---|---|
+| `demo-ds-btn-001` | 클릭 요소는 `<Button>` 사용, 네이티브 `<button>` 직접 사용 금지 | Scenario C 기본 케이스 |
+| `demo-ds-icon-001` | 아이콘 버튼은 `<IconButton>` + `aria-label` | 정책 준수 확인 |
+| `demo-ds-dialog-001` | 모달은 `<Dialog>`, 포커스 이동·복귀, Escape로 닫기 | Dialog 정책 |
+| `demo-ds-tabs-001` | `<Tabs>` 묶음 사용, 화살표 키 이동 | Tabs 정책 |
+| `demo-ds-focus-001` | 포커스 아웃라인 제거(`outline: none`) | **의도적으로 WCAG 2.4.7과 충돌** → `conflict_with_wcag` 확인 |
 
 `project.yaml`:
 

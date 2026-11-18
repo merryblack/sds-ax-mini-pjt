@@ -133,8 +133,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `rag/ingest.py`: `official` 컬렉션에 전체 재인덱싱
 - **완료 조건:** `python -m a11y_investigator.rag.ingest` 실행 후 `wcag-2.1.1` 문서를 ID로 조회할 수 있고, APG Dialog 청크가 존재한다.
 
-### T09. 예제 프로젝트 정책 · 1h
-- [ ] **참조:** 6.2, 3.3 Scenario C
+### T09. 예제 프로젝트 정책 · 1h ✅ 완료 (2026-11-18)
+- [x] **참조:** 6.2, 3.3 Scenario C — 정책 5개(충돌 케이스 `demo-ds-focus-001` 포함), 테스트: `tests/test_policy_lookup.py` 9개(Bedrock 검색 1개는 `-m llm`)
 - **의존:** T03 (`component_mapping` 주입 확인은 T06 완료 후)
 - **작업**
   - `knowledge/project-policies/demo-ds/project.yaml` (`target_level`, `component_mapping`)

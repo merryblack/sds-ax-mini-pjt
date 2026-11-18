@@ -1,0 +1,11 @@
+# Demo project for MVP demonstrations (fictional design system "demo-ds").
+project_id: demo-ds
+name: Demo Design System
+target_level: AA
+# Injected into ESLint settings['jsx-a11y'].components so jsx-a11y treats
+# design-system components like the native elements they render.
+component_mapping:
+  Button: button
+  IconButton: button
+  Link: a
+  TextField: input
