@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a11y-investigator"
+version = "0.2.0"
+description = "Evidence-based React accessibility analysis and improvement agent (MVP)"
+requires-python = ">=3.11"
+# Dependencies are managed in requirements.txt.
+
+[project.scripts]
+a11y-investigator = "a11y_investigator.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "llm: calls AWS Bedrock (costs money; run explicitly with -m llm)",
+    "eval: runs the evaluation dataset (run explicitly with -m eval)",
+]
+addopts = "-m 'not llm and not eval'"
+filterwarnings = ["ignore::DeprecationWarning:langsmith.*"]

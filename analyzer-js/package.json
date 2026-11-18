@@ -1,0 +1,18 @@
+{
+  "name": "a11y-investigator-analyzer",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Static accessibility analyzer for React JSX/TSX (ESLint + jsx-a11y). stdin -> stdout JSON.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "analyze": "node analyze.mjs"
+  },
+  "dependencies": {
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0"
+  }
+}

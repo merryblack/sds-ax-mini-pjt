@@ -60,8 +60,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `docs/decisions.md`에 결정과 이유를 기록한다. D3, D4는 Phase 2 시작 전에 정한다.
 - **완료 조건:** `docs/decisions.md`에 D1·D2가 기록되어 있고, 두 모델의 호출 테스트가 성공한다.
 
-### T02. 프로젝트 스캐폴딩 · 1h
-- [ ] **참조:** 10장, 11장
+### T02. 프로젝트 스캐폴딩 · 1h ✅ 완료 (2026-11-18)
+- [x] **참조:** 10장, 11장 — 환경: Python 3.14 (`.venv`), Node.js 26 LTS, ESLint 9.39.5, jsx-a11y 6.10.2, @typescript-eslint/parser 8.73.0
 - **의존:** T01
 - **작업**
   - Python 의존성은 `requirements.txt` 기준(langchain-aws, boto3 포함), `analyzer-js/package.json` (ESLint 9, eslint-plugin-jsx-a11y, @typescript-eslint/parser)
@@ -69,7 +69,7 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - `config.py`: 모델명, 경로, 한도(300줄, 타임아웃 20초, 재시도 2회, 검색 상한 6/4)를 한곳에 모은다.
   - `.env.example`: `AWS_REGION`, Chat 모델 ID, 임베딩 모델 ID. AWS 자격 증명은 AWS 프로필이나 환경변수로 받고 저장소에 넣지 않는다.
   - `.gitignore`(`data/chroma/`, `.env`)
-- **완료 조건:** `pip install -r requirements.txt`와 `npm install`이 성공하고, `pytest`가 0개 테스트로 통과한다.
+- **완료 조건:** `pip install -r requirements.txt`, `pip install -e .`, `npm install`이 성공하고, `pytest` 스모크 테스트가 통과한다.
 
 ---
 

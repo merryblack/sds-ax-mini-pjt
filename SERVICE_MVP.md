@@ -603,7 +603,8 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 ```text
 a11y-investigator/
 ├── README.md
-├── requirements.txt
+├── requirements.txt             # 고정 버전 의존성
+├── pyproject.toml               # 패키지·CLI 진입점·pytest 설정
 ├── .env.example
 ├── src/a11y_investigator/
 │   ├── cli.py
