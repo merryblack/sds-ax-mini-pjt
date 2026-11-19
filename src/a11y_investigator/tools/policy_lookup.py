@@ -105,6 +105,50 @@ def get_project_policy(project_id: str, policy_id: str, root: Path | None = None
     raise PolicyError(f"{project_id}에 정책 {policy_id}가 없습니다.")
 
 
+def check_project(
+    project_id: str, root: Path | None = None, known_sc: set[str] | frozenset[str] | None = None
+) -> tuple[list[Policy], list[str]]:
+    """Validate a project folder and collect ALL problems (Korean), not just the first.
+
+    Used by `a11y-investigator policies check`. `known_sc` is the set of indexed WCAG SC.
+    """
+    problems: list[str] = []
+    folder = _project_dir(project_id, root)
+    if not folder.is_dir():
+        return [], [f"프로젝트 폴더가 없습니다: {folder}"]
+    try:
+        config = load_project(project_id, root)
+        for component, element in config.component_mapping.items():
+            if not str(element).strip():
+                problems.append(f"project.yaml: component_mapping['{component}']의 값이 비어 있습니다.")
+    except Exception as e:  # missing file, bad YAML, invalid field, id mismatch
+        problems.append(f"project.yaml: {e}")
+
+    policies: list[Policy] = []
+    files = sorted(folder.glob("*.md"))
+    if not files:
+        problems.append("정책 파일(*.md)이 없습니다.")
+    for path in files:
+        try:
+            policy = parse_policy(path, project_id)
+        except Exception as e:
+            problems.append(f"{path.name}: {e}")
+            continue
+        policies.append(policy)
+        if known_sc is not None:
+            unknown = [sc for sc in policy.related_wcag if sc not in known_sc]
+            if unknown:
+                problems.append(f"{path.name}: 인덱스에 없는 WCAG 기준 {unknown}")
+
+    seen: dict[str, str] = {}
+    for policy in policies:
+        name = Path(policy.path).name
+        if policy.policy_id in seen:
+            problems.append(f"{name}: policy_id '{policy.policy_id}'가 {seen[policy.policy_id]}와 중복됩니다.")
+        seen.setdefault(policy.policy_id, name)
+    return policies, problems
+
+
 def policy_chunks(root: Path | None = None) -> list[Chunk]:
     """One chunk per policy rule, for every project."""
     chunks = []

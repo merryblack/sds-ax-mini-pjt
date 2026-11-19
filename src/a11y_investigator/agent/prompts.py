@@ -112,7 +112,9 @@ inside conditions or loops. Put the condition inside the effect instead.
 # Project policies and components
 - If <component_mapping> lists design-system components (e.g. Button -> button) and a policy \
 requires them, use those components instead of the native element, and add the import from \
-the package named in the policy if it is not already imported.
+the package named in the policy if it is not already imported. If no policy names the package, \
+NEVER invent an import path: use the native element instead, and say in changes that the \
+design-system component could not be used because its package is unknown.
 - If a policy conflicts with WCAG (e.g. removing focus outlines), follow WCAG and do not \
 apply the conflicting policy.
 

@@ -9,17 +9,9 @@ import pytest
 from a11y_investigator.schemas.analyzer import AnalyzerResult
 from a11y_investigator.tools.static_analysis import StaticAnalysisError, analyze_code, find_node
 
-try:
-    find_node()
-    HAS_NODE = True
-except StaticAnalysisError:
-    HAS_NODE = False
+from samples import SCENARIO_A  # noqa: E402
 
-pytestmark = pytest.mark.skipif(not HAS_NODE, reason="Node.js not installed")
-
-SCENARIO_A = """export default function SaveButton() {
-  return <div onClick={() => alert("saved")}>저장</div>;
-}"""
+pytestmark = pytest.mark.node
 
 TSX_IMG = """interface Props { src: string }
 export function Avatar({ src }: Props) {

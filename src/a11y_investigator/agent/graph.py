@@ -16,6 +16,7 @@ from langgraph.graph import END, START, StateGraph
 from a11y_investigator.agent import nodes
 from a11y_investigator.agent.decision import Decision
 from a11y_investigator.agent.state import AnalysisState
+from a11y_investigator.agent.trace import Tracer
 from a11y_investigator.config import settings
 from a11y_investigator.schemas.analyzer import TargetLevel
 from a11y_investigator.schemas.diagnosis import (
@@ -159,8 +160,12 @@ def run_analysis(
     project_id: str | None = None,
     level: TargetLevel | None = None,
     trace_id: str | None = None,
+    tracer: Tracer | None = None,
 ) -> tuple[DiagnosisReport, AnalysisState]:
-    """Run the whole workflow. Returns the report and the final state (for tracing)."""
+    """Run the whole workflow. Returns the report and the final state.
+
+    With a `tracer`, the graph is streamed so node timings and LLM token usage are recorded.
+    """
     initial: AnalysisState = {
         "raw_input": raw_input,
         "file_code": file_code,
@@ -171,5 +176,16 @@ def run_analysis(
         "warnings": [],
         "errors": [],
     }
-    final = compiled_graph().invoke(initial, config={"recursion_limit": settings.recursion_limit})
-    return DiagnosisReport.model_validate(final["report"]), final
+    config: dict[str, Any] = {"recursion_limit": settings.recursion_limit}
+    if tracer is None:
+        final = compiled_graph().invoke(initial, config=config)
+    else:
+        config["callbacks"] = [tracer.callback]
+        final = dict(initial)
+        for mode, chunk in compiled_graph().stream(initial, config=config, stream_mode=["updates", "values"]):
+            if mode == "updates":
+                for node, update in chunk.items():
+                    tracer.on_node_update(node, update or {})
+            else:
+                final = chunk
+    return DiagnosisReport.model_validate(final["report"]), final  # type: ignore[return-value]

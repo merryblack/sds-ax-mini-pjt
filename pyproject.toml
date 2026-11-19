@@ -20,6 +20,7 @@ testpaths = ["tests"]
 markers = [
     "llm: calls AWS Bedrock (costs money; run explicitly with -m llm)",
     "eval: runs the evaluation dataset (run explicitly with -m eval)",
+    "node: runs the real Node analyzer (~1.2 s each; skip with --no-node)",
 ]
 addopts = "-m 'not llm and not eval'"
 filterwarnings = ["ignore::DeprecationWarning:langsmith.*", "ignore::DeprecationWarning:chromadb.*"]

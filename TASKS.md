@@ -10,7 +10,7 @@
 |---|---|---|---|---|
 | Phase 0. 준비 | T01–T02 | 2 | 프로젝트가 설치·실행되고 결정 사항이 기록됨 | ✅ 완료 |
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
-| Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | |
+| Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
 | Phase 3. 평가와 마무리 | T17–T19 | 3 | 평가 결과와 README를 갖춘 저장소 | |
 
 ### 중간 점검 (Milestone)
@@ -207,8 +207,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - `report` 노드: `outcome` 결정, 근거 URL을 메타데이터에서 채움, `fix_failed`일 때 "검증되지 않은 코드" 경고, 재현성 필드(model, index_version, analyzer_versions, trace_id)
 - **완료 조건:** **M2 점검** — Scenario A → `improved`, Scenario B → `no_issue_detected` 또는 `no_change_needed`, 300줄 초과 입력 → `analysis_failed`가 나온다. 정책 파일을 고친 뒤 `ingest` 없이 분석해도 바뀐 정책이 검색된다(해시 비교 단위 테스트 포함).
 
-### T16. CLI와 Trace
-- [ ] **참조:** 2.2, 3.1, 9.1
+### T16. CLI와 Trace ✅ 완료 (2026-11-19)
+- [x] **참조:** 2.2, 3.1, 9.1 — 테스트: `tests/test_cli.py` 10개(오프라인). 실제 실행 1회 약 22~25초, 토큰 약 9k+2k, 예상 $0.06. 함께 수정: 정책에 패키지 이름이 없을 때 import 경로를 지어내던 문제(수정 프롬프트·템플릿)
 - **의존:** T15
 - **작업**
   - `cli.py` (Typer): `analyze` 명령, `--file`, `--project`, `--level`(기본값 `None`: 지정하지 않으면 T15의 우선순위를 따름), `--json`, stdin 입력
@@ -241,7 +241,7 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - **RAGAS (9.4, P0로 승격):** 같은 실행 결과(state)로 context_recall, context_precision, faithfulness, answer_relevancy 측정. `ragas` 패키지 추가, 평가 LLM·임베딩은 Bedrock 래퍼(평가 LLM 기본 Haiku 4.5)
   - `evals/reports/`에 결과 저장 (모델, 인덱스 버전 포함)
   - pytest로 LLM 없는 단위 테스트와 평가 실행을 분리 (평가는 마커로 별도 실행)
-  - 실행 전 D3(실행당 비용·토큰 상한, 일일 한도 대응) 확정
+  - 평가 후 케이스 유형별 평균 사용량(시간, 토큰, 예상 비용)을 `docs/decisions.md` D3 표에 기록 (D3은 보류, 상한 없음)
 - **완료 조건:** **M3 점검** — 평가 1회 실행으로 지표 5개, RAGAS 4개 지표, 실패 케이스 목록이 담긴 리포트가 생성되고 README에 기록된다.
 
 ### T19. 품질 개선과 마무리

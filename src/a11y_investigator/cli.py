@@ -1,26 +1,120 @@
-"""CLI entry point: `a11y-investigator analyze` (SERVICE_MVP.md 2.2). Implemented in T16."""
+"""CLI: `a11y-investigator analyze` and `a11y-investigator policies check` (SERVICE_MVP.md 2.2, 6.2).
+
+Exit codes for `analyze`: 0 = analysis completed (any outcome except analysis_failed),
+1 = analysis_failed, 2 = bad command-line input.
+"""
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Optional
 
 import typer
 
-app = typer.Typer(help="Evidence-based React accessibility analysis and improvement agent.")
+from a11y_investigator.config import settings
+
+app = typer.Typer(
+    help="근거 기반 React 접근성 진단·개선 Agent (A11y Investigator).",
+    no_args_is_help=True,
+    add_completion=False,
+)
+policies_app = typer.Typer(help="프로젝트 정책(지침) 관리.", no_args_is_help=True)
+app.add_typer(policies_app, name="policies")
+
+LEVELS = ("A", "AA", "AAA")
 
 
-@app.callback()
-def main() -> None:
-    """A11y Investigator."""
+def _utf8_stdout() -> None:
+    """Korean text and ⚠ must print on Windows consoles that default to cp949."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+        except (AttributeError, ValueError):
+            pass
 
 
 @app.command()
 def analyze(
-    file: str | None = typer.Option(None, "--file", help="React component file (.jsx / .tsx)."),
-    project: str | None = typer.Option(None, "--project", help="Project ID for policy lookup."),
-    level: str = typer.Option("AA", "--level", help="Target WCAG level: A, AA, AAA."),
-    json_output: bool = typer.Option(False, "--json", help="Print DiagnosisReport JSON."),
+    file: Optional[Path] = typer.Option(None, "--file", "-f", help="분석할 React 파일 (.jsx / .tsx)."),
+    request: str = typer.Option("", "--request", "-r", help="요청 문구 (예: 'AAA 기준으로 검토해 줘')."),
+    project: Optional[str] = typer.Option(None, "--project", "-p", help="프로젝트 ID (정책 적용)."),
+    level: Optional[str] = typer.Option(
+        None, "--level", "-l", help="목표 레벨 A / AA / AAA. 생략하면 요청 문구 > 프로젝트 설정 > AA."
+    ),
+    json_output: bool = typer.Option(False, "--json", help="DiagnosisReport JSON으로 출력."),
+    no_trace: bool = typer.Option(False, "--no-trace", help="Trace 파일을 남기지 않음."),
+    trace_dir: Optional[Path] = typer.Option(None, "--trace-dir", help="Trace 저장 폴더 (기본 data/traces)."),
 ) -> None:
-    """Analyze a React component for accessibility issues."""
-    typer.echo("Not implemented yet (T16).", err=True)
-    raise typer.Exit(code=1)
+    """React 컴포넌트의 접근성을 진단하고, 필요하면 수정 코드를 생성·재검증한다.
+
+    --file이 없으면 표준 입력에서 요청 문구와 코드(코드 블록)를 함께 읽는다.
+    """
+    _utf8_stdout()
+    from a11y_investigator.agent.graph import run_analysis
+    from a11y_investigator.agent.trace import Tracer
+    from a11y_investigator.report_markdown import render_markdown
+
+    if level is not None and level.upper() not in LEVELS:
+        typer.echo(f"--level은 {', '.join(LEVELS)} 중 하나여야 합니다.", err=True)
+        raise typer.Exit(code=2)
+
+    if file is not None:
+        if not file.is_file():
+            typer.echo(f"파일을 찾을 수 없습니다: {file}", err=True)
+            raise typer.Exit(code=2)
+        file_code: str | None = file.read_text(encoding="utf-8")
+        raw_input = request
+    else:
+        if sys.stdin.isatty():
+            typer.echo("--file을 지정하거나 표준 입력으로 코드를 넘겨 주세요.", err=True)
+            raise typer.Exit(code=2)
+        file_code = None
+        raw_input = (request + "\n" if request else "") + sys.stdin.read()
+
+    tracer = None if no_trace else Tracer()
+    report, state = run_analysis(
+        raw_input=raw_input,
+        file_code=file_code,
+        project_id=project,
+        level=level.upper() if level else None,  # type: ignore[arg-type]
+        tracer=tracer,
+    )
+
+    if tracer is not None:
+        trace = tracer.build(state, report.model_dump())
+        path = tracer.save(trace, trace_dir)
+        llm = trace["llm"]
+        typer.echo(
+            f"[trace] {path} · {trace['total_seconds']}s · tokens {llm['input_tokens']}+{llm['output_tokens']}"
+            f" · ≈${llm['estimated_cost_usd']:.4f}",
+            err=True,
+        )
+
+    typer.echo(report.model_dump_json(indent=2) if json_output else render_markdown(report))
+    if report.outcome == "analysis_failed":
+        raise typer.Exit(code=1)
+
+
+@policies_app.command("check")
+def policies_check(
+    project_id: str = typer.Argument(..., help="검증할 프로젝트 ID (knowledge/project-policies/<project_id>)."),
+    policies_dir: Optional[Path] = typer.Option(None, "--policies-dir", help="정책 루트 폴더 (기본 knowledge/project-policies)."),
+) -> None:
+    """프로젝트 정책 폴더의 형식·ID·컴포넌트·WCAG 번호를 검증한다. 문제가 있으면 종료 코드 1."""
+    _utf8_stdout()
+    from a11y_investigator.middleware.safety import indexed_sc
+    from a11y_investigator.tools.policy_lookup import check_project
+
+    root = policies_dir or settings.policies_dir
+    policies, problems = check_project(project_id, root, known_sc=indexed_sc())
+    if problems:
+        typer.echo(f"✗ {project_id}: 문제 {len(problems)}건")
+        for p in problems:
+            typer.echo(f"  - {p}")
+        raise typer.Exit(code=1)
+    typer.echo(f"✓ {project_id}: 정책 {len(policies)}개, 문제 없음")
+    for p in policies:
+        typer.echo(f"  - {p.policy_id} ({', '.join(p.applies_to) or '-'}) {p.title}")
 
 
 if __name__ == "__main__":

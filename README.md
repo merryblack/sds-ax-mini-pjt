@@ -111,7 +111,8 @@ python -m a11y_investigator.rag.ingest
 ### 4. 테스트
 
 ```powershell
-pytest                                # 기본: LLM 호출 없음
+pytest                                # 기본: LLM 호출 없음 (커밋 전 전체 확인)
+pytest --no-node                      # 개발 중 빠른 확인: Node 분석기 실행 테스트 제외
 pytest -m llm                         # Bedrock 호출 테스트 (비용 발생)
 cd analyzer-js; npm test; cd ..       # 정적 분석기 테스트
 ```
@@ -120,13 +121,24 @@ cd analyzer-js; npm test; cd ..       # 정적 분석기 테스트
 
 ### 5. 분석 실행
 
-> CLI는 T16에서 구현 예정이다.
-
 ```powershell
-a11y-investigator analyze --file Component.tsx --project demo-ds
+a11y-investigator analyze --file examples\save_button.jsx --project demo-ds
 ```
 
-지금은 Python에서 바로 실행할 수 있다.
+| 옵션 | 설명 |
+|---|---|
+| `--file`, `-f` | 분석할 `.jsx` / `.tsx` 파일. 생략하면 표준 입력에서 요청 문구와 코드 블록을 함께 읽는다 |
+| `--request`, `-r` | 요청 문구 (예: `"AAA 기준으로 검토해 줘"`) |
+| `--project`, `-p` | 프로젝트 ID. 지정하면 해당 프로젝트 정책을 적용하고 정책 적합성을 평가한다 |
+| `--level`, `-l` | 목표 레벨 `A` / `AA` / `AAA`. 생략하면 요청 문구 > 프로젝트 설정 > `AA` |
+| `--json` | 사람이 읽는 Markdown 보고서 대신 `DiagnosisReport` JSON 출력 |
+| `--no-trace` | Trace 파일을 남기지 않음 |
+
+- 출력: Markdown 보고서 9개 항목(요약, 발견된 문제, 근거, 정책 적합성, 개선 필요 여부, 개선 코드, 변경 내용, 재검증, 수동 검증 항목)
+- Trace: 실행마다 `data/traces/<trace_id>.json`에 노드별 시간, LLM 토큰, 예상 비용, 검색 문서, 재검증 결과가 남는다(커밋하지 않음). 경로와 요약은 표준 오류로 출력된다.
+- 종료 코드: `0` 분석 완료, `1` 분석 실패(`analysis_failed`), `2` 잘못된 옵션
+
+Python에서 직접 실행할 수도 있다.
 
 ```python
 from a11y_investigator.agent.graph import run_analysis
@@ -155,7 +167,9 @@ copy docs\policy-template\policy-example.md knowledge\project-policies\my-projec
 - `project.yaml`: `project_id`(폴더 이름과 같게), 목표 레벨, 디자인 시스템 컴포넌트 매핑
 - 정책 Markdown(규칙 하나당 파일 하나): frontmatter에 `policy_id`, `project_id`, `title`, `applies_to`(button / dialog / tabs / combobox), `related_wcag`를 쓰고 본문에 규칙을 쓴다
 
-**3) 검증** (T16에서 구현 예정)
+디자인 시스템 컴포넌트를 쓰라는 정책이라면 **import할 패키지 이름(예: `@my-ds/ui`)을 본문에 적는다.** 적지 않으면 Agent는 import 경로를 지어내지 않고 네이티브 요소로 수정한다.
+
+**3) 검증**
 
 ```powershell
 a11y-investigator policies check my-project
@@ -203,15 +217,17 @@ a11y-investigator analyze --file Component.tsx --project my-project
 
 ## 핵심 코드 위치
 
-> 현재 Phase 2 진행 중(M2 달성)이며, 진행에 따라 바뀐다. ✅ 구현됨 · ⏳ 예정(괄호 안은 담당 Task, 최신 상태는 [TASKS.md](TASKS.md) 참조)
+> 현재 Phase 2 완료(M2 달성), Phase 3 진행 전이며 진행에 따라 바뀐다. ✅ 구현됨 · ⏳ 예정(괄호 안은 담당 Task, 최신 상태는 [TASKS.md](TASKS.md) 참조)
 
 ```text
 mini-project/
 ├── src/a11y_investigator/
-│   ├── cli.py                  ⏳ CLI 진입점 `a11y-investigator` (T16)
+│   ├── cli.py                  ✅ CLI 진입점 `a11y-investigator` (analyze, policies check)
 │   ├── config.py               ✅ 모델 ID·경로·한도 설정
+│   ├── report_markdown.py      ✅ 보고서 Markdown 렌더링 (9개 항목)
 │   ├── agent/
 │   │   ├── state.py            ✅ LangGraph 상태
+│   │   ├── trace.py            ✅ 로컬 JSON Trace (노드 시간, 토큰, 예상 비용)
 │   │   ├── decision.py         ✅ decide: 인용 검증 적용 + 수정 대상 결정 (일반 코드)
 │   │   ├── graph.py            ✅ 메인 에이전트 그래프, 보고서 조립, run_analysis() 진입점
 │   │   ├── nodes.py            ✅ 8개 노드와 분기 조건 (report 노드는 graph.py)
@@ -244,7 +260,10 @@ mini-project/
 ├── docs/
 │   ├── decisions.md            ✅ 모델 선택 등 결정 기록
 │   └── policy-template/        ✅ 내 프로젝트 지침 템플릿
+├── examples/                   ✅ 실행 예시 컴포넌트
 ├── evals/                      ⏳ 평가 데이터셋·실행기 (T17, T18)
-├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`)
-└── data/chroma/                검색 인덱스 (생성물, 커밋하지 않음)
+├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`), 공용 샘플·가짜 객체는 samples.py·fakes.py
+└── data/                       생성물, 커밋하지 않음
+    ├── chroma/                 검색 인덱스, policy-hashes.json
+    └── traces/                 실행별 Trace JSON
 ```

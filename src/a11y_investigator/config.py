@@ -48,7 +48,18 @@ class Settings:
     policies_dir: Path = PROJECT_ROOT / "knowledge" / "project-policies"
     manifests_dir: Path = PROJECT_ROOT / "knowledge" / "manifests"
     chroma_dir: Path = PROJECT_ROOT / "data" / "chroma"
+    traces_dir: Path = PROJECT_ROOT / "data" / "traces"
     analyzer_dir: Path = PROJECT_ROOT / "analyzer-js"
+
+    # ── Cost estimate for traces (USD per 1M tokens) ───────
+    # Rough on-demand prices used only for the "estimated cost" in traces.
+    # Check the current AWS Bedrock price list before relying on them.
+    model_prices: dict[str, tuple[float, float]] = field(
+        default_factory=lambda: {
+            "sonnet": (3.0, 15.0),  # (input, output)
+            "haiku": (1.0, 5.0),
+        }
+    )
 
     # ── Index ───────────────────────────────────────────────
     index_version: str = "index-v1"

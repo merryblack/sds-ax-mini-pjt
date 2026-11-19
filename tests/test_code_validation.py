@@ -20,7 +20,8 @@ from a11y_investigator.tools.code_validation import (
     feedback_from,
     validate_generated_code,
 )
-from a11y_investigator.tools.static_analysis import StaticAnalysisError, find_node
+
+from samples import FIXED_A, SCENARIO_A  # noqa: E402
 
 CLICK = "jsx-a11y/click-events-have-key-events"
 STATIC = "jsx-a11y/no-static-element-interactions"
@@ -152,16 +153,6 @@ def test_can_retry_limits_attempts() -> None:
 
 # ── Real analyzer ───────────────────────────────────────────
 
-try:
-    find_node()
-    HAS_NODE = True
-except StaticAnalysisError:
-    HAS_NODE = False
-
-needs_node = pytest.mark.skipif(not HAS_NODE, reason="Node.js not installed")
-
-SCENARIO_A = 'export default function SaveButton() {\n  return <div onClick={() => alert("saved")}>저장</div>;\n}\n'
-FIXED_A = 'export default function SaveButton() {\n  return <button type="button" onClick={() => alert("saved")}>저장</button>;\n}\n'
 DIALOG_FIX_WITH_KEYDOWN = """export function ConfirmDialog({ open, onClose }) {
   if (!open) return null;
   return (
@@ -182,7 +173,7 @@ DIALOG_ORIGINAL = """export function ConfirmDialog({ open, onClose }) {
 """
 
 
-@needs_node
+@pytest.mark.node
 def test_real_scenario_a_fix_passes() -> None:
     from a11y_investigator.tools.static_analysis import analyze_code
 
@@ -191,7 +182,7 @@ def test_real_scenario_a_fix_passes() -> None:
     assert v.status == "passed" and v.changed_lines == 1
 
 
-@needs_node
+@pytest.mark.node
 @pytest.mark.llm
 def test_retry_with_feedback_resolves_new_violation() -> None:
     """Attempt 1 (onKeyDown on role=dialog) fails; feedback makes attempt 2 pass."""
@@ -241,7 +232,7 @@ export function ConfirmDialog({ open, onClose }) {
 """
 
 
-@needs_node
+@pytest.mark.node
 def test_real_hook_after_early_return_fails() -> None:
     """The T14 retry output: useEffect after `if (!open) return null` breaks the Rules of Hooks."""
     from a11y_investigator.tools.static_analysis import analyze_code
@@ -253,7 +244,7 @@ def test_real_hook_after_early_return_fails() -> None:
     assert "called conditionally" in feedback_from(v, "x", after).new_violations[0]
 
 
-@needs_node
+@pytest.mark.node
 def test_real_dialog_keydown_fix_fails_with_new_violation() -> None:
     """The T13 Dialog case: onKeyDown on a role=dialog div introduces a new rule violation."""
     from a11y_investigator.tools.static_analysis import analyze_code

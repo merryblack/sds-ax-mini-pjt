@@ -10,9 +10,7 @@ from a11y_investigator.tools.input_parser import (
     parse_input,
 )
 
-SCENARIO_A = """export default function SaveButton() {
-  return <div onClick={() => alert("saved")}>저장</div>;
-}"""
+from samples import SCENARIO_A, fenced  # noqa: E402
 
 TSX_DIALOG = """import { useState } from "react";
 
@@ -30,10 +28,6 @@ export function ConfirmDialog({ title, onClose }: ConfirmDialogProps) {
     </div>
   ) : null;
 }"""
-
-
-def fenced(code: str, lang: str = "jsx") -> str:
-    return f"```{lang}\n{code}\n```"
 
 
 # ── Extraction (2.4) ────────────────────────────────────────

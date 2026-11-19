@@ -12,7 +12,7 @@ from a11y_investigator.tools.policy_lookup import (
     load_project,
     policy_chunks,
 )
-from a11y_investigator.tools.static_analysis import StaticAnalysisError, analyze_code, find_node
+from a11y_investigator.tools.static_analysis import analyze_code
 
 
 def write_project(root, project_id="p1", policy_front=None):
@@ -77,14 +77,7 @@ def test_policy_chunks_metadata() -> None:
 
 # ── component_mapping injection into jsx-a11y ───────────────
 
-try:
-    find_node()
-    HAS_NODE = True
-except StaticAnalysisError:
-    HAS_NODE = False
-
-
-@pytest.mark.skipif(not HAS_NODE, reason="Node.js not installed")
+@pytest.mark.node
 def test_component_mapping_makes_jsx_a11y_treat_button_as_button() -> None:
     """With the mapping, <Button> is a native button, so giving it a non-interactive role is flagged."""
     code = 'export const A = () => <Button role="presentation" onClick={() => 1}>저장</Button>;'

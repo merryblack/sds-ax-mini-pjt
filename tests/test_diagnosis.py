@@ -19,9 +19,7 @@ from a11y_investigator.rag.retriever import RetrievalResult, RetrievedDoc
 from a11y_investigator.schemas.analyzer import AnalyzerResult, StaticFinding
 from a11y_investigator.schemas.diagnosis import DiagnosisOutput
 
-SCENARIO_A = """export default function SaveButton() {
-  return <div onClick={() => alert("saved")}>저장</div>;
-}"""
+from samples import SCENARIO_A  # noqa: E402
 
 DIALOG = """export function ConfirmDialog({ open, onClose, onConfirm }) {
   if (!open) return null;

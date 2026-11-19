@@ -25,7 +25,8 @@ from a11y_investigator.schemas.diagnosis import (
     StaticEvidence,
 )
 
-from test_diagnosis import POLICY_WITH_INJECTION, SCENARIO_A  # noqa: E402
+from samples import SCENARIO_A  # noqa: E402
+from test_diagnosis import POLICY_WITH_INJECTION  # noqa: E402
 
 
 def finding(fid: str, will_fix: bool, status: str = "confirmed") -> FindingResult:

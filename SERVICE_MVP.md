@@ -621,7 +621,7 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 | faithfulness | 진단 설명이 검색된 근거에 기반하는가 |
 | answer_relevancy | 진단이 요청(코드의 접근성 문제)에 맞는 답인가 |
 
-- 평가용 LLM과 임베딩은 Bedrock(`langchain-aws`)을 RAGAS 래퍼로 감싸 쓴다. 일일 토큰 한도를 고려해 평가 LLM은 Haiku 4.5를 기본으로 한다(D3에서 확정).
+- 평가용 LLM과 임베딩은 Bedrock(`langchain-aws`)을 RAGAS 래퍼로 감싸 쓴다. 일일 토큰 한도를 고려해 평가 LLM은 Haiku 4.5를 기본으로 한다.
 - 각 케이스의 `retrieved_contexts`와 `response`는 그래프 실행 결과(state)에서 그대로 가져오므로 진단 실행을 추가로 하지 않는다.
 
 ---
@@ -653,9 +653,10 @@ a11y-investigator/
 ├── pyproject.toml               # 패키지·CLI 진입점·pytest 설정
 ├── .env.example
 ├── src/a11y_investigator/
-│   ├── cli.py
+│   ├── cli.py                   # analyze, policies check
 │   ├── config.py                # 모델·경로·한도
-│   ├── agent/                   # graph.py, state.py, nodes.py, decision.py, prompts.py
+│   ├── report_markdown.py       # 보고서 Markdown 렌더링
+│   ├── agent/                   # graph.py, state.py, nodes.py, decision.py, prompts.py, trace.py
 │   ├── chains/                  # llm.py, diagnosis.py, improvement.py
 │   ├── rag/                     # fetch.py, chunker.py, metadata.py, store.py, ingest.py, retriever.py
 │   ├── tools/                   # input_parser.py, static_analysis.py, rule_mapping.py,
@@ -669,7 +670,8 @@ a11y-investigator/
 │   ├── official/
 │   ├── project-policies/demo-ds/   # project.yaml, *.md
 │   └── manifests/                  # sources.yaml, rule-wcag-map.yaml
-├── data/chroma/
+├── data/                       # chroma/(인덱스, policy-hashes.json), traces/ — 커밋하지 않음
+├── examples/                    # 실행 예시 컴포넌트
 ├── evals/                       # datasets/, evaluate.py, reports/
 ├── tests/
 └── docs/decisions.md
@@ -745,7 +747,7 @@ a11y-investigator/
 
 # 14. 미결정 사항
 
-결정 내용과 이유는 `docs/decisions.md`에 기록한다. D1·D2는 확정, D3·D4는 Phase 2 시작 전에 정한다.
+결정 내용과 이유는 `docs/decisions.md`에 기록한다. D1·D2·D4는 확정, D3은 보류(사용량만 기록)다.
 
 **확정된 제약:** LLM과 임베딩은 교육 과정에서 제공받은 **AWS Bedrock**만 사용한다. 따라서 D1·D2는 제공받은 계정에서 **실제로 접근이 허용된 Bedrock 모델 중에서** 고른다.
 
@@ -760,5 +762,5 @@ a11y-investigator/
 |---|---|---|---|
 | D1 | ✅ **Chat LLM: `us.anthropic.claude-sonnet-4-6`** (확정) | 진단·수정 모두 사용, temperature 0~0.2. 평가 반복 등 비용을 줄일 때는 `us.anthropic.claude-haiku-4-5-20251001-v1:0`를 보조로 사용 | 확정 (2026-11-18) |
 | D2 | ✅ **임베딩: `amazon.titan-embed-text-v2:0`** (확정) | 호출 가능한 유일한 다국어 모델. 한국어·영어 문장 유사도가 0.36 정도로 높지 않으므로 공식 문서 검색은 영어 쿼리(6.5)를 유지한다. `index_version`에 모델명 포함 | 확정 (2026-11-18) |
-| D3 | 실행당 비용·토큰 상한 | 예: LLM 호출 최대 6회 (진단 1 + 수정 최대 3 + 여유) | Day 2 |
+| D3 | 실행당 비용·토큰 상한 | **보류.** 상한 없이 평균 사용량만 `docs/decisions.md`에 기록하고 필요할 때 정한다 (현재 1회 약 11k 토큰, 약 $0.06) | 보류 |
 | D4 | ✅ **Trace: 로컬 JSON** (확정) | LangSmith 키 미제공, 유료라 장기 사용 어려움 → `data/traces/<trace_id>.json` | 확정 (2026-11-19) |

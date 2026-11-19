@@ -16,7 +16,7 @@ from a11y_investigator.tools.rule_mapping import (
     load_rule_map,
     wcag_refs_of,
 )
-from a11y_investigator.tools.static_analysis import StaticAnalysisError, find_node
+from a11y_investigator.tools.static_analysis import find_node
 
 
 def finding(rule_id: str) -> StaticFinding:
@@ -38,12 +38,10 @@ def test_table_loads_all_recommended_rules() -> None:
     assert all(rid.startswith("jsx-a11y/") for rid in rule_map)
 
 
+@pytest.mark.node
 def test_table_matches_enabled_analyzer_rules() -> None:
     """Every rule the analyzer can report must be mapped, and nothing extra."""
-    try:
-        node = find_node()
-    except StaticAnalysisError:
-        pytest.skip("Node.js not installed")
+    node = find_node()
     script = (
         "import p from 'eslint-plugin-jsx-a11y';"
         "const r = p.flatConfigs.recommended.rules;"
