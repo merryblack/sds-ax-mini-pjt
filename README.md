@@ -105,7 +105,7 @@ a11y-investigator policies check my-project
 a11y-investigator analyze --file Component.tsx --project my-project
 ```
 
-정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(T15에서 구현 예정). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
+정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(파일 해시를 `data/chroma/policy-hashes.json`과 비교). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
 
 ## RAGAS 평가 결과
 - context_recall: 0.XX
@@ -135,7 +135,8 @@ mini-project/
 │   ├── agent/
 │   │   ├── state.py            ✅ LangGraph 상태
 │   │   ├── decision.py         ✅ decide: 인용 검증 적용 + 수정 대상 결정 (일반 코드)
-│   │   ├── graph.py, nodes.py  ⏳ 메인 에이전트 그래프 (T15)
+│   │   ├── graph.py            ✅ 메인 에이전트 그래프, 보고서 조립, run_analysis() 진입점
+│   │   ├── nodes.py            ✅ 9개 노드와 분기 조건
 │   │   └── prompts.py          ✅ 진단·수정 프롬프트
 │   ├── chains/
 │   │   ├── llm.py              ✅ Bedrock Claude 모델 생성
