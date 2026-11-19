@@ -16,3 +16,4 @@ analyzer-js/node_modules/
 
 # Editor
 .vscode/
+evals/reports/*.json

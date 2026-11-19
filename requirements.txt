@@ -24,3 +24,4 @@ typer==0.29.1
 
 # Test / Eval
 pytest==9.2.0
+ragas==0.4.4                    # 진단 근거 품질 평가 (evals/ragas_eval.py, 2026-11-19 추가)

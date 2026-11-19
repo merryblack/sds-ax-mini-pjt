@@ -610,7 +610,7 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 | RAGAS 입력 | 이 프로젝트에서의 값 |
 |---|---|
 | `user_input` | 요청 문구 + 분석 대상 코드 |
-| `retrieved_contexts` | `retrieve` 노드가 LLM에 넘긴 공식 문서·정책 청크 본문 |
+| `retrieved_contexts` | `retrieve` 노드가 LLM에 넘긴 공식 문서·정책 청크 본문. faithfulness·answer_relevancy에는 진단 LLM이 함께 받은 분석 대상 코드와 정적 분석 결과도 근거로 추가한다(코드에 대한 서술을 확인하기 위해) |
 | `response` | 진단 결과(Finding의 제목·설명·권장사항)를 이어 붙인 텍스트 |
 | `reference` | 평가 데이터셋의 기대 Finding 설명(9.2 라벨) |
 

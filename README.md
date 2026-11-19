@@ -114,6 +114,7 @@ python -m a11y_investigator.rag.ingest
 pytest                                # 기본: LLM 호출 없음 (커밋 전 전체 확인)
 pytest --no-node                      # 개발 중 빠른 확인: Node 분석기 실행 테스트 제외
 pytest -m llm                         # Bedrock 호출 테스트 (비용 발생)
+pytest -m eval                        # 평가 실행기 1케이스 확인 (비용 발생, 전체 평가는 아래 "평가 실행")
 cd analyzer-js; npm test; cd ..       # 정적 분석기 테스트
 ```
 
@@ -186,16 +187,46 @@ a11y-investigator analyze --file Component.tsx --project my-project
 정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(파일 해시를 `data/chroma/policy-hashes.json`과 비교). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
 
 ## RAGAS 평가 결과
-- context_recall: 0.XX
-- context_precision: 0.XX
-- faithfulness: 0.XX
-- answer_relevancy: 0.XX
+1차 측정(2026-11-19, 리포트 [evals/reports/20261119-045925.md](evals/reports/20261119-045925.md)). 진단 단계만 측정하며, 평가 모델은 Haiku 4.5, 임베딩은 Titan V2다. 대상은 문제 있음·정책 케이스 중 Finding이 나온 14개다.
+
+- context_recall: 0.96
+- context_precision: 0.55
+- faithfulness: 0.95
+- answer_relevancy: 0.26
+
+해석
+- context_recall은 높다. 정답 진단에 필요한 근거 문서가 거의 모두 검색된다.
+- context_precision이 낮은 것은 검색 상한(공식 문서 6개)을 채우면서 관련이 덜한 문서도 함께 들어가기 때문이다.
+- faithfulness는 검색 문서와 함께 진단 LLM이 실제로 받은 코드·정적 분석 결과를 근거로 넣어 계산했다. 검색 문서만 넣으면 코드에 대한 서술("div에 onClick만 있다")을 근거로 확인할 수 없어 점수가 0.2~0.6 사이로 흔들렸다.
+- answer_relevancy는 진단 품질보다 임베딩 특성의 영향이 크다. RAGAS가 진단 결과에서 영어 질문을 만들고 이를 한국어 입력과 Titan 임베딩 유사도로 비교하는데, Titan V2는 같은 뜻의 한영 문장도 유사도가 0.36 정도다(docs/decisions.md D2). 질문을 한국어로 만들게 해도 오르지 않아(0.19) 참고 지표로만 본다.
+
+평가 실행
+
+```powershell
+python -m evals.evaluate                     # 19개 전체 + RAGAS (약 9분, 예상 $1.5)
+python -m evals.evaluate --case button --no-ragas
+python -m evals.evaluate --from-run evals/reports/<id>.json   # 저장된 실행 결과로 재채점
+```
+
+결과는 `evals/reports/<id>.md`(요약, 커밋)와 `<id>.json`(전체 실행 기록, 커밋하지 않음)으로 저장된다.
 
 ## 인-아웃 세트 통과율 (자체 평가)
 평가 데이터셋은 `evals/datasets/`의 19개 케이스다(문제 있음 12, 문제 없음 5, 정책 적용 2 / Button 8, Dialog 4, Tabs 4, Combobox 3 / TSX 8). 케이스마다 입력 코드와 기대 결과(Finding, outcome, 인용할 문서, 정책 판정)를 YAML로 라벨링했다.
 
-- 1차 (Day 9 종료): XX / XX 통과
-- 2차 (Day 10 개선 후): XX / XX 통과
+- 1차 (2026-11-19, T18): 14 / 19 통과
+
+| 지표 (SERVICE_MVP.md 9.3) | 1차 | 목표 |
+|---|---|---|
+| `confirmed` Finding 재현율 | 100% | ≥ 90% ✅ |
+| 문제 없는 코드가 no-change로 끝나는 비율 | 20% (1/5) | ≥ 80% ❌ |
+| 수정 시도 케이스의 재검증 통과율 | 94% (17/18) | ≥ 80% ✅ |
+| 허위 인용 | 0건 | 0건 ✅ |
+| WCAG 근거 연결 정확도 | 100% | ≥ 80% ✅ |
+
+  - 실패 5건 중 4건은 문제 없는 코드를 수정한 경우다. APG의 선택 권장 사항(Home/End 키, aria-disabled 선호 등)을 `suspected`·`local`로 보고했고, decide 규칙이 이를 수정 대상으로 삼았다.
+  - 나머지 1건(dialog-01)은 Escape 처리를 넣으면서 `no-static-element-interactions` 위반을 새로 만들었고, 재시도 3회 모두 해결하지 못했다.
+  - 정책 판정 정확도는 100%(6/6)이고, analysis_failed는 0건이다.
+- 2차 (T19 개선 후): XX / XX 통과
 - 개선폭: +XX 건 (주요 개선 사항: ...)
 
 ## 트라이앤에러 회고
@@ -263,7 +294,7 @@ mini-project/
 │   ├── decisions.md            ✅ 모델 선택 등 결정 기록
 │   └── policy-template/        ✅ 내 프로젝트 지침 템플릿
 ├── examples/                   ✅ 실행 예시 컴포넌트
-├── evals/                      ✅ 평가 데이터셋 19개·스키마(dataset.py), ⏳ 실행기 (T18)
+├── evals/                      ✅ 평가 데이터셋 19개, 실행기(evaluate.py), 지표(metrics.py), RAGAS(ragas_eval.py), 리포트(reports/)
 ├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`), 공용 샘플·가짜 객체는 samples.py·fakes.py
 └── data/                       생성물, 커밋하지 않음
     ├── chroma/                 검색 인덱스, policy-hashes.json

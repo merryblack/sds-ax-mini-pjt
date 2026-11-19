@@ -233,8 +233,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - 케이스마다 입력 코드, 기대 Finding(`rule_id` 또는 설명, `status`, `wcag_criteria`), 기대 `outcome`, 기대 근거 `document_id`, 정책 케이스는 기대 `PolicyAssessment`
 - **완료 조건:** 19개 파일이 스키마 검증을 통과한다.
 
-### T18. 평가 실행기
-- [ ] **참조:** 9.3, 13장
+### T18. 평가 실행기 ✅ 완료 (2026-11-19, M3)
+- [x] **참조:** 9.3, 13장 — 결과: [evals/reports/20261119-045925.md](evals/reports/20261119-045925.md). 14/19 통과, 지표 5개 중 4개 합격(문제 없는 코드의 no-change 비율 20% 미달), RAGAS recall 0.96 / precision 0.55 / faithfulness 0.95 / relevancy 0.26. 테스트: `tests/test_eval_metrics.py`(오프라인 8개 + `-m eval` 1개). faithfulness는 코드·정적 분석 결과도 근거로 넣어 계산(README 참고)
 - **의존:** T17, T16
 - **작업**
   - `evals/evaluate.py`: 전체 케이스 실행, 9.3 지표 5개 계산, 케이스별 실패 사유 기록
