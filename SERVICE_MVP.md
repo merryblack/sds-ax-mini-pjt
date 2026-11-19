@@ -631,8 +631,8 @@ a11y-investigator/
 ├── src/a11y_investigator/
 │   ├── cli.py
 │   ├── config.py                # 모델·경로·한도
-│   ├── agent/                   # graph.py, state.py, nodes.py, prompts.py
-│   ├── chains/                  # diagnosis.py, improvement.py
+│   ├── agent/                   # graph.py, state.py, nodes.py, decision.py, prompts.py
+│   ├── chains/                  # llm.py, diagnosis.py, improvement.py
 │   ├── rag/                     # fetch.py, chunker.py, metadata.py, store.py, ingest.py, retriever.py
 │   ├── tools/                   # input_parser.py, static_analysis.py, rule_mapping.py,
 │   │                            # guideline_search.py, policy_lookup.py, code_validation.py

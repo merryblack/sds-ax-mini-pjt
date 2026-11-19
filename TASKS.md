@@ -161,8 +161,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
     - 정책이 있으면 `PolicyAssessment` 작성
 - **완료 조건:** Scenario A로 실행하면 `confirmed` Finding이 1개 이상 나오고, 근거에 전달된 `document_id`만 들어 있다.
 
-### T12. 판단 노드와 인용 검증
-- [ ] **참조:** 5.2, 8장, 7.2 마지막 문단
+### T12. 판단 노드와 인용 검증 ✅ 완료 (2026-11-19)
+- [x] **참조:** 5.2, 8장, 7.2 마지막 문단 — `middleware/safety.py`(인용 검증) + `agent/decision.py`(decide). 테스트: `tests/test_decision.py` 18개(LLM 없음)
 - **의존:** T11
 - **작업**
   - `middleware/safety.py`: 전달되지 않은 `document_id` 제거, 인덱스에 없는 WCAG SC 제거

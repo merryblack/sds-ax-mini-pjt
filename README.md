@@ -134,6 +134,7 @@ mini-project/
 │   ├── config.py               ✅ 모델 ID·경로·한도 설정
 │   ├── agent/
 │   │   ├── state.py            ✅ LangGraph 상태
+│   │   ├── decision.py         ✅ decide: 인용 검증 적용 + 수정 대상 결정 (일반 코드)
 │   │   ├── graph.py, nodes.py  ⏳ 메인 에이전트 그래프 (T15)
 │   │   └── prompts.py          ✅ 진단 프롬프트 / ⏳ 수정 프롬프트 (T13)
 │   ├── chains/
@@ -155,7 +156,7 @@ mini-project/
 │   │   ├── ingest.py           ✅ 인덱싱
 │   │   └── retriever.py        ✅ 정확 조회 + 벡터 검색 + 정책 선택
 │   ├── schemas/                ✅ 정적 분석·근거·진단·보고서 스키마
-│   └── middleware/safety.py    ⏳ 인용 검증, 린트 우회 차단 (T12, T14)
+│   └── middleware/safety.py    ✅ 인용 검증·강등 / ⏳ 린트 우회 차단 (T14)
 ├── analyzer-js/analyze.mjs     ✅ ESLint 9 + jsx-a11y 정적 분석기 (stdin → JSON)
 ├── knowledge/
 │   ├── official/               ✅ WCAG·Understanding·Techniques·APG 원문 (W3C)
