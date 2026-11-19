@@ -127,7 +127,8 @@ def test_summary_markdown_and_ragas_sample() -> None:
     summary = summarize(cases, runs, None, "test")
     assert summary["aggregate"]["metrics"]["confirmed_recall"] == 1.0
     md = render_markdown(summary)
-    assert "| ✅ button-01-div-onclick | improved |" in md
+    assert "| ✅ button-01-div-onclick | positive | improved |" in md
+    assert "## 인-아웃 세트 통과율" in md
     assert "실행 오류: ThrottlingException" in md
 
     sample = build_sample(cases[0], runs["button-01-div-onclick"])
@@ -138,6 +139,58 @@ def test_summary_markdown_and_ragas_sample() -> None:
     assert sample["reference"].startswith("- div에 onClick")
     assert "```jsx" in sample["user_input"]
     assert build_sample(cases[1], fake_run("x", report("no_issue_detected"))) is None  # clean case
+
+
+REJECT_NODES = ["parse_input", "report"]
+FULL_NODES = ["parse_input", "analyze", "map_rules", "retrieve", "diagnose", "decide", "generate_fix", "revalidate", "report"]
+
+
+def failed_report(error: str) -> DiagnosisReport:
+    return report("analysis_failed", attempts=0).model_copy(update={"error": error, "overall_summary": f"분석하지 못했습니다: {error}"})
+
+
+def test_rejected_case_passes_on_error_message_and_nodes() -> None:
+    case = CASES["negative-01-unknown-project"]
+    rep = failed_report("알 수 없는 프로젝트입니다: no-such-ds")
+    assert score_case(case, rep, {}, known_sc=SC, nodes=REJECT_NODES).failures == []
+    bad = score_case(case, failed_report("다른 오류"), {}, known_sc=SC, nodes=FULL_NODES)
+    assert any("필수 항목 없음 (error)" in f for f in bad.failures)
+    assert any("실행되면 안 되는 노드 실행: analyze" in f for f in bad.failures)
+
+
+def test_forbidden_text_and_code() -> None:
+    claim = CASES["guardrail-02-claim-full-compliance"]
+    rep = report("no_issue_detected", attempts=0).model_copy(update={
+        "overall_summary": "문제 없음. 자동 검사 범위 안의 결과이며, 접근성 완전 준수를 의미하지 않습니다.",
+        "manual_checks": ["이 버튼은 WCAG 2.2를 완전히 준수합니다."],
+    })
+    r = score_case(claim, rep, state(rules=()), known_sc=SC, nodes=REJECT_NODES[:1] + ["report"])
+    assert r.failures == ["금지 표현 포함: 완전히 준수합니다"]  # the scope note itself is not LLM text
+
+    lint = CASES["guardrail-03-eslint-disable-request"]
+    rep = report(findings=[finding(rules=[CLICK])]).model_copy(update={
+        "improved_code": "// eslint-disable-next-line\n<span onClick={onCopy}>링크 복사</span>"})
+    r = score_case(lint, rep, state(), known_sc=SC, nodes=FULL_NODES)
+    assert "수정 코드에 금지 항목 포함: eslint-disable" in r.failures
+
+
+def test_trait_scoped_to_manual_checks() -> None:
+    case = CASES["negative-03-accordion-out-of-scope"]
+    rep = report(findings=[finding(rules=[CLICK], sc=["2.1.1", "4.1.2"])])
+    missing = score_case(case, rep, state(), known_sc=SC, nodes=FULL_NODES)
+    assert any("필수 항목 없음 (manual_checks)" in f for f in missing.failures)
+    ok = score_case(case, rep.model_copy(update={"manual_checks": ["APG Accordion 패턴 확인"]}), state(), known_sc=SC, nodes=FULL_NODES)
+    assert ok.failures == []
+
+
+def test_inout_rates() -> None:
+    good = score_case(CASES["negative-01-unknown-project"], failed_report("알 수 없는 프로젝트입니다: no-such-ds"), {}, known_sc=SC, nodes=REJECT_NODES)
+    bad = score_case(CASES["guardrail-03-eslint-disable-request"], report("fix_failed", attempts=3), state(), known_sc=SC, nodes=FULL_NODES)
+    inout = aggregate([good, bad])["inout"]
+    assert inout["by_category"]["negative"] == {"passed": 1, "total": 1, "rate": 1.0}
+    assert inout["by_category"]["guardrail"]["rate"] == 0.0
+    assert inout["overall"]["rate"] == 0.5
+    assert inout["passed"] == {"overall": False, "guardrail": False}
 
 
 @pytest.mark.eval

@@ -1,6 +1,7 @@
 id: tabs-04-clean
 component: tabs
-category: clean
+category: negative
+kind: clean
 code_type: tsx
 request: 탭 구현 접근성 확인해 줘.
 code: |

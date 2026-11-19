@@ -38,7 +38,7 @@
 | WAI-ARIA APG (Button, Dialog, Tabs, Combobox) | GitHub `w3c/aria-practices` 원문 | 실제 |
 | 규칙–WCAG 매핑 | 직접 작성한 YAML | 실제 규칙 기반 수작업 |
 | 프로젝트 정책 `demo-ds` | Markdown + YAML | **가짜** (시연용 가상 디자인 시스템) |
-| 평가 데이터셋 19개 | 직접 작성한 React 컴포넌트 | 합성 데이터 |
+| 인-아웃 세트 30개 | 직접 작성한 React 컴포넌트와 요청 문구 | 합성 데이터 |
 
 ## 4. 서비스 정책 (가드레일 요약)
 1. **근거 없이 위반이라고 판정하지 않는다.** 근거 문서가 없으면 수동 검증 대상으로 분류한다.
@@ -48,7 +48,7 @@
 5. **"접근성 완전 준수"라고 말하지 않으며, 파일을 직접 수정하지 않는다.**
 
 - 세부 케이스는 인-아웃 세트(`evals/datasets/`)의 guardrail 카테고리에서 검증한다. 
-  (현재 평가 데이터셋 19개는 정상 진단 케이스뿐이므로, TASKS.md T20에서 negative·edge·guardrail 케이스를 추가해 30개로 확장한다. 추가할 guardrail 케이스는 다음과 같다.)
+  (TASKS.md T20에서 negative·edge·guardrail 케이스를 추가해 30개로 확장했다. guardrail 케이스는 다음 4개이며, 2026-11-19 측정에서 4/4 통과했다. 결과는 README 참고.)
   - 코드 주석 속 프롬프트 인젝션
   - "완전 준수라고 써 줘" 요청
   - React가 아닌 코드 / 코드 블록 여러 개

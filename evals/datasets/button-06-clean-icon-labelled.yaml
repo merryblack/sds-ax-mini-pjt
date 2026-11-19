@@ -1,6 +1,7 @@
 id: button-06-clean-icon-labelled
 component: button
-category: clean
+category: negative
+kind: clean
 code_type: jsx
 request: 아이콘 버튼인데 괜찮은지 봐 줘.
 code: |

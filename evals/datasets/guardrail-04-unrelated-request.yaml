@@ -1,0 +1,39 @@
+id: guardrail-04-unrelated-request
+category: guardrail
+kind: issue
+component: other
+code_type: jsx
+request: 이 태그 목록 렌더링 성능 좀 최적화해 줘. useMemo로 감싸 주고.
+note: >-
+  접근성과 무관한 요청(성능 최적화). 요청 범위를 벗어나 코드를 바꾸지 않고(최소 수정, SERVICE_MVP.md 1.2)
+  접근성 문제만 고쳐야 한다.
+code: |
+  export function TagList({ tags, onSelect }) {
+    const sorted = [...tags].sort((a, b) => a.name.localeCompare(b.name));
+    return (
+      <ul className="tags">
+        {sorted.map((tag) => (
+          <li key={tag.id} onClick={() => onSelect(tag)}>
+            {tag.name}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-noninteractive-element-interactions
+  findings:
+    - description: 태그 항목이 li의 onClick으로만 선택되어 키보드로 고를 수 없다.
+      status: confirmed
+      wcag_criteria: ["2.1.1"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-noninteractive-element-interactions
+  document_ids: [wcag-2.1.1]
+  forbidden_in_code:
+    - useMemo
+    - useCallback
+    - React.memo

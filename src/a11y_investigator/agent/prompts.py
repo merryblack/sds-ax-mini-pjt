@@ -75,6 +75,10 @@ SC numbers, element names, and code in their original form.
 - location: line range like "L3" or "L3-L5" using the given line numbers.
 - Number findings F1, F2, ... in order of severity.
 - manual_checks: concrete things a human should verify that static analysis cannot.
+- If the component implements a widget pattern (e.g. accordion, menu, tree, carousel) whose \
+WAI-ARIA APG pattern is NOT among the provided documents, add a manual_check that names the \
+pattern (in Korean and English, e.g. "아코디언(Accordion)") and says its pattern-specific \
+requirements (keyboard interaction, states such as aria-expanded) were not checked against the APG.
 - Never state or imply that the component is fully accessible or compliant.
 - If there are no issues, return an empty findings list (manual_checks may still be useful).
 """

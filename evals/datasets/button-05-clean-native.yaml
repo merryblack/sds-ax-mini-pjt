@@ -1,6 +1,7 @@
 id: button-05-clean-native
 component: button
-category: clean
+category: negative
+kind: clean
 code_type: tsx
 request: 이 버튼 접근성 문제 있는지 확인해 줘.
 code: |

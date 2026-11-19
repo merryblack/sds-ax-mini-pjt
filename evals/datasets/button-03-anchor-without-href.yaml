@@ -1,6 +1,7 @@
 id: button-03-anchor-without-href
 component: button
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 더 보기 링크 접근성 점검 부탁해.
 code: |

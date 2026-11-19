@@ -1,6 +1,7 @@
 id: button-01-div-onclick
 component: button
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 다음 버튼의 접근성을 검토해 줘.
 code: |

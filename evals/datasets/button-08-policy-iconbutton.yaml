@@ -1,6 +1,7 @@
 id: button-08-policy-iconbutton
 component: button
-category: policy
+category: positive
+kind: policy
 code_type: tsx
 request: 패널 닫기 버튼을 프로젝트 지침에 맞게 봐 줘.
 project_id: demo-ds

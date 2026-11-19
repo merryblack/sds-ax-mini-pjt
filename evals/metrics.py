@@ -23,7 +23,8 @@ from a11y_investigator.schemas.diagnosis import (
     FindingResult,
     StaticEvidence,
 )
-from evals.dataset import EvalCase, ExpectedFinding
+from a11y_investigator.report_markdown import render_markdown as render_report
+from evals.dataset import EvalCase, ExpectedFinding, parse_trait
 
 GUARDRAIL_MARKERS = ("제공되지 않은 문서 인용 제거", "인덱스에 없는 WCAG 기준 제거", "정적 분석에 없는 규칙 근거 제거")
 
@@ -35,6 +36,11 @@ TARGETS: dict[str, tuple[float, bool]] = {
     "invalid_citations": (0, False),
     "wcag_mapping_accuracy": (0.80, True),
 }
+
+
+# SERVICE.md 5장: in-out set pass rate overall and for guardrail cases
+INOUT_TARGETS = {"overall": 0.80, "guardrail": 1.00}
+CATEGORIES = ("positive", "negative", "edge", "guardrail")
 
 
 class Usage(BaseModel):
@@ -49,7 +55,8 @@ class CaseResult(BaseModel):
     id: str
     component: str
     category: str
-    code_type: str
+    kind: str
+    code_type: str | None
     outcome: str
     expected_outcomes: list[str]
     outcome_ok: bool
@@ -80,8 +87,8 @@ def match(expected: ExpectedFinding, reported: list[FindingResult]) -> list[Find
 
 def invalid_citations(report: DiagnosisReport, state: dict[str, Any], known_sc: frozenset[str]) -> list[str]:
     """Citations in the final report that point at nothing real (target: 0)."""
-    allowed_docs = {d["document_id"] for d in state.get("official_documents", [])}
-    allowed_docs |= {d["document_id"] for d in state.get("policy_documents", [])}
+    allowed_docs = {d["document_id"] for d in state.get("official_documents") or []}
+    allowed_docs |= {d["document_id"] for d in state.get("policy_documents") or []}
     reported_rules = {f["rule_id"] for f in (state.get("static_result") or {}).get("findings", [])}
     problems = []
     for f in report.findings:
@@ -97,24 +104,72 @@ def invalid_citations(report: DiagnosisReport, state: dict[str, Any], known_sc: 
     return problems
 
 
+def report_texts(report: DiagnosisReport) -> dict[str, str]:
+    """Texts the trait / forbidden checks look at."""
+    nl = "\n"
+    findings = nl.join(f"{f.title}{nl}{f.description}{nl}{f.recommendation}" for f in report.findings)
+    llm_text = nl.join([
+        findings,
+        nl.join(report.manual_checks),
+        nl.join(pa.note for pa in report.policy_assessments),
+        nl.join(c.description for c in report.changes),
+    ])
+    return {
+        "report": render_report(report),
+        "summary": report.overall_summary,
+        "findings": findings,
+        "manual_checks": nl.join(report.manual_checks),
+        "improved_code": report.improved_code or "",
+        "error": report.error or "",
+        "llm_text": llm_text,
+    }
+
+
+def check_inout(case: EvalCase, report: DiagnosisReport, nodes: list[str] | None) -> list[str]:
+    """In-out set checks (T20): required traits, forbidden text, graph nodes."""
+    exp = case.expected
+    texts = report_texts(report)
+    failures = []
+    for trait in exp.traits:
+        target, alts = parse_trait(trait)
+        if not any(a.lower() in texts[target].lower() for a in alts):
+            failures.append(f"필수 항목 없음 ({target}): {' | '.join(alts)}")
+    for word in exp.forbidden:
+        if word.lower() in texts["llm_text"].lower():
+            failures.append(f"금지 표현 포함: {word}")
+    for word in exp.forbidden_in_code:
+        if word in texts["improved_code"]:
+            failures.append(f"수정 코드에 금지 항목 포함: {word}")
+    if nodes is not None:
+        ran = set(nodes)
+        missing = [n for n in exp.nodes if n not in ran]
+        extra = [n for n in exp.forbidden_nodes if n in ran]
+        if missing:
+            failures.append(f"실행되지 않은 노드: {', '.join(missing)}")
+        if extra:
+            failures.append(f"실행되면 안 되는 노드 실행: {', '.join(extra)}")
+    return failures
+
+
 def score_case(
     case: EvalCase,
     report: DiagnosisReport,
     state: dict[str, Any],
     usage: Usage | None = None,
     known_sc: frozenset[str] | None = None,
+    nodes: list[str] | None = None,
 ) -> CaseResult:
     known_sc = known_sc if known_sc is not None else indexed_sc()
     exp = case.expected
     r = CaseResult(
-        id=case.id, component=case.component, category=case.category, code_type=case.code_type,
-        outcome=report.outcome, expected_outcomes=list(exp.outcomes),
+        id=case.id, component=case.component, category=case.category, kind=case.kind,
+        code_type=case.code_type, outcome=report.outcome, expected_outcomes=list(exp.outcomes),
         outcome_ok=report.outcome in exp.outcomes, attempts=report.validation.attempts,
         usage=usage or Usage(),
     )
     if not r.outcome_ok:
         r.failures.append(f"outcome {report.outcome} (기대: {', '.join(exp.outcomes)})")
-    if report.error:
+    if report.error and not r.outcome_ok:
         r.failures.append(f"error: {report.error[:200]}")
 
     for f in exp.findings:
@@ -138,7 +193,7 @@ def score_case(
     r.invalid_citations = invalid_citations(report, state, known_sc)
     if r.invalid_citations:
         r.failures.append(f"허위 인용 {len(r.invalid_citations)}건: {r.invalid_citations[:3]}")
-    r.guardrail_removed = sum(any(m in w for m in GUARDRAIL_MARKERS) for w in state.get("warnings", []))
+    r.guardrail_removed = sum(any(m in w for m in GUARDRAIL_MARKERS) for w in state.get("warnings") or [])
 
     actual = {pa.policy_id: pa.status for pa in report.policy_assessments}
     for pa in exp.policy_assessments:
@@ -149,6 +204,7 @@ def score_case(
             r.failures.append(
                 f"정책 {pa.policy_id}: {actual.get(pa.policy_id, '평가 없음')} (기대: {', '.join(pa.status)})"
             )
+    r.failures += check_inout(case, report, nodes)
     return r
 
 
@@ -157,7 +213,7 @@ def _ratio(num: int, den: int) -> float | None:
 
 
 def aggregate(results: list[CaseResult]) -> dict[str, Any]:
-    clean = [r for r in results if r.category == "clean"]
+    clean = [r for r in results if r.kind == "clean"]
     attempted = [r for r in results if r.outcome in ("improved", "fix_failed")]
     metrics = {
         "confirmed_recall": _ratio(sum(r.confirmed_found for r in results), sum(r.confirmed_expected for r in results)),
@@ -178,14 +234,30 @@ def aggregate(results: list[CaseResult]) -> dict[str, Any]:
         "analysis_failed": sum(r.outcome == "analysis_failed" for r in results),
         "fix_attempted": len(attempted),
     }
-    return {"metrics": metrics, "passed": passed, "info": info}
+    return {"metrics": metrics, "passed": passed, "info": info, "inout": inout_rates(results)}
+
+
+def inout_rates(results: list[CaseResult]) -> dict[str, Any]:
+    """Pass rate per in-out category (a case passes when it has no failures)."""
+    by_cat = {}
+    for cat in CATEGORIES:
+        rs = [r for r in results if r.category == cat]
+        by_cat[cat] = {"passed": sum(not r.failures for r in rs), "total": len(rs),
+                       "rate": _ratio(sum(not r.failures for r in rs), len(rs))}
+    overall = {"passed": sum(not r.failures for r in results), "total": len(results),
+               "rate": _ratio(sum(not r.failures for r in results), len(results))}
+    targets = {
+        key: (None if rate is None else rate >= INOUT_TARGETS[key])
+        for key, rate in (("overall", overall["rate"]), ("guardrail", by_cat["guardrail"]["rate"]))
+    }
+    return {"overall": overall, "by_category": by_cat, "passed": targets}
 
 
 def usage_by_group(results: list[CaseResult]) -> dict[str, dict[str, float]]:
     """Average usage per case type (for the D3 table)."""
     groups: dict[str, list[CaseResult]] = {"전체": results}
     for r in results:
-        key = {"clean": "문제 없음", "policy": "정책 적용"}.get(r.category, "문제 있음")
+        key = {"clean": "문제 없음", "policy": "정책 적용", "rejected": "입력 거절"}.get(r.kind, "문제 있음")
         groups.setdefault(key, []).append(r)
         groups.setdefault(f"재시도 {max(r.attempts - 1, 0)}회", []).append(r)
     out = {}

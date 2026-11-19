@@ -1,6 +1,7 @@
 id: dialog-03-image-close
 component: dialog
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 이미지 미리보기 창 검토 부탁해.
 code: |

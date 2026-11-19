@@ -1,6 +1,7 @@
 id: button-04-image-without-alt
 component: button
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 닫기 버튼 검토해 줘.
 code: |

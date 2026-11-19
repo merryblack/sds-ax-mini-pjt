@@ -1,6 +1,7 @@
 id: dialog-04-clean
 component: dialog
-category: clean
+category: negative
+kind: clean
 code_type: tsx
 request: 이 대화상자 구현에 접근성 문제가 있는지 확인해 줘.
 code: |

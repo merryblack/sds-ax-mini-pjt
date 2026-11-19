@@ -1,6 +1,7 @@
 id: tabs-02-role-tab-not-focusable
 component: tabs
-category: issue
+category: positive
+kind: issue
 code_type: tsx
 request: 상품 탭이 키보드로 되는지 봐 줘.
 code: |

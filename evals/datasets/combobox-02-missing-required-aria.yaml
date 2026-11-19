@@ -1,6 +1,7 @@
 id: combobox-02-missing-required-aria
 component: combobox
-category: issue
+category: positive
+kind: issue
 code_type: tsx
 request: 국가 선택 콤보박스 ARIA가 맞는지 봐 줘.
 code: |

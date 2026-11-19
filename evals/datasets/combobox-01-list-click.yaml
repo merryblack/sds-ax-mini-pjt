@@ -1,6 +1,7 @@
 id: combobox-01-list-click
 component: combobox
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 도시 검색 자동완성 접근성 검토해 줘.
 code: |

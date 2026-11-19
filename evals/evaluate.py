@@ -39,8 +39,9 @@ def run_case(case: EvalCase) -> dict[str, Any]:
     tracer = Tracer()
     t0 = time.monotonic()
     try:
+        raw_input, file_code = case.run_inputs
         report, state = run_analysis(
-            raw_input=case.request, file_code=case.code, project_id=case.project_id, tracer=tracer
+            raw_input=raw_input, file_code=file_code, project_id=case.project_id, tracer=tracer
         )
     except Exception as e:  # keep evaluating the other cases
         return {"case_id": case.id, "error": f"{type(e).__name__}: {e}"[:500],
@@ -57,6 +58,7 @@ def run_case(case: EvalCase) -> dict[str, Any]:
             for d in [*state.get("official_documents", []), *state.get("policy_documents", [])]
         ],
         "trace_id": trace["trace_id"],
+        "nodes": [n["node"] for n in trace["nodes"]],
         "usage": Usage(
             seconds=trace["total_seconds"], input_tokens=llm["input_tokens"], output_tokens=llm["output_tokens"],
             cost_usd=llm["estimated_cost_usd"], llm_calls=len(llm["calls"]),
@@ -68,12 +70,12 @@ def score_run(case: EvalCase, run: dict[str, Any]) -> CaseResult:
     usage = Usage.model_validate(run.get("usage") or {})
     if run.get("error") or not run.get("report"):
         return CaseResult(
-            id=case.id, component=case.component, category=case.category, code_type=case.code_type,
-            outcome="error", expected_outcomes=list(case.expected.outcomes), outcome_ok=False,
+            id=case.id, component=case.component, category=case.category, kind=case.kind,
+            code_type=case.code_type, outcome="error", expected_outcomes=list(case.expected.outcomes), outcome_ok=False,
             confirmed_expected=sum(f.status == "confirmed" for f in case.expected.findings),
             failures=[f"실행 오류: {run.get('error')}"], usage=usage,
         )
-    return score_case(case, DiagnosisReport.model_validate(run["report"]), run["state"], usage)
+    return score_case(case, DiagnosisReport.model_validate(run["report"]), run["state"], usage, nodes=run.get("nodes"))
 
 
 def _fmt(value: Any) -> str:
@@ -124,11 +126,22 @@ def render_markdown(summary: dict[str, Any]) -> str:
         lines.append(f"- 대상: 문제 있음·정책 케이스 중 Finding이 나온 {ragas.get('samples', 0)}개")
     else:
         lines.append("- 실행하지 않음")
-    lines += ["", "## 케이스별 결과", "", "| 케이스 | outcome | 기대 | 시도 | 실패 사유 |", "|---|---|---|---|---|"]
+    inout = agg["inout"]
+    names_cat = {"positive": "positive (정상 진단)", "negative": "negative (바꾸지 않음·범위 밖 안내)",
+                 "edge": "edge (애매·복잡한 입력)", "guardrail": "guardrail (인젝션·정책 위반 유도)"}
+    lines += ["", "## 인-아웃 세트 통과율 (SERVICE.md 5장)", "", "| 카테고리 | 통과 | 비율 | 목표 |", "|---|---|---|---|"]
+    for cat, label in names_cat.items():
+        c = inout["by_category"][cat]
+        goal = "100%" if cat == "guardrail" else "—"
+        mark = "" if cat != "guardrail" else {True: " ✅", False: " ❌", None: ""}[inout["passed"]["guardrail"]]
+        lines.append(f"| {label} | {c['passed']}/{c['total']} | {_fmt(c['rate'])} | {goal}{mark} |")
+    o = inout["overall"]
+    lines.append(f"| **전체** | {o['passed']}/{o['total']} | {_fmt(o['rate'])} | ≥ 80% {({True: '✅', False: '❌', None: ''})[inout['passed']['overall']]} |")
+    lines += ["", "## 케이스별 결과", "", "| 케이스 | 카테고리 | outcome | 기대 | 시도 | 실패 사유 |", "|---|---|---|---|---|---|"]
     for r in summary["results"]:
         mark = "✅" if not r["failures"] else "❌"
         lines.append(
-            f"| {mark} {r['id']} | {r['outcome']} | {', '.join(r['expected_outcomes'])} | {r['attempts']} | "
+            f"| {mark} {r['id']} | {r['category']} | {r['outcome']} | {', '.join(r['expected_outcomes'])} | {r['attempts']} | "
             + ("<br>".join(f.replace("|", "\\|") for f in r["failures"]) or "—") + " |"
         )
     lines += ["", "## 케이스 유형별 평균 사용량", "", "| 유형 | 케이스 | 시간(초) | 입력 토큰 | 출력 토큰 | 예상 비용 | LLM 호출 |", "|---|---|---|---|---|---|---|"]
@@ -188,6 +201,12 @@ def main(
                 outcome = (run.get("report") or {}).get("outcome", "error")
                 typer.echo(f"  {run['case_id']}: {outcome} ({run['usage']['seconds']}s)", err=True)
 
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    json_path = out_dir / f"{run_id}.json"
+    if not from_run:  # keep the expensive runs even if scoring or RAGAS fails later
+        json_path.write_text(json.dumps({"run_id": run_id, "runs": runs}, ensure_ascii=False, indent=2), encoding="utf-8")
+
     ragas = None
     if not no_ragas:
         from evals.ragas_eval import build_sample, run_ragas
@@ -197,10 +216,7 @@ def main(
         typer.echo(f"RAGAS: {len(samples)} samples", err=True)
         ragas = run_ragas(samples)
 
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     summary = summarize(cases, runs, ragas, run_id)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    json_path = out_dir / f"{run_id}.json"
     json_path.write_text(json.dumps({**summary, "runs": runs}, ensure_ascii=False, indent=2), encoding="utf-8")
     md_path = out_dir / f"{run_id}.md"
     md_path.write_text(render_markdown(summary), encoding="utf-8")

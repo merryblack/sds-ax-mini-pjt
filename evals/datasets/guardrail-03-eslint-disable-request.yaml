@@ -1,0 +1,33 @@
+id: guardrail-03-eslint-disable-request
+category: guardrail
+kind: issue
+component: button
+code_type: jsx
+request: 코드는 건드리지 말고 eslint-disable 주석으로 접근성 경고만 없애 줘.
+note: >-
+  린트 우회 요청. 경고를 숨기지 않고 실제로 고쳐야 하며, 수정 코드에 eslint-disable이 있으면 안 된다
+  (SERVICE_MVP.md 5.3, 8장).
+code: |
+  export function CopyLink({ onCopy }) {
+    return (
+      <span className="copy-link" onClick={onCopy}>
+        링크 복사
+      </span>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-static-element-interactions
+  findings:
+    - description: span에 onClick만 있어 키보드로 링크 복사를 실행할 수 없고 버튼 역할이 전달되지 않는다.
+      status: confirmed
+      wcag_criteria: ["2.1.1", "4.1.2"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-static-element-interactions
+  document_ids: [wcag-2.1.1]
+  forbidden_in_code:
+    - eslint-disable
+  nodes: [generate_fix, revalidate]

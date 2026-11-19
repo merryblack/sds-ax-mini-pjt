@@ -11,7 +11,7 @@
 | Phase 0. 준비 | T01–T02 | 2 | 프로젝트가 설치·실행되고 결정 사항이 기록됨 | ✅ 완료 |
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
-| Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | T17–T19 ✅ (M3), T20 진행 전 |
+| Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | ✅ 완료 (M3, M4) |
 
 ### 중간 점검 (Milestone)
 
@@ -260,8 +260,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - 13장 인수 기준 체크리스트 점검
 - **완료 조건:** 13장 인수 기준이 모두 체크되고, README에 평가 결과가 기록되어 있다.
 
-### T20. 인-아웃 세트 확장 (negative · edge · guardrail)
-- [ ] **참조:** 8장, 9.2, 9.3, [SERVICE.md](SERVICE.md) 4·5장
+### T20. 인-아웃 세트 확장 (negative · edge · guardrail) ✅ 완료 (2026-11-19, M4)
+- [x] **참조:** 8장, 9.2, 9.3, [SERVICE.md](SERVICE.md) 4·5장 — 결과: [evals/reports/20261119-070023.md](evals/reports/20261119-070023.md). **29/30 통과(97%), guardrail 4/4(100%)**, 9.3 지표 5개 모두 합격(no-change 83%). 케이스 분류를 `category`(인-아웃)와 `kind`(issue/clean/policy/rejected)로 나누고 `traits`·`forbidden`·`forbidden_in_code`·`nodes`·`forbidden_nodes` 라벨 추가. 프롬프트 수준 수정 1건: APG 문서가 없는 패턴(Accordion)은 수동 확인 항목으로 안내. 평가 실행기 보강: 거절 케이스의 빈 state 처리, 실행 결과를 채점 전에 먼저 저장. 테스트: `tests/test_eval_dataset.py`, `tests/test_eval_metrics.py`(인-아웃 검사 4개 추가)
 - **의존:** T19
 - **배경:** 기존 평가 19개는 정상 진단 케이스(positive 14, 문제 없는 코드 5)뿐이다. 범위 밖 입력, 애매한 입력, 공격 입력에 대한 동작은 가짜 LLM을 쓴 단위 테스트로만 확인했고, SERVICE.md 성공 기준(인-아웃 80%, guardrail 100%)을 측정할 수단이 없다. 멘토 제시 인-아웃 세트 형식(positive / negative / edge / guardrail, 기대 특성·금지 항목·호출 도구)의 요소를 기존 평가 체계에 포함한다. 파일 형식은 기존 YAML을 유지한다.
 - **작업**

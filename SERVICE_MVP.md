@@ -718,7 +718,7 @@ a11y-investigator/
 
 # 13. 인수 기준
 
-> 2026-11-19 T19에서 점검 완료. 항목별 근거는 TASKS.md T19 참고. 9.3 합격선 중 "문제 없는 코드의 no-change 비율"은 60%로 미달이며 README에 기록했다.
+> 2026-11-19 T19에서 점검 완료, T20에서 인-아웃 세트 항목 추가. 항목별 근거는 TASKS.md T19·T20 참고. 9.3 합격선은 T19 2차 측정에서 "문제 없는 코드의 no-change 비율"(60%)이 미달이었고, T20 측정(30개)에서는 지표 5개 모두 통과했다(README 참고).
 
 ### 입력
 - [x] JSX, TSX 코드를 CLI로 입력할 수 있다.
@@ -745,6 +745,7 @@ a11y-investigator/
 - [x] 노드별 Trace 기록
 - [x] 보고서에 모델, 인덱스 버전, 분석기 버전 기록
 - [x] 평가 데이터셋 19개와 합격선 측정 결과를 README에 기록
+- [x] 인-아웃 세트 30개(positive / negative / edge / guardrail)의 카테고리별 통과율을 README에 기록 (T20)
 - [x] RAGAS 4개 지표(context_recall, context_precision, faithfulness, answer_relevancy)를 측정해 README에 기록
 
 ---

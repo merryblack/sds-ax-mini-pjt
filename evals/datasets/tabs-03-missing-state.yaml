@@ -1,6 +1,7 @@
 id: tabs-03-missing-state
 component: tabs
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 탭 컴포넌트 ARIA 검토해 줘.
 code: |

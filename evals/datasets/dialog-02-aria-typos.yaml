@@ -1,6 +1,7 @@
 id: dialog-02-aria-typos
 component: dialog
-category: issue
+category: positive
+kind: issue
 code_type: tsx
 request: 공지 대화상자 ARIA 속성이 맞는지 봐 줘.
 code: |

@@ -1,6 +1,7 @@
 id: tabs-01-div-tabs
 component: tabs
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 설정 화면 탭 접근성 검토해 줘.
 code: |

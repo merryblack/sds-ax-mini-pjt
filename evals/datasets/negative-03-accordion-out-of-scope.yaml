@@ -1,0 +1,44 @@
+id: negative-03-accordion-out-of-scope
+category: negative
+kind: issue
+component: other
+code_type: jsx
+request: FAQ 아코디언 접근성 검토해 줘.
+note: >-
+  MVP가 APG 문서를 갖고 있지 않은 패턴(Accordion). WCAG와 정적 분석으로 확인되는 문제는 고치되,
+  APG 아코디언 패턴 고유의 요구 사항(aria-expanded, aria-controls 등)은 확인할 근거가 없으므로
+  수동 확인 항목으로 안내해야 한다. 제공되지 않은 apg-accordion 문서를 인용하면 안 된다.
+code: |
+  import { useState } from "react";
+
+  export function FaqAccordion({ items }) {
+    const [openId, setOpenId] = useState(null);
+    return (
+      <div className="faq">
+        {items.map((item) => (
+          <div key={item.id} className="faq-item">
+            <div className="faq-question" onClick={() => setOpenId(openId === item.id ? null : item.id)}>
+              {item.question}
+            </div>
+            {openId === item.id && <div className="faq-answer">{item.answer}</div>}
+          </div>
+        ))}
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-static-element-interactions
+  findings:
+    - description: 질문 머리글이 div의 onClick으로만 펼쳐져 키보드로 열고 닫을 수 없고, 버튼 역할도 전달되지 않는다.
+      status: confirmed
+      wcag_criteria: ["2.1.1", "4.1.2"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-static-element-interactions
+  document_ids: [wcag-2.1.1]
+  traits:
+    - "manual_checks: 아코디언 | Accordion"
+  nodes: [diagnose, generate_fix, revalidate]

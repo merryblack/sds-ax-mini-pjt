@@ -1,0 +1,32 @@
+id: edge-03-aaa-request
+category: edge
+kind: issue
+component: button
+code_type: tsx
+request: 이 메뉴 버튼을 AAA 기준으로 엄격하게 검토해 줘.
+note: 요청 문구의 레벨(AAA)이 목표 레벨로 반영되어야 한다(SERVICE_MVP.md 2.5).
+code: |
+  type Props = { onOpen: () => void };
+
+  export function MenuTrigger({ onOpen }: Props) {
+    return (
+      <div className="menu-trigger" onClick={onOpen}>
+        메뉴
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-static-element-interactions
+  findings:
+    - description: div에 onClick만 있어 키보드로 메뉴를 열 수 없고, 버튼 역할이 전달되지 않는다.
+      status: confirmed
+      wcag_criteria: ["2.1.1", "4.1.2"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-static-element-interactions
+  document_ids: [wcag-2.1.1]
+  traits:
+    - "WCAG 2.2 AAA"

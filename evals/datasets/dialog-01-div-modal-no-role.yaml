@@ -1,6 +1,7 @@
 id: dialog-01-div-modal-no-role
 component: dialog
-category: issue
+category: positive
+kind: issue
 code_type: jsx
 request: 확인 모달 접근성 검토해 줘.
 code: |

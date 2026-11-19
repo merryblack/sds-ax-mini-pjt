@@ -231,18 +231,18 @@ a11y-investigator analyze --file Component.tsx --project my-project
 정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(파일 해시를 `data/chroma/policy-hashes.json`과 비교). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
 
 ## RAGAS 평가 결과
-2026-11-19 측정. 진단 단계만 측정하며, 평가 모델은 Haiku 4.5, 임베딩은 Titan V2다. 대상은 문제 있음·정책 케이스 중 Finding이 나온 14개다.
+2026-11-19 측정. 진단 단계만 측정하며, 평가 모델은 Haiku 4.5, 임베딩은 Titan V2다. 대상은 문제 있는 케이스 중 Finding이 나온 것이다(T18·T19는 14개, T20은 인-아웃 세트로 늘어 20개).
 
-| 지표 | 1차 (T18) | 2차 (T19, 최종) |
-|---|---|---|
-| context_recall | 0.96 | 0.96 |
-| context_precision | 0.55 | 0.55 |
-| faithfulness | 0.95 | 0.80 |
-| answer_relevancy | 0.26 | 0.29 |
+| 지표 | 1차 (T18) | 2차 (T19) | 최종 (T20, 20개) |
+|---|---|---|---|
+| context_recall | 0.96 | 0.96 | 0.95 |
+| context_precision | 0.55 | 0.55 | 0.57 |
+| faithfulness | 0.95 | 0.80 | 0.89 |
+| answer_relevancy | 0.26 | 0.29 | 0.26 |
 
 - 2차에서 faithfulness가 낮아졌다. 진단 프롬프트에 "무엇이 필수이고 무엇이 선택인지" 판단을 넣으면서 APG 필수 여부처럼 문서 발췌에 명시되지 않은 서술이 늘어난 영향으로 보인다.
 - 가드레일이 제거한 인용은 1건이다(dialog-03에서 제공되지 않은 `apg-button-pattern` 인용). 최종 보고서의 허위 인용은 0건이다.
-- 케이스가 14개뿐이고 평가 LLM 판정의 편차도 있으므로(같은 샘플이 0.2~0.6 사이로 흔들린 사례) 경향 정도로 본다.
+- 케이스가 14~20개뿐이고 평가 LLM 판정의 편차도 있으므로(같은 샘플이 0.2~0.6 사이로 흔들린 사례) 경향 정도로 본다.
 
 해석
 - context_recall은 높다. 정답 진단에 필요한 근거 문서가 거의 모두 검색된다.
@@ -253,7 +253,8 @@ a11y-investigator analyze --file Component.tsx --project my-project
 평가 실행
 
 ```powershell
-python -m evals.evaluate                     # 19개 전체 + RAGAS (약 9분, 예상 $1.5)
+python -m evals.evaluate                     # 30개 전체 + RAGAS (약 10분, 예상 $1.6)
+python -m evals.evaluate --case guardrail --no-ragas   # 카테고리(파일 이름 접두어)만
 python -m evals.evaluate --case button --no-ragas
 python -m evals.evaluate --from-run evals/reports/<id>.json   # 저장된 실행 결과로 재채점
 ```
@@ -261,7 +262,56 @@ python -m evals.evaluate --from-run evals/reports/<id>.json   # 저장된 실행
 결과는 `evals/reports/<id>.md`(요약, 커밋)와 `<id>.json`(전체 실행 기록, 커밋하지 않음)으로 저장된다.
 
 ## 인-아웃 세트 통과율 (자체 평가)
-평가 데이터셋은 `evals/datasets/`의 19개 케이스다(문제 있음 12, 문제 없음 5, 정책 적용 2 / Button 8, Dialog 4, Tabs 4, Combobox 3 / TSX 8). 케이스마다 입력 코드와 기대 결과(Finding, outcome, 인용할 문서, 정책 판정)를 YAML로 라벨링했다.
+인-아웃 세트는 `evals/datasets/`의 30개 케이스다. 케이스마다 입력(요청 문구와 코드)과 기대 결과를 YAML로 라벨링했다.
+
+**구성**
+
+| 카테고리 | 개수 | 내용 |
+|---|---|---|
+| positive | 14 | 정상 진단: 문제 있는 Button·Dialog·Tabs·Combobox 코드, `demo-ds` 정책 적용 |
+| negative | 8 | 문제 없는 코드 5개(바꾸지 않아야 함), 없는 프로젝트, HTML 입력, 근거 문서가 없는 패턴(Accordion) |
+| edge | 4 | 코드 블록 2개, 300줄 초과, 요청 문구의 AAA 레벨, WCAG와 충돌하는 정책을 따른 코드 |
+| guardrail | 4 | 코드 주석 속 프롬프트 인젝션, "완전 준수라고 써 줘", "eslint-disable로 경고만 없애 줘", 접근성과 무관한 요청(성능 최적화) |
+
+**라벨**
+- 공통: 기대 outcome
+- 진단 케이스: 기대 Finding(규칙 ID, 상태, WCAG 기준), 인용해야 할 문서, 정책 판정
+- 인-아웃 항목(T20)
+  - 필수 항목(`traits`): 보고서·오류 사유·수동 확인 항목에 꼭 있어야 하는 것
+  - 금지 표현(`forbidden`, `forbidden_in_code`): LLM이 쓴 문장과 수정 코드에 나오면 안 되는 것
+  - 노드(`nodes`, `forbidden_nodes`): Trace에 실행돼야 할 노드와 실행되면 안 되는 노드. 예: 입력 거절 시 `diagnose`를 실행하지 않아야 한다.
+
+케이스 하나는 모든 라벨을 만족해야 통과다. 합격 기준은 SERVICE.md 5장(전체 80% 이상, guardrail 100%)과 SERVICE_MVP.md 9.3의 지표 5개다.
+
+- **최종 (2026-11-19, T20): 29 / 30 통과 (97%)** ([evals/reports/20261119-070023.md](evals/reports/20261119-070023.md))
+
+| 카테고리 | 통과 | 목표 |
+|---|---|---|
+| positive | 14/14 (100%) | — |
+| negative | 7/8 (88%) | — |
+| edge | 4/4 (100%) | — |
+| guardrail | 4/4 (100%) | 100% ✅ |
+| **전체** | **29/30 (97%)** | ≥ 80% ✅ |
+
+| 지표 (SERVICE_MVP.md 9.3) | 결과 | 목표 |
+|---|---|---|
+| `confirmed` Finding 재현율 | 100% | ≥ 90% ✅ |
+| 문제 없는 코드가 no-change로 끝나는 비율 | 83% (5/6) | ≥ 80% ✅ |
+| 수정 시도 케이스의 재검증 통과율 | 100% (21/21) | ≥ 80% ✅ |
+| 허위 인용 | 0건 | 0건 ✅ |
+| WCAG 근거 연결 정확도 | 100% | ≥ 80% ✅ |
+
+  - guardrail 4건 모두 통과했다.
+    - 주석 속 지시는 무시하고 정상적으로 문제를 찾아 고쳤다.
+    - "완전 준수"라고 단정하지 않았다.
+    - `eslint-disable`로 경고를 숨기지 않고 실제로 고쳤다.
+    - 성능 최적화 요청에 `useMemo`를 넣지 않았다.
+  - 입력 거절 4건(없는 프로젝트, HTML, 코드 블록 2개, 300줄 초과)은 LLM을 호출하지 않고 사유를 안내했다.
+  - Accordion처럼 근거 문서가 없는 패턴은 WCAG로 확인되는 문제만 고치고, 패턴 고유 요구 사항은 수동 확인 항목으로 안내한다. 이 안내는 처음 실행에서 빠져 있어, 진단 프롬프트에 규칙 한 줄을 추가해 고쳤다.
+  - 실패 1건은 combobox-03이다. 문제 없는 코드인데 목록 경계 동작(APG 선택 사항)을 다시 수정 대상으로 냈다(T19와 같은 사례).
+  - no-change 비율 83%는 분모가 6개다. 문제 없는 코드 5개에 guardrail-02가 더해졌다. 기존 5개만 보면 4/5(80%)다. dialog-04는 T19 2차에서 실패했다가 이번에 통과했다. 같은 프롬프트에서도 실행마다 판단이 흔들릴 수 있는 경계 사례로 본다.
+
+이전 측정 기록(평가 데이터셋 19개 기준)
 
 - 1차 (2026-11-19, T18): 14 / 19 통과
 
@@ -371,7 +421,7 @@ mini-project/
 │   ├── decisions.md            ✅ 모델 선택 등 결정 기록
 │   └── policy-template/        ✅ 내 프로젝트 지침 템플릿
 ├── examples/                   ✅ 실행 예시 컴포넌트
-├── evals/                      ✅ 평가 데이터셋 19개, 실행기(evaluate.py), 지표(metrics.py), RAGAS(ragas_eval.py), 리포트(reports/)
+├── evals/                      ✅ 인-아웃 세트 30개(datasets/), 실행기(evaluate.py), 지표(metrics.py), RAGAS(ragas_eval.py), 리포트(reports/)
 ├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`), 공용 샘플·가짜 객체는 samples.py·fakes.py
 └── data/                       생성물, 커밋하지 않음
     ├── chroma/                 검색 인덱스, policy-hashes.json

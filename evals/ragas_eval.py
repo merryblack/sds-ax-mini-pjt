@@ -24,13 +24,13 @@ SHORT = {
 
 
 def build_sample(case: EvalCase, run: dict[str, Any]) -> dict[str, Any] | None:
-    """RAGAS row for one case, or None when there is nothing to judge (clean case or no findings).
+    """RAGAS row for one case, or None when there is nothing to judge (clean / rejected case, no findings).
 
     `retrieved_contexts` holds only the retrieved documents (for the retrieval metrics).
     `grounding_contexts` adds the code and static analysis result the diagnosis LLM also
     received, so faithfulness can verify claims about the code itself.
     """
-    if case.category == "clean" or not case.expected.findings:
+    if case.kind in ("clean", "rejected") or not case.expected.findings:
         return None
     findings = (run.get("report") or {}).get("findings") or []
     contexts = [d["text"] for d in run.get("documents", []) if d.get("text")]

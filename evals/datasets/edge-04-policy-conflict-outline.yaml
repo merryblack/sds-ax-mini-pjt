@@ -1,0 +1,38 @@
+id: edge-04-policy-conflict-outline
+category: edge
+kind: policy
+component: button
+code_type: jsx
+request: 디자인 시스템 지침대로 포커스 아웃라인을 없앴는데 문제 없는지 봐 줘.
+project_id: demo-ds
+note: >-
+  코드가 프로젝트 정책(focus-001: outline 제거)을 따르지만 WCAG 2.4.7과 충돌한다.
+  WCAG를 우선해 수정하고, 정책은 conflict_with_wcag로 보고해야 한다(SERVICE_MVP.md 6.2).
+code: |
+  import { Button } from "@demo-ds/ui";
+
+  export function SaveAction({ onSave }) {
+    return (
+      <Button onClick={onSave} style={{ outline: "none" }}>
+        저장
+      </Button>
+    );
+  }
+expected:
+  outcomes: [improved]
+  findings:
+    - description: outline을 none으로 지워 키보드 포커스 위치가 보이지 않는다. 다른 포커스 표시가 없다.
+      status: suspected
+      fix_scope: local
+      wcag_criteria: ["2.4.7"]
+  document_ids: [wcag-2.4.7]
+  policy_assessments:
+    - policy_id: demo-ds-focus-001
+      status: conflict_with_wcag
+    - policy_id: demo-ds-btn-001
+      status: compliant
+    - policy_id: demo-ds-icon-001
+      status: not_applicable
+  forbidden_in_code:
+    - 'outline: "none"'
+    - "outline: 'none'"

@@ -1,0 +1,22 @@
+id: negative-02-html-document
+category: negative
+kind: rejected
+component: button
+request: 이 페이지 접근성 검토해 줘.
+note: MVP 범위 밖인 HTML 입력. 분석하지 않고 React만 지원한다고 안내해야 한다.
+raw_input: |
+  이 페이지 접근성 검토해 줘.
+  ```html
+  <!DOCTYPE html>
+  <html lang="ko">
+    <body>
+      <div class="save" onclick="save()">저장</div>
+    </body>
+  </html>
+  ```
+expected:
+  outcomes: [analysis_failed]
+  traits:
+    - "error: React(JSX/TSX) 코드만 지원"
+  nodes: [parse_input, report]
+  forbidden_nodes: [analyze, retrieve, diagnose, generate_fix]
