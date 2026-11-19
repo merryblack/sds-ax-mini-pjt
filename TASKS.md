@@ -171,8 +171,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - `decide`: `will_fix` 설정, `needs_improvement` 계산
 - **완료 조건:** 가짜 `document_id`·가짜 SC(`9.9.9`)를 넣은 Finding이 강등되는 테스트, `fix_scope`별 `will_fix` 테스트가 통과한다. (LLM 없이 테스트 가능)
 
-### T13. 수정 체인
-- [ ] **참조:** 4.2 `generate_fix`, 1.2 최소 수정
+### T13. 수정 체인 ✅ 완료 (2026-11-19)
+- [x] **참조:** 4.2 `generate_fix`, 1.2 최소 수정 — 테스트: `tests/test_improvement.py` 오프라인 8개 + Bedrock 2개(`-m llm`). 함께 수정: 펜스 없는 입력의 맨 앞 주석이 코드에서 빠지던 T04 파서 버그
 - **의존:** T12
 - **작업**
   - `chains/improvement.py`: LCEL + 구조화 출력 → `FixOutput`

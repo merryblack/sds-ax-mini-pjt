@@ -40,6 +40,7 @@ _CODE_START_RE = re.compile(
         import\b | export\b | function\b | const\b | let\b | var\b | class\b
       | interface\b | type\s+\w+ | async\s+function\b
       | ["']use\ (client|strict)["']
+      | //  | /\*                      # a leading comment belongs to the code
       | <
     )""",
     re.VERBOSE,

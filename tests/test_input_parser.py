@@ -70,6 +70,14 @@ def test_no_fence_starts_at_code_line() -> None:
     assert result.code.startswith("export default function")
 
 
+def test_no_fence_leading_comment_stays_in_code() -> None:
+    raw = "검토해 줘\n// 저장 버튼\n/* note */\n" + SCENARIO_A
+    result = parse_input(raw)
+    assert result.ok
+    assert result.user_request == "검토해 줘"
+    assert result.code.startswith("// 저장 버튼\n/* note */\nexport default function")
+
+
 def test_unclosed_fence_takes_rest() -> None:
     result = parse_input("검토해 줘\n```jsx\n" + SCENARIO_A)
     assert result.ok

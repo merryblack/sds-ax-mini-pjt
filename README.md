@@ -136,11 +136,11 @@ mini-project/
 │   │   ├── state.py            ✅ LangGraph 상태
 │   │   ├── decision.py         ✅ decide: 인용 검증 적용 + 수정 대상 결정 (일반 코드)
 │   │   ├── graph.py, nodes.py  ⏳ 메인 에이전트 그래프 (T15)
-│   │   └── prompts.py          ✅ 진단 프롬프트 / ⏳ 수정 프롬프트 (T13)
+│   │   └── prompts.py          ✅ 진단·수정 프롬프트
 │   ├── chains/
 │   │   ├── llm.py              ✅ Bedrock Claude 모델 생성
 │   │   ├── diagnosis.py        ✅ 진단 체인 (구조화 출력 → DiagnosisOutput)
-│   │   └── improvement.py      ⏳ 수정 체인 (T13)
+│   │   └── improvement.py      ✅ 수정 체인 (구조화 출력 → FixOutput, 재시도 피드백)
 │   ├── tools/
 │   │   ├── input_parser.py     ✅ 코드 추출, JSX/TSX 판별, 컴포넌트 힌트
 │   │   ├── static_analysis.py  ✅ Node 정적 분석기 호출
