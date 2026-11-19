@@ -149,8 +149,8 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
 
 Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한다.
 
-### T11. 진단 체인
-- [ ] **참조:** 4.2 `diagnose`, 5.2, 8장
+### T11. 진단 체인 ✅ 완료 (2026-11-19)
+- [x] **참조:** 4.2 `diagnose`, 5.2, 8장 — 테스트: `tests/test_diagnosis.py` 오프라인 5개 + Bedrock 3개(`-m llm`, Scenario A / Dialog / 정책+프롬프트 인젝션, 1회 15~25초)
 - **의존:** T10
 - **작업**
   - `chains/diagnosis.py`: LCEL + 구조화 출력 → `DiagnosisOutput`
