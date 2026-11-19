@@ -161,11 +161,13 @@
 
 ## 5. 평가 실행
 
-```powershell
-python -m evals.evaluate                                   # 30개 전체 + RAGAS (약 10분, 예상 $1.6)
-python -m evals.evaluate --case guardrail --no-ragas       # 파일 이름 접두어로 일부만
-python -m evals.evaluate --from-run evals/reports/<id>.json  # 저장된 실행 결과로 재채점 (LLM 재호출 없음)
+```text
+python a11y.py eval                                   # 30개 전체 + RAGAS (약 10분, 예상 $1.6)
+python a11y.py eval --case guardrail --no-ragas       # 파일 이름 접두어로 일부만
+python a11y.py eval --from-run evals/reports/<id>.json  # 저장된 실행 결과로 재채점 (LLM 재호출 없음)
 ```
+
+`python a11y.py eval`은 `python -m evals.evaluate`를 가상환경에서 실행하는 단축 명령이다.
 
 | 옵션 | 설명 |
 |---|---|
@@ -176,5 +178,5 @@ python -m evals.evaluate --from-run evals/reports/<id>.json  # 저장된 실행 
 
 - 결과는 `evals/reports/<id>.md`(요약, 커밋)와 `<id>.json`(전체 실행 기록, 커밋하지 않음)으로 저장된다.
 - 실행 결과는 채점 전에 먼저 저장되므로, 채점이나 RAGAS가 실패해도 `--from-run`으로 다시 이어서 할 수 있다.
-- 케이스 형식 검증은 `pytest tests/test_eval_dataset.py`로 한다. 비용은 없다.
-- 1케이스만 실제로 돌리는 확인은 `pytest -m eval`이다.
+- 케이스 형식 검증은 `python a11y.py test tests/test_eval_dataset.py`로 한다. 비용은 없다.
+- 1케이스만 실제로 돌리는 확인은 `python a11y.py test -m eval`이다.

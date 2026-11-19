@@ -2,6 +2,8 @@
 
 [README](../README.md)의 "실행 방법"을 자세히 설명한다. 설치와 인덱스 생성은 README를 먼저 따른다.
 
+모든 명령은 저장소 폴더에서 `python a11y.py ...`로 실행한다. OS·셸에 상관없이 같고, 가상환경을 활성화할 필요가 없다. 가상환경을 활성화했다면 `python a11y.py` 대신 `a11y-investigator`를 써도 된다. macOS·Linux에서는 `python` 대신 `python3`일 수 있다.
+
 - [1. 분석 실행](#1-분석-실행)
 - [2. 검색 인덱스 관리](#2-검색-인덱스-관리)
 - [3. 프로젝트 지침 관리](#3-프로젝트-지침-관리)
@@ -12,8 +14,8 @@
 
 ### 명령과 옵션
 
-```powershell
-a11y-investigator analyze --file examples\save_button.jsx --project demo-ds
+```text
+python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 ```
 
 | 옵션 | 설명 |
@@ -128,9 +130,9 @@ print(report.overall_summary)
 
 | 상황 | 명령 | 소요 |
 |---|---|---|
-| 처음 설치 | `python -m a11y_investigator.rag.ingest` | 약 2분 (Bedrock 임베딩) |
-| 프로젝트 정책만 수동 반영 | `python -m a11y_investigator.rag.ingest --policies` | 수 초 |
-| W3C 원문을 최신본으로 갱신 | `python -m a11y_investigator.rag.fetch` 후 `python -m a11y_investigator.rag.ingest` | 수 분 |
+| 처음 설치 | `python setup_env.py --yes` (또는 `python a11y.py index`) | 약 2분 (Bedrock 임베딩) |
+| 프로젝트 정책만 수동 반영 | `python a11y.py index --policies` | 수 초 |
+| W3C 원문을 최신본으로 갱신 | `python a11y.py fetch` 후 `python a11y.py index` | 수 분 |
 
 - 인덱스(`data/chroma/`)는 저장소에 포함되지 않는다. 공식 문서 원본(`knowledge/official/`)은 포함되어 있다.
 - 원문을 갱신하면 출처와 커밋 해시가 `knowledge/manifests/sources.yaml`에 기록된다.
@@ -195,8 +197,8 @@ related_wcag: ["3.3.4"]          # 인덱스에 있는 SC만
 
 ### 3.3. 검증 (LLM 호출 없음)
 
-```powershell
-a11y-investigator policies check my-project
+```text
+python a11y.py policies check my-project
 ```
 
 다음 문제를 한 번에 모두 출력하고, 문제가 있으면 종료 코드 1로 끝난다.
@@ -208,7 +210,7 @@ a11y-investigator policies check my-project
 
 ### 3.4. 반영 (자동 재인덱싱)
 
-따로 할 일은 없다. `--project`로 분석하면 정책 파일 해시를 `data/chroma/policy-hashes.json`과 비교한다. 바뀐 내용이 있으면 해당 프로젝트 정책만 지우고 다시 인덱싱하며, 추가·수정·삭제가 모두 반영된다. 미리 반영하려면 `python -m a11y_investigator.rag.ingest --policies`를 실행한다.
+따로 할 일은 없다. `--project`로 분석하면 정책 파일 해시를 `data/chroma/policy-hashes.json`과 비교한다. 바뀐 내용이 있으면 해당 프로젝트 정책만 지우고 다시 인덱싱하며, 추가·수정·삭제가 모두 반영된다. 미리 반영하려면 `python a11y.py index --policies`를 실행한다.
 
 ### 3.5. 반영 확인 (한 건씩 테스트)
 
@@ -220,8 +222,8 @@ a11y-investigator policies check my-project
 | ② 새 정책을 **지키는** 코드 | 정책 판정 `compliant`, 정책 때문에 수정하지 않음 |
 | ③ 정책과 **무관한** 컴포넌트 | 정책이 검색되지 않거나 `not_applicable` |
 
-```powershell
-a11y-investigator analyze --file test\violating.jsx --project my-project
+```text
+python a11y.py analyze --file test/violating.jsx --project my-project
 ```
 
 **확인할 곳**
@@ -271,8 +273,8 @@ expected:
 
 다음 명령으로 이 케이스만 실행한다.
 
-```powershell
-python -m evals.evaluate --case policy-my-project --no-ragas
+```text
+python a11y.py eval --case policy-my-project --no-ragas
 ```
 
 - `tests/test_eval_dataset.py`가 케이스 수(현재 30개)를 고정하고 있어, 케이스를 추가하면 이 테스트도 함께 고친다.

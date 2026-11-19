@@ -4,7 +4,7 @@
 
 ## 한눈에 보기
 
-**4단계 · 20개 Task**
+**5단계 · 21개 Task**
 
 | 단계 | Task | 개수 | 끝나면 할 수 있는 것 | 상태 |
 |---|---|---|---|---|
@@ -12,6 +12,7 @@
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
 | Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | ✅ 완료 (M3, M4) |
+| Phase 4. 사용성 | T21 | 1 | 어떤 OS·셸에서도 같은 명령 두 개로 설치하고 실행할 수 있음 | ✅ 완료 |
 
 ### 중간 점검 (Milestone)
 
@@ -278,3 +279,30 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - 재평가 후 README "인-아웃 세트 통과율"에 카테고리별 결과 기록, D3 사용량 갱신
   - 실패한 guardrail 케이스는 프롬프트 수준으로 고칠 수 있으면 T20에서 고치고, 동작 설계 변경이 필요하면 ROADMAP V0.3에 기록한다
 - **완료 조건:** 30개 케이스가 스키마 검증을 통과하고, 평가 1회로 카테고리별 통과율과 guardrail 통과율이 리포트에 나오며 README에 기록된다.
+
+---
+
+# Phase 4. 사용성
+
+### T21. 누구나 쉽게 실행하는 설치·실행 방식 ✅ 완료 (2026-11-19)
+- [x] **참조:** 2.2, 10장, README "실행 방법" — 결과: 루트에 `setup_env.py`(설치)와 `a11y.py`(런처, `test`·`eval`·`index`·`fetch` 단축 명령 포함), `python -m a11y_investigator` 지원. README·guide·evaluation·CLAUDE.md의 명령을 `python setup_env.py` / `python a11y.py ...`로 통일. **검증:** 저장소를 새로 clone한 폴더에서 PowerShell로 처음부터 설치 → 인덱스 생성 → 분석(`improved`, 재검증 통과)까지 확인하고, Git Bash·cmd·`py` 런처에서 재설치(건너뛰기)·정책 검증·테스트 실행을 확인했다. **확인하지 못한 환경:** macOS·Linux(코드상 `.venv/bin/python` 분기만 단위 테스트). 검증 중 고친 버그: 입력이 없는 터미널에서 질문하다 `EOFError`로 중단되던 문제, 하위 명령 출력과 메시지 순서가 뒤섞이던 문제. 테스트: `tests/test_setup_env.py` 7개
+- **의존:** T20
+- **배경:** README 절차를 처음 받는 사용자 입장에서 따라가 보면 셸·OS마다 막힌다.
+  - 가상환경 활성화가 셸마다 다르고, PowerShell은 실행 정책 때문에 차단될 수 있다.
+  - `copy`는 Git Bash·macOS에 없다.
+  - `cd analyzer-js; npm install`은 cmd에서 동작하지 않는다.
+  - 가상환경을 활성화하지 않으면 `a11y-investigator`를 찾지 못한다.
+  - Git Bash에서는 `\` 경로가 깨진다.
+- **작업**
+  - `setup_env.py` (표준 라이브러리만 사용, 시스템 Python으로 실행)
+    - Python·Node 버전 확인
+    - `.venv` 생성과 의존성 설치(요구사항이 바뀌지 않았으면 건너뜀)
+    - `analyzer-js` npm 설치
+    - `.env`가 없으면 복사, AWS 키가 비어 있으면 안내
+    - 키가 있고 인덱스가 없으면 확인 후 인덱스 생성
+    - 여러 번 실행해도 안전하게, 마지막에 다음 명령 안내
+  - `a11y.py`: 가상환경 활성화 없이 `.venv`의 Python으로 CLI를 실행하는 런처. 모든 하위 명령과 표준 입력을 그대로 전달하고 종료 코드를 유지한다
+  - `python -m a11y_investigator` 지원(`__main__.py`)
+  - README "실행 방법"을 `python setup_env.py` → `python a11y.py ...` 흐름으로 바꾸고, 예시 경로는 `/`로 통일한다. 기존 가상환경 방식은 대안으로 남긴다
+  - 설치 스크립트의 판단 로직(경로, 건너뛰기 조건, `.env` 검사) 오프라인 테스트
+- **완료 조건:** 새 터미널에서 가상환경 활성화 없이 README 명령 그대로 설치·실행이 된다. Windows PowerShell과 Git Bash에서 직접 확인하고, 확인하지 못한 환경(macOS·Linux, cmd)은 그대로 기록한다.

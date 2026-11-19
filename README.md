@@ -69,6 +69,10 @@ report ─────── outcome 결정, 근거 URL, 요약, 재현성 정�
 
 ## 실행 방법
 
+어떤 OS·셸(PowerShell, cmd, Git Bash, macOS·Linux 터미널)에서도 **같은 명령**으로 설치하고 실행한다. 가상환경을 직접 활성화할 필요가 없다.
+
+> macOS·Linux에서 `python` 명령이 없으면 `python3`로 바꿔 입력한다. Windows에서는 `py`도 된다.
+
 ### 준비물
 - Python 3.11 이상 (개발 환경: 3.14)
 - Node.js 20 이상 (개발 환경: 26 LTS) — 정적 분석기(ESLint + jsx-a11y) 실행용
@@ -78,50 +82,56 @@ report ─────── outcome 결정, 근거 URL, 요약, 재현성 정�
 
 ### 1. 설치
 
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-pip install -e .
-cd analyzer-js; npm install; cd ..
+저장소 폴더에서 실행한다.
+
+```text
+python setup_env.py
 ```
+
+설치 스크립트가 하는 일(여러 번 실행해도 되며, 끝난 단계는 건너뛴다):
+1. Python·Node.js 버전을 확인한다.
+2. `.venv`를 만들고 Python 의존성을 설치한다.
+3. 정적 분석기(`analyzer-js`) 의존성을 설치한다.
+4. `.env`가 없으면 `.env.example`을 복사해 만든다.
+5. AWS 키가 입력되어 있으면 검색 인덱스를 만든다(3번 참고).
 
 ### 2. 환경변수
 
-`.env.example`을 `.env`로 복사하고 AWS 자격 증명을 채운다(`.env`는 커밋하지 않음). 리전·모델 ID·Node 경로는 선택 항목이며 `.env.example` 주석을 따른다.
-
-```powershell
-copy .env.example .env
-```
+1번이 만든 `.env`에 AWS 자격 증명(`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)을 채운다(`.env`는 커밋하지 않음). 리전·모델 ID·Node 경로는 선택 항목이며 `.env.example` 주석을 따른다.
 
 ### 3. 검색 인덱스 만들기 (최초 1회)
 
-검색 인덱스(`data/chroma/`)는 저장소에 포함되지 않는다. 다음 명령은 공식 문서와 프로젝트 정책을 인덱싱하며, Bedrock 임베딩을 호출해 약 2분 걸린다. 정책만 다시 인덱싱하거나 W3C 원문을 갱신하는 방법은 [사용 가이드 2장](docs/guide.md#2-검색-인덱스-관리)에 있다.
+키를 채운 뒤 설치 스크립트를 한 번 더 실행하면, 확인을 거쳐 검색 인덱스(`data/chroma/`)를 만든다. Bedrock 임베딩을 호출해 약 2분 걸린다. 질문 없이 진행하려면 `--yes`를 붙인다.
 
-```powershell
-python -m a11y_investigator.rag.ingest
+```text
+python setup_env.py --yes
 ```
+
+인덱스는 저장소에 포함되지 않는다. 정책만 다시 인덱싱하거나 W3C 원문을 갱신하는 방법은 [사용 가이드 2장](docs/guide.md#2-검색-인덱스-관리)에 있다.
 
 ### 4. 테스트
 
-```powershell
-pytest                                # 기본: LLM 호출 없음 (커밋 전 전체 확인)
-pytest --no-node                      # 개발 중 빠른 확인: Node 분석기 실행 테스트 제외
-pytest -m llm                         # Bedrock 호출 테스트 11개 (비용 발생, 약 2~3분)
-cd analyzer-js; npm test; cd ..       # 정적 분석기 테스트
+개발자용이다. 저장소 폴더에서 실행한다.
+
+```text
+python a11y.py test              # 기본: LLM 호출 없음 (커밋 전 전체 확인)
+python a11y.py test --no-node    # 빠른 확인: Node 분석기 실행 테스트 제외
+python a11y.py test -m llm       # Bedrock 호출 테스트 11개 (비용 발생, 약 2~3분)
 ```
 
-계정에 Bedrock 일일 토큰 한도가 있어 반복 실행하면 `ThrottlingException`이 날 수 있다(현재 기준이며 바뀔 수 있음).
+`python a11y.py test` 뒤의 인자는 pytest에 그대로 전달된다. 정적 분석기 테스트는 `analyzer-js` 폴더에서 `npm test`로 실행한다. 계정에 Bedrock 일일 토큰 한도가 있어 반복 실행하면 `ThrottlingException`이 날 수 있다(현재 기준이며 바뀔 수 있음).
 
 ### 5. 분석 실행
 
-```powershell
-a11y-investigator analyze --file examples\save_button.jsx --project demo-ds
+```text
+python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 ```
 
 - 출력: 요약, 발견된 문제, 근거(W3C 원문 URL), 정책 적합성, 개선 코드, 재검증 결과 등 Markdown 보고서 9개 항목. `--json`이면 JSON으로 출력한다.
 - 예시 결과: `<div onClick>`을 `demo-ds` 정책대로 `@demo-ds/ui`의 `<Button>`으로 고치고 재검증을 통과한다. 정책 없이 실행하면 `<button type="button">`으로 고친다.
 - 실행마다 `data/traces/`에 Trace(노드별 시간, 토큰, 예상 비용, 검색 문서)가 남는다.
+- Bedrock을 호출한다. 1회 약 25초, 약 $0.06이다(현재 기준).
+- `a11y.py`는 가상환경의 CLI를 대신 실행하는 런처다. 가상환경을 활성화했다면 `a11y-investigator analyze ...`로 바로 써도 된다.
 
 옵션 전체, 출력 예시, outcome 종류, Python에서 실행하는 방법은 [사용 가이드 1장](docs/guide.md#1-분석-실행)을 참고한다.
 
@@ -129,9 +139,9 @@ a11y-investigator analyze --file examples\save_button.jsx --project demo-ds
 
 팀의 디자인 시스템 규칙이나 접근성 지침을 `knowledge/project-policies/<project_id>/`에 정책 파일(규칙 하나당 Markdown 하나)로 추가하면, Agent가 WCAG와 **별도로** 정책 적합성을 평가하고 수정 코드에도 반영한다. WCAG와 충돌하는 정책은 WCAG를 우선하고 충돌을 보고한다.
 
-```powershell
-a11y-investigator policies check my-project            # 형식 검증 (LLM 호출 없음)
-a11y-investigator analyze --file Component.tsx --project my-project
+```text
+python a11y.py policies check my-project            # 형식 검증 (LLM 호출 없음)
+python a11y.py analyze --file Component.tsx --project my-project
 ```
 
 정책 파일이 바뀌면 다음 분석 때 자동으로 다시 인덱싱한다. 정책 작성 요령, 반영 확인 방법(Trace·보고서에서 볼 곳), 회귀 테스트로 남기는 법, 현재 한계는 [사용 가이드 3장](docs/guide.md#3-프로젝트-지침-관리)에 있다.
@@ -194,7 +204,7 @@ a11y-investigator analyze --file Component.tsx --project my-project
 
 ## 핵심 코드 위치
 
-> 현재 MVP(T01~T20) 완료 기준이며 바뀔 수 있다. Task별 내역은 [TASKS.md](TASKS.md) 참조.
+> 현재 T01~T21 완료 기준이며 바뀔 수 있다. Task별 내역은 [TASKS.md](TASKS.md) 참조.
 
 ```text
 mini-project/
@@ -210,6 +220,8 @@ mini-project/
 │   ├── rag/                    W3C 문서 수집·청킹, 임베딩·Chroma, 인덱싱, 검색(retriever.py)
 │   ├── schemas/                정적 분석·근거·진단·보고서 스키마
 │   └── middleware/safety.py    인용 검증·강등, 린트 우회 주석 차단
+├── setup_env.py                설치 스크립트 (모든 OS·셸 공통)
+├── a11y.py                     실행 런처 (가상환경 활성화 없이 CLI 실행)
 ├── analyzer-js/analyze.mjs     ESLint 9 + jsx-a11y 정적 분석기 (stdin → JSON)
 ├── knowledge/
 │   ├── official/               WCAG·Understanding·Techniques·APG 원문 (W3C)
