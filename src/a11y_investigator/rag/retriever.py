@@ -112,7 +112,7 @@ def build_queries(result: AnalyzerResult, component_hint: list[str] | None) -> l
     component = patterns[0] if patterns else "UI component"
     queries: list[str] = []
     seen_rules: set[str] = set()
-    for finding in result.findings:
+    for finding in result.a11y_findings:
         if finding.rule_id in seen_rules:
             continue
         seen_rules.add(finding.rule_id)

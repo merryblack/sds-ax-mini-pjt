@@ -18,9 +18,19 @@ import { fileURLToPath } from "node:url";
 import tsParser from "@typescript-eslint/parser";
 import { ESLint } from "eslint";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import reactHooks from "eslint-plugin-react-hooks";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const TOOL = "eslint-jsx-a11y";
+
+// Rule prefix -> tool name reported in StaticFinding.tool.
+// jsx-a11y: accessibility rules (diagnosis + revalidation).
+// react-hooks: functional-regression guard for generated code (revalidation only).
+const TOOLS = { "jsx-a11y/": "eslint-jsx-a11y", "react-hooks/": "eslint-react-hooks" };
+
+function toolFor(ruleId) {
+  const prefix = Object.keys(TOOLS).find((p) => ruleId?.startsWith(p));
+  return prefix ? TOOLS[prefix] : null;
+}
 
 function fail(message) {
   process.stderr.write(`analyze.mjs: ${message}\n`);
@@ -66,7 +76,7 @@ function buildConfig(type, components) {
   return [
     {
       files: ["**/*.jsx", "**/*.tsx"],
-      plugins: { "jsx-a11y": jsxA11y },
+      plugins: { "jsx-a11y": jsxA11y, "react-hooks": reactHooks },
       languageOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
@@ -74,7 +84,11 @@ function buildConfig(type, components) {
         parserOptions: { ecmaFeatures: { jsx: true } },
       },
       settings: { "jsx-a11y": { components } },
-      rules: jsxA11y.flatConfigs.recommended.rules,
+      rules: {
+        ...jsxA11y.flatConfigs.recommended.rules,
+        // only the Rules of Hooks; exhaustive-deps is a noisy warning and stays off
+        "react-hooks/rules-of-hooks": "error",
+      },
     },
   ];
 }
@@ -122,14 +136,14 @@ async function main() {
   const findings = fatal
     ? []
     : result.messages
-        .filter((m) => m.ruleId && m.ruleId.startsWith("jsx-a11y/"))
+        .filter((m) => toolFor(m.ruleId))
         .map((m) => ({
-          tool: TOOL,
+          tool: toolFor(m.ruleId),
           rule_id: m.ruleId,
           message: m.message,
           line: m.line ?? null,
           column: m.column ?? null,
-          element: elementAt(code, m.line, m.column),
+          element: m.ruleId.startsWith("jsx-a11y/") ? elementAt(code, m.line, m.column) : null,
           wcag_refs: [],
         }));
 
@@ -141,6 +155,7 @@ async function main() {
       node: process.versions.node,
       eslint: ESLint.version,
       "eslint-plugin-jsx-a11y": packageVersion("eslint-plugin-jsx-a11y"),
+      "eslint-plugin-react-hooks": packageVersion("eslint-plugin-react-hooks"),
       "@typescript-eslint/parser": packageVersion("@typescript-eslint/parser"),
     },
   };

@@ -29,12 +29,12 @@ def number_lines(code: str) -> str:
 def format_static(result: AnalyzerResult) -> str:
     if not result.parse_ok:
         return f"PARSE ERROR: {result.parse_error}\n(no rule results; no finding may be 'confirmed')"
-    if not result.findings:
+    if not result.a11y_findings:
         return "(no rule violations)"
     return "\n".join(
         f"- rule_id={f.rule_id} line={f.line} element={f.element} "
         f"wcag={','.join(f.wcag_refs) or '-'} message={f.message}"
-        for f in result.findings
+        for f in result.a11y_findings
     )
 
 

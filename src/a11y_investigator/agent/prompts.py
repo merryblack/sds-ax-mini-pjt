@@ -105,6 +105,9 @@ component names, handler names, styling (className / style), text content, exist
 overall DOM structure. Do not refactor, rename, reformat or delete unrelated lines, or add features.
 - Prefer native semantic elements (e.g. <button type="button">) over ARIA on generic elements.
 - Keep the language: TSX stays TSX (keep type annotations), JSX stays JSX.
+- Rules of Hooks: if you add hooks (useEffect, useRef, useState, ...), call them at the top \
+level of the component, BEFORE any early return (e.g. `if (!open) return null;`) and never \
+inside conditions or loops. Put the condition inside the effect instead.
 
 # Project policies and components
 - If <component_mapping> lists design-system components (e.g. Button -> button) and a policy \

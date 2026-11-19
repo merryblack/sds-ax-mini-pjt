@@ -65,6 +65,8 @@ def load_rule_map(path: Path = DEFAULT_MAP_PATH) -> RuleMap:
 
 
 def map_finding(finding: StaticFinding, rule_map: RuleMap) -> StaticFinding:
+    if not finding.is_a11y:  # regression-only rules (react-hooks) have no WCAG mapping
+        return finding
     mapping = rule_map.get(finding.rule_id)
     if mapping is None:
         logger.warning("No WCAG mapping for rule %s; falling back to vector search", finding.rule_id)
@@ -83,7 +85,7 @@ def apply_mapping(result: AnalyzerResult, rule_map: RuleMap | None = None) -> An
 def wcag_refs_of(result: AnalyzerResult) -> list[str]:
     """Distinct WCAG SC ids across all findings, in first-seen order."""
     seen: dict[str, None] = {}
-    for finding in result.findings:
+    for finding in result.a11y_findings:
         for sc in finding.wcag_refs:
             seen.setdefault(sc, None)
     return list(seen)
@@ -94,7 +96,7 @@ def apg_patterns_of(result: AnalyzerResult, rule_map: RuleMap | None = None) -> 
     rule_map = rule_map if rule_map is not None else load_rule_map()
     found = {
         rule_map[f.rule_id].apg_pattern
-        for f in result.findings
+        for f in result.a11y_findings
         if f.rule_id in rule_map and rule_map[f.rule_id].apg_pattern
     }
     return [p for p in APG_PATTERNS if p in found]

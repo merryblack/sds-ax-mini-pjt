@@ -12,3 +12,6 @@ data/chroma/
 
 # Node
 analyzer-js/node_modules/
+
+# Editor
+.vscode/

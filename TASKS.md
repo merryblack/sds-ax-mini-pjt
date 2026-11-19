@@ -180,8 +180,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - 재시도 입력: 이전 실패 사유(새 위반, 미해소 규칙, 금지 패턴)를 받을 수 있게 설계
 - **완료 조건:** Scenario A로 `<button type="button">`을 사용한 코드가 생성된다.
 
-### T14. 재검증
-- [ ] **참조:** 5.3, 8장 린트 우회
+### T14. 재검증 ✅ 완료 (2026-11-19)
+- [x] **참조:** 5.3, 8장 린트 우회 — 테스트: `tests/test_code_validation.py` 18개(LLM 없음) + Bedrock 재시도 1개(`-m llm`). 보완: 재시도 결과에서 Hooks 규칙 위반이 발견되어 `react-hooks/rules-of-hooks`를 재검증 전용 규칙으로 추가(5.1)
 - **의존:** T13, T06
 - **작업**
   - `tools/code_validation.py`: 통과 기준 4가지

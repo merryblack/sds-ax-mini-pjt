@@ -35,6 +35,17 @@ MVP 구현 중 내린 결정과 이유를 기록한다. 항목 번호는 [SERVIC
 
 ---
 
+## 운영 메모: 리전 분리 — 2026-11-19
+
+**상황:** `us-east-1`에서 Sonnet 4.6 호출이 `ThrottlingException: Too many tokens per day`로 거부됐다(계정 일일 토큰 한도). Haiku 4.5는 같은 시점에 호출 가능했다.
+
+**조치**
+- Chat 모델 리전을 `us-west-1`로 바꿨다(`.env`의 `AWS_DEFAULT_REGION`). 모델 ID(`us.` 추론 프로파일)는 그대로 쓴다.
+- Titan Embed V2는 `us-west-1`에서 제공되지 않아(`The provided model identifier is invalid`) 임베딩 리전을 `EMBEDDING_REGION`(기본 `us-east-1`)으로 분리했다. 인덱스도 `us-east-1`에서 만들었으므로 같은 리전을 유지한다.
+- 확인: 리전 변경 후 Bedrock 테스트 9개 모두 통과.
+
+**시사점:** 일일 토큰 한도가 있으므로 T15 그래프 테스트와 T18 평가처럼 반복 실행하는 작업은 실행 횟수를 나누거나 Haiku(`light=True`)를 쓰는 방안을 D3에서 함께 정한다.
+
 ## D3. 실행당 비용·토큰 상한 — 미정 (Phase 2 시작 전)
 
 ## D4. LangSmith 사용 여부 — 미정 (Phase 2 시작 전)

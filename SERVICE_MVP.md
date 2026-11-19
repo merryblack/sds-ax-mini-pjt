@@ -210,6 +210,9 @@ parse_input ─(실패)───────────────────
 |---|---|
 | JSX | ESLint 9 (flat config) + `eslint-plugin-jsx-a11y` (`recommended`) |
 | TSX | 위와 동일 + `@typescript-eslint/parser` (타입 정보 없이 구문 파싱만) |
+| 공통 (재검증용) | `eslint-plugin-react-hooks`의 `rules-of-hooks` 하나만 (`tool="eslint-react-hooks"`) |
+
+`rules-of-hooks`는 접근성 규칙이 아니라 **수정 코드의 기능 회귀 방지용**이다. 수정 과정에서 `useEffect` 등을 early return 뒤에 넣는 실수를 잡는다. 매핑·검색·진단·인용 검증에는 `AnalyzerResult.a11y_findings`(jsx-a11y만)를 쓰고, 재검증만 전체 결과를 비교한다. 원본 코드에 이미 있던 Hooks 위반은 진단 대상이 아니다. 경고 수준이고 오탐이 많은 `exhaustive-deps`는 켜지 않는다.
 
 ### Python ↔ Node 인터페이스
 
@@ -256,7 +259,7 @@ parse_input ─(실패)───────────────────
 ### 통과 기준 (모두 만족)
 
 1. 수정 코드의 파싱이 성공한다.
-2. 원본에 없던 규칙 위반이 새로 생기지 않는다. 수정 후에는 줄 번호가 바뀌므로 `rule_id`별 위반 개수로 비교한다(어떤 규칙이든 원본보다 개수가 늘면 실패).
+2. 원본에 없던 규칙 위반이 새로 생기지 않는다. 수정 후에는 줄 번호가 바뀌므로 `rule_id`별 위반 개수로 비교한다(어떤 규칙이든 원본보다 개수가 늘면 실패). jsx-a11y뿐 아니라 `react-hooks/rules-of-hooks`도 포함한다.
 3. `will_fix=true`인 Finding과 연결된 규칙 위반이 모두 해소된다.
 4. 원본에 없던 린트 우회 주석이 없다(8장).
 

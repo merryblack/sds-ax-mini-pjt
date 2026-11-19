@@ -17,7 +17,7 @@ def get_embeddings() -> BedrockEmbeddings:
     """Amazon Titan Text Embeddings V2 on Bedrock (normalized, 1024 dims)."""
     return BedrockEmbeddings(
         model_id=settings.embedding_model_id,
-        region_name=settings.aws_region,
+        region_name=settings.embedding_region,
         model_kwargs={"dimensions": EMBEDDING_DIMENSIONS, "normalize": True},
     )
 

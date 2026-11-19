@@ -36,6 +36,9 @@ class Settings:
     embedding_model_id: str = field(
         default_factory=lambda: _env("EMBEDDING_MODEL_ID", "amazon.titan-embed-text-v2:0")
     )
+    # Embeddings have their own region: Titan V2 is not offered in every region (e.g. us-west-1),
+    # and the index was built in us-east-1. Changing the chat region must not break search.
+    embedding_region: str = field(default_factory=lambda: _env("EMBEDDING_REGION", "us-east-1"))
     temperature: float = 0.0
 
     # ── Paths ───────────────────────────────────────────────

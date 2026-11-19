@@ -68,9 +68,23 @@ test("component mapping makes custom components behave like native elements", ()
   assert.equal(withMap.findings[0].element, "Link");
 });
 
+test("Rules of Hooks violations are reported with their own tool name", () => {
+  const code = 'import { useEffect } from "react";\nexport function D({ open }) {\n  if (!open) return null;\n  useEffect(() => {}, []);\n  return <p />;\n}\n';
+  const { out } = analyze(code, ["--type", "jsx"]);
+  assert.deepEqual(ruleIds(out), ["react-hooks/rules-of-hooks"]);
+  assert.equal(out.findings[0].tool, "eslint-react-hooks");
+  assert.equal(out.findings[0].line, 4);
+  assert.equal(out.findings[0].element, null);
+});
+
+test("hooks at the top level are fine", () => {
+  const code = 'import { useEffect } from "react";\nexport function D({ open }) {\n  useEffect(() => { if (!open) return; }, [open]);\n  if (!open) return null;\n  return <p />;\n}\n';
+  assert.equal(analyze(code, ["--type", "jsx"]).out.findings.length, 0);
+});
+
 test("analyzer versions are reported", () => {
   const { out } = analyze("export const E = () => <p />;", ["--type", "jsx"]);
-  for (const key of ["node", "eslint", "eslint-plugin-jsx-a11y", "@typescript-eslint/parser"]) {
+  for (const key of ["node", "eslint", "eslint-plugin-jsx-a11y", "eslint-plugin-react-hooks", "@typescript-eslint/parser"]) {
     assert.ok(out.analyzer_versions[key] && out.analyzer_versions[key] !== "unknown", key);
   }
 });

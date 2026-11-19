@@ -164,3 +164,10 @@ def test_indexed_sc_from_manifest() -> None:
     sc = indexed_sc()
     assert {"2.1.1", "4.1.2", "2.4.7"} <= sc
     assert "9.9.9" not in sc
+
+
+def test_hooks_findings_do_not_trigger_coverage_warning() -> None:
+    hooks = StaticFinding(tool="eslint-react-hooks", rule_id="react-hooks/rules-of-hooks", message="m")
+    analysis = AnalyzerResult(parse_ok=True, findings=[*ANALYSIS.findings, hooks])
+    d = run(finding(), analysis=analysis)
+    assert d.warnings == []

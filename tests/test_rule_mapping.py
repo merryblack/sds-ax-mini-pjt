@@ -104,3 +104,15 @@ def test_bad_entries_rejected(tmp_path, bad: str) -> None:
     path.write_text(f"rules:\n  - {bad}\n", encoding="utf-8")
     with pytest.raises(ValueError):
         load_rule_map(path)
+
+
+def test_regression_findings_are_not_mapped_or_warned(caplog: pytest.LogCaptureFixture) -> None:
+    hooks = StaticFinding(tool="eslint-react-hooks", rule_id="react-hooks/rules-of-hooks", message="m")
+    result = AnalyzerResult(parse_ok=True, findings=[finding("jsx-a11y/alt-text"), hooks])
+    with caplog.at_level(logging.WARNING):
+        mapped = apply_mapping(result)
+    assert "rules-of-hooks" not in caplog.text
+    assert mapped.findings[1].wcag_refs == []
+    assert [f.rule_id for f in mapped.a11y_findings] == ["jsx-a11y/alt-text"]
+    assert [f.rule_id for f in mapped.regression_findings] == ["react-hooks/rules-of-hooks"]
+    assert wcag_refs_of(mapped) == ["1.1.1"]

@@ -8,10 +8,12 @@ T12 — citation checks on the diagnosis:
 - demote findings left without document evidence to manual_review
 - forbid `confirmed` when the code could not be parsed
 
-T14 adds lint-bypass detection for generated code.
+T14 — lint-bypass detection for generated code: a fix that silences the linter
+instead of fixing the code fails revalidation.
 """
 from __future__ import annotations
 
+import re
 from functools import lru_cache
 
 import yaml
@@ -26,6 +28,22 @@ from a11y_investigator.schemas.diagnosis import (
 )
 
 ANALYZER_TOOL = "eslint-jsx-a11y"
+
+# Lint-bypass comments (SERVICE_MVP.md 8장). Matched in // and /* */ comments.
+BLOCKED_PATTERNS: dict[str, re.Pattern[str]] = {
+    "eslint-disable": re.compile(r"eslint-disable(?:-next-line|-line)?\b"),
+    "eslint-enable": re.compile(r"eslint-enable\b"),
+    "@ts-ignore / @ts-nocheck": re.compile(r"@ts-(?:ignore|nocheck)\b"),
+}
+
+
+def find_blocked_patterns(original: str, improved: str) -> list[str]:
+    """Bypass patterns that appear more often in `improved` than in `original`."""
+    return [
+        name
+        for name, pattern in BLOCKED_PATTERNS.items()
+        if len(pattern.findall(improved)) > len(pattern.findall(original))
+    ]
 
 
 @lru_cache(maxsize=1)
@@ -84,7 +102,7 @@ def check_citations(
 ) -> tuple[DiagnosisOutput, list[str]]:
     """Return a cleaned copy of `diagnosis` and human-readable warnings (Korean)."""
     known_sc = known_sc if known_sc is not None else indexed_sc()
-    reported_rules = {f.rule_id for f in analysis.findings}
+    reported_rules = {f.rule_id for f in analysis.a11y_findings}
     warnings: list[str] = []
 
     findings = [

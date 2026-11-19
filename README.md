@@ -147,7 +147,7 @@ mini-project/
 │   │   ├── rule_mapping.py     ✅ 규칙 → WCAG SC / APG 매핑
 │   │   ├── guideline_search.py ✅ WCAG 기준 조회, 공식 문서 검색
 │   │   ├── policy_lookup.py    ✅ 프로젝트 정책 로딩·검증
-│   │   └── code_validation.py  ⏳ 수정 코드 재검증 (T14)
+│   │   └── code_validation.py  ✅ 수정 코드 재검증 (통과 기준 4개, 재시도 피드백)
 │   ├── rag/
 │   │   ├── fetch.py            ✅ W3C 문서 수집
 │   │   ├── chunker.py          ✅ 문서 유형별 청킹
@@ -156,8 +156,8 @@ mini-project/
 │   │   ├── ingest.py           ✅ 인덱싱
 │   │   └── retriever.py        ✅ 정확 조회 + 벡터 검색 + 정책 선택
 │   ├── schemas/                ✅ 정적 분석·근거·진단·보고서 스키마
-│   └── middleware/safety.py    ✅ 인용 검증·강등 / ⏳ 린트 우회 차단 (T14)
-├── analyzer-js/analyze.mjs     ✅ ESLint 9 + jsx-a11y 정적 분석기 (stdin → JSON)
+│   └── middleware/safety.py    ✅ 인용 검증·강등, 린트 우회 주석 차단
+├── analyzer-js/analyze.mjs     ✅ ESLint 9 + jsx-a11y 정적 분석기, 재검증용 rules-of-hooks (stdin → JSON)
 ├── knowledge/
 │   ├── official/               ✅ WCAG·Understanding·Techniques·APG 원문 (W3C)
 │   ├── project-policies/       ✅ 프로젝트 정책 (예제: demo-ds)
