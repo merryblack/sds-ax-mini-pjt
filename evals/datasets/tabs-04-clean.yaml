@@ -1,0 +1,54 @@
+id: tabs-04-clean
+component: tabs
+category: clean
+code_type: tsx
+request: 탭 구현 접근성 확인해 줘.
+code: |
+  import { useRef, useState, type KeyboardEvent } from "react";
+
+  const TABS = [
+    { id: "overview", label: "개요" },
+    { id: "reviews", label: "리뷰" },
+  ];
+
+  export function ProductTabs() {
+    const [active, setActive] = useState<number>(0);
+    const refs = useRef<Array<HTMLButtonElement | null>>([]);
+
+    const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const next = (active + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length;
+      setActive(next);
+      refs.current[next]?.focus();
+    };
+
+    return (
+      <div>
+        <div role="tablist" aria-label="상품 정보">
+          {TABS.map((tab, i) => (
+            <button
+              key={tab.id}
+              ref={(el) => { refs.current[i] = el; }}
+              type="button"
+              role="tab"
+              id={`tab-${tab.id}`}
+              aria-selected={active === i}
+              aria-controls={`panel-${tab.id}`}
+              tabIndex={active === i ? 0 : -1}
+              onClick={() => setActive(i)}
+              onKeyDown={onKeyDown}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {TABS.map((tab, i) => (
+          <div key={tab.id} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={active !== i}>
+            {tab.label} 내용
+          </div>
+        ))}
+      </div>
+    );
+  }
+expected:
+  outcomes: [no_issue_detected, no_change_needed]

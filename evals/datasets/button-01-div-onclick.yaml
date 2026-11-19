@@ -1,0 +1,22 @@
+id: button-01-div-onclick
+component: button
+category: issue
+code_type: jsx
+request: 다음 버튼의 접근성을 검토해 줘.
+code: |
+  export default function SaveButton() {
+    return <div onClick={() => alert("saved")}>저장</div>;
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-static-element-interactions
+  findings:
+    - description: div에 onClick만 있어 키보드로 포커스하거나 실행할 수 없고, 버튼 역할도 전달되지 않는다.
+      status: confirmed
+      wcag_criteria: ["2.1.1", "4.1.2"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-static-element-interactions
+  document_ids: [wcag-2.1.1, apg-button-keyboard]

@@ -1,0 +1,17 @@
+id: button-06-clean-icon-labelled
+component: button
+category: clean
+code_type: jsx
+request: 아이콘 버튼인데 괜찮은지 봐 줘.
+code: |
+  export function CloseButton({ onClose }) {
+    return (
+      <button type="button" aria-label="닫기" onClick={onClose}>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" />
+        </svg>
+      </button>
+    );
+  }
+expected:
+  outcomes: [no_issue_detected, no_change_needed]

@@ -1,0 +1,33 @@
+id: dialog-02-aria-typos
+component: dialog
+category: issue
+code_type: tsx
+request: 공지 대화상자 ARIA 속성이 맞는지 봐 줘.
+code: |
+  type Props = { open: boolean; onClose: () => void };
+
+  export function NoticeDialog({ open, onClose }: Props) {
+    if (!open) return null;
+    return (
+      <div role="dialog" aria-modal="yes" aria-labeledby="notice-title">
+        <h2 id="notice-title">공지</h2>
+        <p>점검이 예정되어 있습니다.</p>
+        <button type="button" onClick={onClose}>확인</button>
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/aria-props
+    - jsx-a11y/aria-proptypes
+  findings:
+    - description: aria-labeledby는 존재하지 않는 속성(올바른 이름은 aria-labelledby)이라 대화상자 제목이 이름으로 연결되지 않는다.
+      status: confirmed
+      wcag_criteria: ["4.1.2"]
+      rule_ids: [jsx-a11y/aria-props]
+    - description: aria-modal 값 "yes"는 허용되지 않는 값이다. true 또는 false여야 한다.
+      status: confirmed
+      wcag_criteria: ["4.1.2"]
+      rule_ids: [jsx-a11y/aria-proptypes]
+  document_ids: [wcag-4.1.2, apg-dialog-roles]

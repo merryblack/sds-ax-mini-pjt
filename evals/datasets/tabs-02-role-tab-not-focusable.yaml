@@ -1,0 +1,35 @@
+id: tabs-02-role-tab-not-focusable
+component: tabs
+category: issue
+code_type: tsx
+request: 상품 탭이 키보드로 되는지 봐 줘.
+code: |
+  import { useState } from "react";
+
+  const TABS = ["개요", "리뷰", "문의"];
+
+  export function ProductTabs() {
+    const [active, setActive] = useState<number>(0);
+    return (
+      <div role="tablist">
+        {TABS.map((label, i) => (
+          <div key={label} role="tab" aria-selected={active === i} onClick={() => setActive(i)}>
+            {label}
+          </div>
+        ))}
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/interactive-supports-focus
+  findings:
+    - description: role="tab"인 div에 tabIndex와 키보드 이벤트가 없어 키보드로 탭에 포커스하거나 탭을 바꿀 수 없다.
+      status: confirmed
+      wcag_criteria: ["2.1.1"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/interactive-supports-focus
+  document_ids: [wcag-2.1.1, apg-tabs-keyboard]

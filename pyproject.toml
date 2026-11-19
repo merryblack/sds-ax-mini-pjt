@@ -17,6 +17,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # makes the top-level `evals` package importable
 markers = [
     "llm: calls AWS Bedrock (costs money; run explicitly with -m llm)",
     "eval: runs the evaluation dataset (run explicitly with -m eval)",

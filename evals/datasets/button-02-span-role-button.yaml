@@ -1,0 +1,28 @@
+id: button-02-span-role-button
+component: button
+category: issue
+code_type: tsx
+request: 상세 정보 토글 버튼인데 키보드로도 잘 되는지 봐 줘.
+code: |
+  type Props = { expanded: boolean; onToggle: () => void };
+
+  export function ToggleDetails({ expanded, onToggle }: Props) {
+    return (
+      <span role="button" aria-expanded={expanded} onClick={onToggle}>
+        상세 정보
+      </span>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/interactive-supports-focus
+  findings:
+    - description: role="button"인 span에 tabIndex와 키보드 이벤트가 없어 Tab으로 포커스할 수 없고 Enter·Space로 실행할 수 없다.
+      status: confirmed
+      wcag_criteria: ["2.1.1"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/interactive-supports-focus
+  document_ids: [wcag-2.1.1, apg-button-keyboard]

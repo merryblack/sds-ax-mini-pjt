@@ -1,0 +1,37 @@
+id: button-08-policy-iconbutton
+component: button
+category: policy
+code_type: tsx
+request: 패널 닫기 버튼을 프로젝트 지침에 맞게 봐 줘.
+project_id: demo-ds
+code: |
+  import { IconButton, Icon } from "@demo-ds/ui";
+
+  type Props = { onClose: () => void };
+
+  export function PanelCloseButton({ onClose }: Props) {
+    return (
+      <IconButton onClick={onClose} style={{ outline: "none" }}>
+        <Icon name="close" />
+      </IconButton>
+    );
+  }
+expected:
+  outcomes: [improved]
+  findings:
+    - description: 아이콘만 있는 IconButton에 aria-label이 없어 버튼의 이름이 전달되지 않는다.
+      status: suspected
+      fix_scope: local
+      wcag_criteria: ["4.1.2"]
+    - description: outline을 none으로 지워 키보드 포커스 위치가 보이지 않을 수 있다.
+      status: suspected
+      fix_scope: local
+      wcag_criteria: ["2.4.7"]
+  document_ids: [wcag-4.1.2, wcag-2.4.7]
+  policy_assessments:
+    - policy_id: demo-ds-icon-001
+      status: violated
+    - policy_id: demo-ds-btn-001
+      status: compliant
+    - policy_id: demo-ds-focus-001
+      status: conflict_with_wcag

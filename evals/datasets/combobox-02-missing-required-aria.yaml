@@ -1,0 +1,33 @@
+id: combobox-02-missing-required-aria
+component: combobox
+category: issue
+code_type: tsx
+request: 국가 선택 콤보박스 ARIA가 맞는지 봐 줘.
+code: |
+  import { useState } from "react";
+
+  export function CountrySelect({ options }: { options: string[] }) {
+    const [query, setQuery] = useState("");
+    const matches = options.filter((o) => o.includes(query));
+    return (
+      <div>
+        <label htmlFor="country">국가</label>
+        <input id="country" role="combobox" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <ul role="listbox">
+          {matches.map((o) => (
+            <li key={o} role="option" aria-selected={false}>{o}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/role-has-required-aria-props
+  findings:
+    - description: role="combobox"에 필수 속성 aria-expanded와 aria-controls가 없어 목록이 열렸는지, 어떤 목록을 제어하는지 전달되지 않는다.
+      status: confirmed
+      wcag_criteria: ["4.1.2"]
+      rule_ids: [jsx-a11y/role-has-required-aria-props]
+  document_ids: [wcag-4.1.2, apg-combobox-roles]

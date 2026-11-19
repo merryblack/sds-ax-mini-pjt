@@ -1,0 +1,31 @@
+id: tabs-01-div-tabs
+component: tabs
+category: issue
+code_type: jsx
+request: 설정 화면 탭 접근성 검토해 줘.
+code: |
+  export function SettingsTabs({ active, onChange }) {
+    return (
+      <div className="tabs">
+        <div className={active === "profile" ? "tab active" : "tab"} onClick={() => onChange("profile")}>프로필</div>
+        <div className={active === "security" ? "tab active" : "tab"} onClick={() => onChange("security")}>보안</div>
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-static-element-interactions
+  findings:
+    - description: 탭이 div의 onClick으로만 동작해 키보드로 포커스하거나 선택할 수 없다.
+      status: confirmed
+      wcag_criteria: ["2.1.1"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-static-element-interactions
+    - description: tablist·tab 역할과 aria-selected가 없어 탭 구조와 현재 선택된 탭이 보조기술에 전달되지 않는다.
+      status: suspected
+      fix_scope: local
+      wcag_criteria: ["4.1.2"]
+  document_ids: [wcag-2.1.1, wcag-4.1.2, apg-tabs-keyboard, apg-tabs-roles]

@@ -225,8 +225,8 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 
 # Phase 3. 평가와 마무리
 
-### T17. 평가 데이터셋
-- [ ] **참조:** 9.2
+### T17. 평가 데이터셋 ✅ 완료 (2026-11-19)
+- [x] **참조:** 9.2 — 결과: `evals/datasets/` 19개 YAML(TSX 8개), 스키마 `evals/dataset.py`. 테스트: `tests/test_eval_dataset.py`(개수·참조 검증, 분석기 결과와 `static_rule_ids` 대조). 문제 없는 코드는 `no_issue_detected`·`no_change_needed`를 모두 정답으로 둔다
 - **의존:** T15 (출력 형식 확정 후)
 - **작업**
   - `evals/datasets/`에 19개 케이스: Button 8 (정책 2 포함), Dialog 4, Tabs 4, Combobox 3. 최소 4개는 TSX

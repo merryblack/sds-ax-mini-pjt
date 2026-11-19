@@ -192,6 +192,8 @@ a11y-investigator analyze --file Component.tsx --project my-project
 - answer_relevancy: 0.XX
 
 ## 인-아웃 세트 통과율 (자체 평가)
+평가 데이터셋은 `evals/datasets/`의 19개 케이스다(문제 있음 12, 문제 없음 5, 정책 적용 2 / Button 8, Dialog 4, Tabs 4, Combobox 3 / TSX 8). 케이스마다 입력 코드와 기대 결과(Finding, outcome, 인용할 문서, 정책 판정)를 YAML로 라벨링했다.
+
 - 1차 (Day 9 종료): XX / XX 통과
 - 2차 (Day 10 개선 후): XX / XX 통과
 - 개선폭: +XX 건 (주요 개선 사항: ...)
@@ -261,7 +263,7 @@ mini-project/
 │   ├── decisions.md            ✅ 모델 선택 등 결정 기록
 │   └── policy-template/        ✅ 내 프로젝트 지침 템플릿
 ├── examples/                   ✅ 실행 예시 컴포넌트
-├── evals/                      ⏳ 평가 데이터셋·실행기 (T17, T18)
+├── evals/                      ✅ 평가 데이터셋 19개·스키마(dataset.py), ⏳ 실행기 (T18)
 ├── tests/                      ✅ pytest (LLM 호출 없는 기본 테스트 + `-m llm`), 공용 샘플·가짜 객체는 samples.py·fakes.py
 └── data/                       생성물, 커밋하지 않음
     ├── chroma/                 검색 인덱스, policy-hashes.json

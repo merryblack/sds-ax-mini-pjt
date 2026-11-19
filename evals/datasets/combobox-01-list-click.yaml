@@ -1,0 +1,43 @@
+id: combobox-01-list-click
+component: combobox
+category: issue
+code_type: jsx
+request: 도시 검색 자동완성 접근성 검토해 줘.
+code: |
+  import { useState } from "react";
+
+  export function CitySearch({ cities, onPick }) {
+    const [query, setQuery] = useState("");
+    const matches = cities.filter((c) => c.startsWith(query));
+    return (
+      <div className="city-search">
+        <input placeholder="도시 검색" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <ul className="suggestions">
+          {matches.map((c) => (
+            <li key={c} onClick={() => onPick(c)}>{c}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+expected:
+  outcomes: [improved]
+  static_rule_ids:
+    - jsx-a11y/click-events-have-key-events
+    - jsx-a11y/no-noninteractive-element-interactions
+  findings:
+    - description: 추천 항목이 li의 onClick으로만 선택되어 키보드로 고를 수 없다.
+      status: confirmed
+      wcag_criteria: ["2.1.1"]
+      rule_ids:
+        - jsx-a11y/click-events-have-key-events
+        - jsx-a11y/no-noninteractive-element-interactions
+    - description: 입력란에 레이블이 없고 placeholder만 있어 입력란의 이름이 안정적으로 전달되지 않는다.
+      status: suspected
+      fix_scope: local
+      wcag_criteria: ["3.3.2", "4.1.2"]
+    - description: combobox·listbox·option 역할과 aria-expanded, aria-activedescendant 같은 상태가 없어 자동완성 구조가 전달되지 않는다.
+      status: suspected
+      fix_scope: structural
+      wcag_criteria: ["4.1.2"]
+  document_ids: [wcag-2.1.1, wcag-4.1.2, apg-combobox-keyboard]
