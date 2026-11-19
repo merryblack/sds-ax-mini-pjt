@@ -591,6 +591,8 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 
 케이스마다 기대 Finding(`rule_id` 또는 설명, `status`, `wcag_criteria`), 기대 `outcome`, 기대 근거 `document_id`, 정책 케이스는 기대 `PolicyAssessment`를 라벨링한다.
 
+**인-아웃 세트 확장 (TASKS.md T20):** 위 19개는 정상 진단 케이스뿐이므로 11개를 추가해 30개로 만든다. 카테고리는 positive(문제 있음·정책) / negative(문제 없는 코드, 범위 밖 입력) / edge(애매·복잡한 입력) / guardrail(인젝션, 정책 위반 유도)로 나누고, 케이스마다 금지 문자열(`forbidden`)과 Trace에서 확인할 노드 실행 여부(`expected_nodes` / `forbidden_nodes`)를 함께 라벨링한다. 성공 기준은 [SERVICE.md](SERVICE.md) 5장(전체 80%, guardrail 100%)을 따른다.
+
 ## 9.3. 합격선
 
 | 지표 | 목표 |

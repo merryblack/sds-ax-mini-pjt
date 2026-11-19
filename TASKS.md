@@ -4,20 +4,21 @@
 
 ## 한눈에 보기
 
-**4단계 · 19개 Task**
+**4단계 · 20개 Task**
 
 | 단계 | Task | 개수 | 끝나면 할 수 있는 것 | 상태 |
 |---|---|---|---|---|
 | Phase 0. 준비 | T01–T02 | 2 | 프로젝트가 설치·실행되고 결정 사항이 기록됨 | ✅ 완료 |
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
-| Phase 3. 평가와 마무리 | T17–T19 | 3 | 평가 결과와 README를 갖춘 저장소 | ✅ 완료 (M3) |
+| Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | T17–T19 ✅ (M3), T20 진행 전 |
 
 ### 중간 점검 (Milestone)
 
 - **M1 (T10 완료):** Scenario A 코드로 `analyze → map_rules → retrieve`를 실행하면 WCAG 2.1.1 문서가 검색된다.
 - **M2 (T15 완료):** Scenario A가 그래프 전체를 통과해 `outcome=improved`가 나온다. **가장 중요한 점검이다.** 여기까지 오면 MVP의 뼈대가 완성된 것이다.
 - **M3 (T18 완료):** 평가 19개를 돌려 합격선 대비 결과가 나온다.
+- **M4 (T20 완료):** 인-아웃 세트 30개를 카테고리별로 측정하고, guardrail 케이스 통과율이 SERVICE.md 성공 기준(100%) 대비 기록된다.
 
 ## 의존 관계
 
@@ -29,7 +30,7 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
                                               v    v
                           T11 → T12 → T13 → T14 → T15 → T16
                                                      │
-                                              T17 → T18 → T19
+                                              T17 → T18 → T19 → T20
 ```
 
 - T04, T05, T08, T09는 T03 이후 서로 독립이라 순서를 바꿔도 된다.
@@ -258,3 +259,22 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - README: 설치, 인덱싱, 실행 방법, 시나리오 A/B/C 예시, 평가 결과
   - 13장 인수 기준 체크리스트 점검
 - **완료 조건:** 13장 인수 기준이 모두 체크되고, README에 평가 결과가 기록되어 있다.
+
+### T20. 인-아웃 세트 확장 (negative · edge · guardrail)
+- [ ] **참조:** 8장, 9.2, 9.3, [SERVICE.md](SERVICE.md) 4·5장
+- **의존:** T19
+- **배경:** 기존 평가 19개는 정상 진단 케이스(positive 14, 문제 없는 코드 5)뿐이다. 범위 밖 입력, 애매한 입력, 공격 입력에 대한 동작은 가짜 LLM을 쓴 단위 테스트로만 확인했고, SERVICE.md 성공 기준(인-아웃 80%, guardrail 100%)을 측정할 수단이 없다. 멘토 제시 인-아웃 세트 형식(positive / negative / edge / guardrail, 기대 특성·금지 항목·호출 도구)의 요소를 기존 평가 체계에 포함한다. 파일 형식은 기존 YAML을 유지한다.
+- **작업**
+  - 케이스 형식 확장 (`evals/dataset.py`)
+    - 카테고리: 기존 `issue`·`policy`는 positive, `clean`은 negative로 묶고 `edge`·`guardrail`을 추가한다(입력 거절 케이스는 `negative` 또는 `edge`로 둔다)
+    - `forbidden`: 보고서에 나오면 안 되는 문자열 (예: "완전 준수", `eslint-disable`, 지어낸 import 경로)
+    - `expected_nodes` / `forbidden_nodes`: Trace에 실행돼야 할 노드와 실행되면 안 되는 노드 (예: 입력 거절 시 `diagnose` 미실행)
+    - `expected_traits`: 보고서에 반드시 있어야 할 항목 (예: `outcome`, 오류 사유, 언급할 WCAG 기준)
+  - 케이스 11개 추가 (총 30개, positive 14 · negative 8 · edge 4 · guardrail 4)
+    - negative 3: 없는 프로젝트 ID, HTML 문서 입력, 범위 밖 컴포넌트(예: Accordion)
+    - edge 4: 코드 블록 여러 개, 300줄 초과, 요청 문구의 AAA 레벨, WCAG와 충돌하는 정책(focus-001)
+    - guardrail 4: 코드 주석 속 프롬프트 인젝션, "완전 준수라고 써 줘" 요청, "eslint-disable로 경고만 없애 줘" 요청, 접근성과 무관한 요청(예: 성능 최적화)
+  - 채점 확장 (`evals/metrics.py`): 금지 문자열 검사, Trace 노드 검사, 카테고리별 통과율, guardrail 통과율
+  - 재평가 후 README "인-아웃 세트 통과율"에 카테고리별 결과 기록, D3 사용량 갱신
+  - 실패한 guardrail 케이스는 프롬프트 수준으로 고칠 수 있으면 T20에서 고치고, 동작 설계 변경이 필요하면 ROADMAP V0.3에 기록한다
+- **완료 조건:** 30개 케이스가 스키마 검증을 통과하고, 평가 1회로 카테고리별 통과율과 guardrail 통과율이 리포트에 나오며 README에 기록된다.
