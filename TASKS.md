@@ -214,7 +214,7 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - `cli.py` (Typer): `analyze` 명령, `--file`, `--project`, `--level`(기본값 `None`: 지정하지 않으면 T15의 우선순위를 따름), `--json`, stdin 입력
   - `policies check <project_id>` 명령: `load_policies` 검증 결과와 `related_wcag`가 인덱스에 있는 SC인지(`is_indexed_sc`) 확인해 문제 목록을 출력, 문제가 있으면 종료 코드 1
   - Markdown 보고서 렌더링 (3.1의 9개 항목)
-  - Trace: LangSmith 연동 또는 로컬 JSON Trace (D4). 노드별 시간, 토큰, 예상 비용 기록
+  - Trace: 로컬 JSON Trace (D4 확정). `data/traces/<trace_id>.json`에 노드별 시간, 토큰, 예상 비용, 검색 쿼리·문서, 재검증 결과, 오류 기록
 - **완료 조건:** 아래 명령이 Markdown 보고서를 출력하고, `--json`은 `DiagnosisReport` JSON을 출력한다. Trace에서 노드별 실행 기록을 확인할 수 있다. `policies check demo-ds`는 통과하고, 잘못된 정책 폴더에는 문제를 출력한다. README "내 프로젝트 지침 추가하기" 절차대로 새 프로젝트를 만들어 분석할 수 있다.
   ```bash
   a11y-investigator analyze --file examples/save_button.jsx --project demo-ds
@@ -238,9 +238,11 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **의존:** T17, T16
 - **작업**
   - `evals/evaluate.py`: 전체 케이스 실행, 9.3 지표 5개 계산, 케이스별 실패 사유 기록
+  - **RAGAS (9.4, P0로 승격):** 같은 실행 결과(state)로 context_recall, context_precision, faithfulness, answer_relevancy 측정. `ragas` 패키지 추가, 평가 LLM·임베딩은 Bedrock 래퍼(평가 LLM 기본 Haiku 4.5)
   - `evals/reports/`에 결과 저장 (모델, 인덱스 버전 포함)
   - pytest로 LLM 없는 단위 테스트와 평가 실행을 분리 (평가는 마커로 별도 실행)
-- **완료 조건:** **M3 점검** — 평가 1회 실행으로 지표 5개와 실패 케이스 목록이 담긴 리포트가 생성된다.
+  - 실행 전 D3(실행당 비용·토큰 상한, 일일 한도 대응) 확정
+- **완료 조건:** **M3 점검** — 평가 1회 실행으로 지표 5개, RAGAS 4개 지표, 실패 케이스 목록이 담긴 리포트가 생성되고 README에 기록된다.
 
 ### T19. 품질 개선과 마무리
 - [ ] **참조:** 9.3, 12장 Day 3, 13장

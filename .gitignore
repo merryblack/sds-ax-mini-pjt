@@ -9,6 +9,7 @@ __pycache__/
 
 # Generated data
 data/chroma/
+data/traces/
 
 # Node
 analyzer-js/node_modules/

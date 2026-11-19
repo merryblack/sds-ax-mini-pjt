@@ -50,8 +50,8 @@ A11y Investigator는 정적 분석 도구, LLM 기반 추론, RAG 지식베이�
 | RAG 구축 및 검색 품질 개선 | MVP |
 | Guardrails | MVP |
 | Observability 및 Trace | MVP |
-| 평가 데이터셋 기반 품질 측정 | MVP |
-| ReAct, MCP, RAGAS, LLM-as-Judge, Middleware | P1 (V0.3) |
+| 평가 데이터셋 기반 품질 측정, RAGAS | MVP |
+| ReAct, MCP, LLM-as-Judge, Middleware | P1 (V0.3) |
 | HITL, Multi-Agent, Long-term Memory | P2 (V0.4 이후) |
 
 ### Secondary Goal — 실용적인 접근성 개발 도구 구축
@@ -163,8 +163,8 @@ MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐�
 
 | 단계 | 내용 | 버전 |
 |---|---|---|
-| **P0 — MVP 필수** | LCEL / Pydantic 구조화 출력, LangGraph 고정 Workflow, Chroma RAG, 규칙–WCAG 매핑, 정적 분석(React JSX / TSX), 개선 필요성 판단, 개선 코드 생성, 정적 재검증, 최소 Guardrails, Trace, 평가 데이터셋 | V0.2 ([SERVICE_MVP.md](SERVICE_MVP.md)) |
-| **P1 — Stretch** | HTML / HTML + JS 입력 지원, ReAct 추가 조사, MCP 서버, 민감정보 Guardrails, Middleware, FastAPI, RAGAS, LLM-as-Judge, Hybrid Retrieval, Reranking | MVP 기간에 시간이 남으면 시작, V0.3에서 완성 (6장) |
+| **P0 — MVP 필수** | LCEL / Pydantic 구조화 출력, LangGraph 고정 Workflow, Chroma RAG, 규칙–WCAG 매핑, 정적 분석(React JSX / TSX), 개선 필요성 판단, 개선 코드 생성, 정적 재검증, 최소 Guardrails, Trace, 평가 데이터셋, RAGAS | V0.2 ([SERVICE_MVP.md](SERVICE_MVP.md)) |
+| **P1 — Stretch** | HTML / HTML + JS 입력 지원, ReAct 추가 조사, MCP 서버, 민감정보 Guardrails, Middleware, FastAPI, LLM-as-Judge, Hybrid Retrieval, Reranking | MVP 기간에 시간이 남으면 시작, V0.3에서 완성 (6장) |
 | **P2 — 장기 확장** | Multi-Agent, Plan-Execute, Long-term Memory, HITL, 로컬 파일 접근·수정, 동적 분석, 코딩 Agent·CI 연동 | V0.4 이후 (7장) |
 
 ---
@@ -174,7 +174,7 @@ MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐�
 | 버전 | 이름 | 내용 |
 |---|---|---|
 | V0.2 | Prompt-based Analysis & Improvement | **MVP.** 프롬프트로 입력한 React 코드의 정적 분석, Chroma RAG, 접근성 판단, 개선 코드 출력 ([SERVICE_MVP.md](SERVICE_MVP.md)) |
-| V0.3 | Advanced Agent Workflow | HTML / HTML + JS 입력 지원. MVP에서 stretch로 남은 ReAct, MCP, RAGAS 완성. 민감정보 Guardrails, Middleware, Hybrid Retrieval, Reranking, Query Expansion |
+| V0.3 | Advanced Agent Workflow | HTML / HTML + JS 입력 지원. MVP에서 stretch로 남은 ReAct, MCP 완성. 민감정보 Guardrails, Middleware, Hybrid Retrieval, Reranking, Query Expansion |
 | V0.4 | Local Project Integration | 로컬 React 프로젝트 탐색, 관련 파일 읽기, 프로젝트 지침 자동 수집 후보 생성 |
 | V0.5 | Automated Code Modification | 개선 코드 Diff 생성, 사용자 승인(HITL), 실제 파일 변경, 테스트 및 롤백 |
 | V0.6 | Dynamic Accessibility Analysis | Playwright 및 axe-core 기반 렌더링 검사와 키보드 상호작용 테스트 |
@@ -245,7 +245,7 @@ MVP에서 구현 비용 때문에 제외한 검사이다.
 
 ### 평가
 
-- RAGAS: 진단 설명과 근거에만 적용 (Faithfulness, Answer Relevancy, Context Precision, Context Recall)
+- RAGAS: MVP(P0)로 승격됨 — SERVICE_MVP.md 9.4 참조. V0.3에서는 측정 대상 확대(정책 근거 등)를 검토
 - LLM-as-Judge: 진단 설명의 정확성, 개선 제안의 타당성, 코드 변경의 최소성, 출력의 이해 가능성
 - 기능 유지 여부 검증: 정적 분석만으로는 한계가 있어 테스트 실행과 브라우저 자동화로 보완 (V0.6)
 
@@ -312,8 +312,8 @@ MVP에서 구현 비용 때문에 제외한 검사이다.
 | Backend | Python | MVP |
 | Vector Database | Chroma (Local Persistent → 운영 시 서버 배포 검토) | MVP |
 | 정적 분석 | Node.js 기반 ESLint + jsx-a11y (MVP), html-validate (V0.3) | MVP → V0.3 |
-| Observability | LangSmith | MVP |
-| Evaluation | pytest → RAGAS | MVP → V0.3 |
+| Observability | 로컬 JSON Trace (MVP), 외부 도구는 V0.3 이후 검토 | MVP |
+| Evaluation | pytest, RAGAS | MVP |
 | API | FastAPI | V0.3 |
 | MCP | MCP Python SDK | V0.3 |
 | 동적 분석 | Playwright, axe-core | V0.6 |

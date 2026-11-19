@@ -37,7 +37,7 @@
 
 | 구분 | 항목 |
 |---|---|
-| P1 stretch (시간이 남으면) | ReAct 추가 조사, MCP 서버, RAGAS, LLM-as-Judge, FastAPI, 민감정보 마스킹, Hybrid Retrieval / Reranking |
+| P1 stretch (시간이 남으면) | ReAct 추가 조사, MCP 서버, LLM-as-Judge, FastAPI, 민감정보 마스킹, Hybrid Retrieval / Reranking |
 | MVP 제외 | HTML / HTML + JS 입력, 로컬 파일 수정, 브라우저·동적 분석, 스크린리더 테스트, Multi-Agent, 장기 메모리, 문서 동기화 자동화 |
 
 ---
@@ -603,6 +603,27 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 
 첫 측정 후 조정할 수 있으며, 조정 사유는 `docs/decisions.md`에 기록한다.
 
+## 9.4. RAGAS (P0)
+
+검색 근거와 진단 설명의 품질을 RAGAS 4개 지표로 측정한다. 수정 코드에는 적용하지 않는다(코드에는 Faithfulness 같은 지표가 맞지 않음). 결과는 README "RAGAS 평가 결과"에 기록한다.
+
+| RAGAS 입력 | 이 프로젝트에서의 값 |
+|---|---|
+| `user_input` | 요청 문구 + 분석 대상 코드 |
+| `retrieved_contexts` | `retrieve` 노드가 LLM에 넘긴 공식 문서·정책 청크 본문 |
+| `response` | 진단 결과(Finding의 제목·설명·권장사항)를 이어 붙인 텍스트 |
+| `reference` | 평가 데이터셋의 기대 Finding 설명(9.2 라벨) |
+
+| 지표 | 보는 것 |
+|---|---|
+| context_recall | 정답 진단에 필요한 근거가 검색되었는가 |
+| context_precision | 검색된 근거 중 쓸모 있는 것이 위에 있는가 |
+| faithfulness | 진단 설명이 검색된 근거에 기반하는가 |
+| answer_relevancy | 진단이 요청(코드의 접근성 문제)에 맞는 답인가 |
+
+- 평가용 LLM과 임베딩은 Bedrock(`langchain-aws`)을 RAGAS 래퍼로 감싸 쓴다. 일일 토큰 한도를 고려해 평가 LLM은 Haiku 4.5를 기본으로 한다(D3에서 확정).
+- 각 케이스의 `retrieved_contexts`와 `response`는 그래프 실행 결과(state)에서 그대로 가져오므로 진단 실행을 추가로 하지 않는다.
+
 ---
 
 # 10. 기술 스택
@@ -617,9 +638,9 @@ LLM은 전달받은 `document_id`만 인용할 수 있다. 그 외 ID는 `report
 | Embeddings | AWS Bedrock `amazon.titan-embed-text-v2:0` (`langchain-aws`의 `BedrockEmbeddings`) (D2) |
 | Manifest | YAML 파일 (`knowledge/manifests/`) |
 | JS Runtime | Node.js 20 LTS 이상 |
-| 정적 분석 | ESLint 9, eslint-plugin-jsx-a11y, @typescript-eslint/parser |
-| Observability | LangSmith (D4) |
-| Test / Eval | pytest |
+| 정적 분석 | ESLint 9, eslint-plugin-jsx-a11y, @typescript-eslint/parser, eslint-plugin-react-hooks(재검증 전용, 5.1) |
+| Observability | 로컬 JSON Trace (`data/traces/`, D4) |
+| Test / Eval | pytest, RAGAS |
 
 ---
 
@@ -718,6 +739,7 @@ a11y-investigator/
 - [ ] 노드별 Trace 기록
 - [ ] 보고서에 모델, 인덱스 버전, 분석기 버전 기록
 - [ ] 평가 데이터셋 19개와 합격선 측정 결과를 README에 기록
+- [ ] RAGAS 4개 지표(context_recall, context_precision, faithfulness, answer_relevancy)를 측정해 README에 기록
 
 ---
 
@@ -739,4 +761,4 @@ a11y-investigator/
 | D1 | ✅ **Chat LLM: `us.anthropic.claude-sonnet-4-6`** (확정) | 진단·수정 모두 사용, temperature 0~0.2. 평가 반복 등 비용을 줄일 때는 `us.anthropic.claude-haiku-4-5-20251001-v1:0`를 보조로 사용 | 확정 (2026-11-18) |
 | D2 | ✅ **임베딩: `amazon.titan-embed-text-v2:0`** (확정) | 호출 가능한 유일한 다국어 모델. 한국어·영어 문장 유사도가 0.36 정도로 높지 않으므로 공식 문서 검색은 영어 쿼리(6.5)를 유지한다. `index_version`에 모델명 포함 | 확정 (2026-11-18) |
 | D3 | 실행당 비용·토큰 상한 | 예: LLM 호출 최대 6회 (진단 1 + 수정 최대 3 + 여유) | Day 2 |
-| D4 | LangSmith 사용 여부 | 계정·API 키 필요. 안 쓰면 로컬 JSON Trace로 대체 | Day 2 |
+| D4 | ✅ **Trace: 로컬 JSON** (확정) | LangSmith 키 미제공, 유료라 장기 사용 어려움 → `data/traces/<trace_id>.json` | 확정 (2026-11-19) |
