@@ -32,6 +32,7 @@ expected:
     - policy_id: demo-ds-icon-001
       status: violated
     - policy_id: demo-ds-btn-001
-      status: compliant
+      # IconButton is covered by icon-001, so "not applicable" is also a correct reading.
+      status: [compliant, not_applicable]
     - policy_id: demo-ds-focus-001
       status: conflict_with_wcag

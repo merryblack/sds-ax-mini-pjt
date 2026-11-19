@@ -41,7 +41,12 @@ class ExpectedFinding(BaseModel):
 
 class ExpectedPolicy(BaseModel):
     policy_id: str
-    status: PolicyStatus
+    status: list[PolicyStatus] = Field(min_length=1, description="Acceptable statuses (a single value is allowed).")
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def _one_or_many(cls, value: object) -> object:
+        return [value] if isinstance(value, str) else value
 
 
 class Expected(BaseModel):

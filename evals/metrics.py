@@ -143,10 +143,12 @@ def score_case(
     actual = {pa.policy_id: pa.status for pa in report.policy_assessments}
     for pa in exp.policy_assessments:
         r.policy_expected += 1
-        if actual.get(pa.policy_id) == pa.status:
+        if actual.get(pa.policy_id) in pa.status:
             r.policy_correct += 1
         else:
-            r.failures.append(f"정책 {pa.policy_id}: {actual.get(pa.policy_id, '평가 없음')} (기대: {pa.status})")
+            r.failures.append(
+                f"정책 {pa.policy_id}: {actual.get(pa.policy_id, '평가 없음')} (기대: {', '.join(pa.status)})"
+            )
     return r
 
 

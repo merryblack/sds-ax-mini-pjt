@@ -716,32 +716,34 @@ a11y-investigator/
 
 # 13. 인수 기준
 
+> 2026-11-19 T19에서 점검 완료. 항목별 근거는 TASKS.md T19 참고. 9.3 합격선 중 "문제 없는 코드의 no-change 비율"은 60%로 미달이며 README에 기록했다.
+
 ### 입력
-- [ ] JSX, TSX 코드를 CLI로 입력할 수 있다.
-- [ ] 코드 유형(jsx / tsx)을 식별하고, React가 아닌 코드는 `analysis_failed`로 거절한다.
-- [ ] 입력 제한 초과나 코드 블록이 여러 개이면 `analysis_failed`와 사유를 반환한다.
-- [ ] `--project`로 프로젝트를 지정할 수 있다.
+- [x] JSX, TSX 코드를 CLI로 입력할 수 있다.
+- [x] 코드 유형(jsx / tsx)을 식별하고, React가 아닌 코드는 `analysis_failed`로 거절한다.
+- [x] 입력 제한 초과나 코드 블록이 여러 개이면 `analysis_failed`와 사유를 반환한다.
+- [x] `--project`로 프로젝트를 지정할 수 있다.
 
 ### 진단
-- [ ] 정적 분석을 수행하고 규칙을 WCAG SC에 매핑한다.
-- [ ] Chroma에서 관련 표준 문서와 프로젝트 정책을 검색한다.
-- [ ] 문제와 근거를 제시하고 confirmed / suspected / manual_review를 구분한다.
-- [ ] 근거 없는 Finding은 `manual_review`로 강등한다.
-- [ ] 존재하지 않는 WCAG ID나 전달되지 않은 문서를 인용하지 않는다.
-- [ ] 프로젝트 정책 적합성을 WCAG 적합성과 별도로 보고한다.
+- [x] 정적 분석을 수행하고 규칙을 WCAG SC에 매핑한다.
+- [x] Chroma에서 관련 표준 문서와 프로젝트 정책을 검색한다.
+- [x] 문제와 근거를 제시하고 confirmed / suspected / manual_review를 구분한다.
+- [x] 근거 없는 Finding은 `manual_review`로 강등한다.
+- [x] 존재하지 않는 WCAG ID나 전달되지 않은 문서를 인용하지 않는다.
+- [x] 프로젝트 정책 적합성을 WCAG 적합성과 별도로 보고한다.
 
 ### 개선
-- [ ] 수정이 필요하면 전체 코드와 변경 이유를 출력한다.
-- [ ] 5.3 기준으로 재검증하고, 린트 우회 주석이 있으면 통과시키지 않는다.
-- [ ] 최대 2회 재수정하고, 초과하면 `fix_failed`로 보고한다.
-- [ ] 수정이 불필요하면 원본을 유지한다.
+- [x] 수정이 필요하면 전체 코드와 변경 이유를 출력한다.
+- [x] 5.3 기준으로 재검증하고, 린트 우회 주석이 있으면 통과시키지 않는다.
+- [x] 최대 2회 재수정하고, 초과하면 `fix_failed`로 보고한다.
+- [x] 수정이 불필요하면 원본을 유지한다.
 
 ### 기술 및 평가
-- [ ] LCEL / Pydantic 구조화 출력, LangGraph 그래프, Chroma RAG
-- [ ] 노드별 Trace 기록
-- [ ] 보고서에 모델, 인덱스 버전, 분석기 버전 기록
-- [ ] 평가 데이터셋 19개와 합격선 측정 결과를 README에 기록
-- [ ] RAGAS 4개 지표(context_recall, context_precision, faithfulness, answer_relevancy)를 측정해 README에 기록
+- [x] LCEL / Pydantic 구조화 출력, LangGraph 그래프, Chroma RAG
+- [x] 노드별 Trace 기록
+- [x] 보고서에 모델, 인덱스 버전, 분석기 버전 기록
+- [x] 평가 데이터셋 19개와 합격선 측정 결과를 README에 기록
+- [x] RAGAS 4개 지표(context_recall, context_precision, faithfulness, answer_relevancy)를 측정해 README에 기록
 
 ---
 

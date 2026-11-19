@@ -43,7 +43,7 @@ code: |
           ))}
         </div>
         {TABS.map((tab, i) => (
-          <div key={tab.id} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={active !== i}>
+          <div key={tab.id} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} tabIndex={0} hidden={active !== i}>
             {tab.label} 내용
           </div>
         ))}

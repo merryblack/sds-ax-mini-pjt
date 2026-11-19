@@ -139,6 +139,50 @@ a11y-investigator analyze --file examples\save_button.jsx --project demo-ds
 - Trace: 실행마다 `data/traces/<trace_id>.json`에 노드별 시간, LLM 토큰, 예상 비용, 검색 문서, 재검증 결과가 남는다(커밋하지 않음). 경로와 요약은 표준 오류로 출력된다.
 - 종료 코드: `0` 분석 완료, `1` 분석 실패(`analysis_failed`), `2` 잘못된 옵션
 
+출력 예시 (위 명령, Scenario A 코드 + `demo-ds` 정책. 2026-11-19 실행, 일부 생략):
+
+````markdown
+## 1. 요약
+문제 2건(확정 2, 추정 0, 수동 확인 0). 수정 대상 2건을 고쳤고 재검증을 통과했습니다(시도 1회, 변경 3줄).
+자동 검사(정적 분석·문서 근거) 범위 안의 결과이며, 접근성 완전 준수를 의미하지 않습니다.
+
+## 2. 발견된 문제
+### F1. 키보드로 접근·조작 불가능한 클릭 핸들러 (2.1.1)
+- 상태: **확정** · 심각도: critical · 수정 대상 · 위치: L2
+### F2. 인터랙티브 역할 및 접근 가능한 이름 누락 (4.1.2)
+
+## 3. 근거
+| F1 | 정적 분석 | `jsx-a11y/click-events-have-key-events` | line 2 |
+| F1 | 문서 | `wcag-2.1.1` | https://www.w3.org/TR/WCAG22/#keyboard |
+| F2 | 문서 | `apg-button-roles` | https://www.w3.org/WAI/ARIA/apg/patterns/button/#roles_states_properties |
+
+## 4. 프로젝트 정책 적합성
+| `demo-ds-btn-001` | 위반 | ... `<div onClick>` 대신 `@demo-ds/ui`의 `<Button>`을 써야 합니다. |
+| `demo-ds-icon-001` | 해당 없음 | 텍스트를 표시하는 버튼이라 적용되지 않습니다. |
+| `demo-ds-focus-001` | WCAG와 충돌 (WCAG 우선) | `outline: none` 정책은 WCAG 2.4.7 Focus Visible과 충돌합니다. ... |
+
+## 6. 개선 코드
+```jsx
+import { Button } from "@demo-ds/ui";
+
+export default function SaveButton() {
+  return <Button onClick={() => alert("saved")}>저장</Button>;
+}
+```
+
+## 8. 재검증 결과
+- 결과: **통과** (시도 1회, 변경 3줄)
+- 정적 분석 위반: 2건 → 0건
+
+## 9. 수동 검증 필요 항목
+- 포커스 아웃라인 가시성 확인 ... (WCAG 2.4.7)
+- 스크린 리더에서 버튼 역할과 이름('저장')이 올바르게 읽히는지 확인
+````
+
+표준 오류에는 Trace 요약이 출력된다: `[trace] data\traces\<id>.json · 25.41s · tokens 9955+2259 · ≈$0.0638`
+
+정책 없이 실행하면(Scenario A) `<button type="button">`으로 고친다. 이미 네이티브 버튼인 코드(Scenario B)는 `no_issue_detected`로 끝나고 원본을 유지한다.
+
 Python에서 직접 실행할 수도 있다.
 
 ```python
@@ -187,12 +231,18 @@ a11y-investigator analyze --file Component.tsx --project my-project
 정책 파일을 고친 뒤 따로 인덱싱할 필요는 없다. `--project`로 분석할 때 정책 파일이 바뀌었으면 자동으로 다시 인덱싱한다(파일 해시를 `data/chroma/policy-hashes.json`과 비교). 수동으로 하려면 `python -m a11y_investigator.rag.ingest --policies`.
 
 ## RAGAS 평가 결과
-1차 측정(2026-11-19, 리포트 [evals/reports/20261119-045925.md](evals/reports/20261119-045925.md)). 진단 단계만 측정하며, 평가 모델은 Haiku 4.5, 임베딩은 Titan V2다. 대상은 문제 있음·정책 케이스 중 Finding이 나온 14개다.
+2026-11-19 측정. 진단 단계만 측정하며, 평가 모델은 Haiku 4.5, 임베딩은 Titan V2다. 대상은 문제 있음·정책 케이스 중 Finding이 나온 14개다.
 
-- context_recall: 0.96
-- context_precision: 0.55
-- faithfulness: 0.95
-- answer_relevancy: 0.26
+| 지표 | 1차 (T18) | 2차 (T19, 최종) |
+|---|---|---|
+| context_recall | 0.96 | 0.96 |
+| context_precision | 0.55 | 0.55 |
+| faithfulness | 0.95 | 0.80 |
+| answer_relevancy | 0.26 | 0.29 |
+
+- 2차에서 faithfulness가 낮아졌다. 진단 프롬프트에 "무엇이 필수이고 무엇이 선택인지" 판단을 넣으면서 APG 필수 여부처럼 문서 발췌에 명시되지 않은 서술이 늘어난 영향으로 보인다.
+- 가드레일이 제거한 인용은 1건이다(dialog-03에서 제공되지 않은 `apg-button-pattern` 인용). 최종 보고서의 허위 인용은 0건이다.
+- 케이스가 14개뿐이고 평가 LLM 판정의 편차도 있으므로(같은 샘플이 0.2~0.6 사이로 흔들린 사례) 경향 정도로 본다.
 
 해석
 - context_recall은 높다. 정답 진단에 필요한 근거 문서가 거의 모두 검색된다.
@@ -226,8 +276,29 @@ python -m evals.evaluate --from-run evals/reports/<id>.json   # 저장된 실행
   - 실패 5건 중 4건은 문제 없는 코드를 수정한 경우다. APG의 선택 권장 사항(Home/End 키, aria-disabled 선호 등)을 `suspected`·`local`로 보고했고, decide 규칙이 이를 수정 대상으로 삼았다.
   - 나머지 1건(dialog-01)은 Escape 처리를 넣으면서 `no-static-element-interactions` 위반을 새로 만들었고, 재시도 3회 모두 해결하지 못했다.
   - 정책 판정 정확도는 100%(6/6)이고, analysis_failed는 0건이다.
-- 2차 (T19 개선 후): XX / XX 통과
-- 개선폭: +XX 건 (주요 개선 사항: ...)
+- 2차 (2026-11-19, T19 개선 후): **17 / 19 통과** ([evals/reports/20261119-054203.md](evals/reports/20261119-054203.md))
+
+| 지표 (SERVICE_MVP.md 9.3) | 1차 | 2차 | 목표 |
+|---|---|---|---|
+| `confirmed` Finding 재현율 | 100% | 100% | ≥ 90% ✅ |
+| 문제 없는 코드가 no-change로 끝나는 비율 | 20% (1/5) | 60% (3/5) | ≥ 80% ❌ |
+| 수정 시도 케이스의 재검증 통과율 | 94% (17/18) | 100% (16/16) | ≥ 80% ✅ |
+| 허위 인용 | 0건 | 0건 | 0건 ✅ |
+| WCAG 근거 연결 정확도 | 100% | 100% | ≥ 80% ✅ |
+| (참고) 정책 판정 정확도 | 100% | 100% | — |
+| (참고) RAGAS faithfulness | 0.95 | 0.80 | — |
+
+- 개선폭: +3건
+- 주요 개선 사항
+  - 진단 프롬프트가 WCAG 위반·APG 필수 사항만 Finding으로 보고하고, 선택 권장 사항·다른 유효한 구현·가정에 기반한 지적은 `manual_checks`로 보낸다.
+  - 수정 프롬프트가 비대화형 컨테이너에 키 핸들러를 달지 않고 Escape를 document 리스너로 처리한다. 이로써 dialog-01 `fix_failed`가 해결됐고, 재시도 없이 모두 1회차에 통과했다.
+  - 정답 코드 라벨을 보강했다: dialog-04에 포커스 트랩, tabs-04에 tabpanel `tabIndex`를 넣었고, button-08 정책 판정에 `not_applicable`도 허용했다.
+- 남은 미달: 문제 없는 코드 2건(combobox-03, dialog-04)을 여전히 수정했다.
+  - combobox-03은 목록 경계에서의 ArrowUp 동작(APG 선택 사항)을 필수로 해석했다.
+  - dialog-04는 "향후 요소가 추가되면" 같은 보강 제안을 `suspected`·`local`로 냈다.
+  - 프롬프트 조정은 문제 없는 코드 5개에 과적합될 위험이 있어 여기서 멈췄고, 합격선은 낮추지 않았다(docs/decisions.md).
+- 유의점: 문제 없는 코드 케이스가 5개뿐이고 이 케이스를 보며 프롬프트를 조정했으므로, 수치가 실제 일반화 성능보다 좋게 나왔을 수 있다.
+- 중간 측정(20261119-053227)에서는 병렬 실행 중 Chroma 클라이언트 초기화가 경합해 2건이 실행 오류로 끝났다. 잠금을 추가해 해결했다.
 
 ## 트라이앤에러 회고
 
@@ -244,13 +315,19 @@ python -m evals.evaluate --from-run evals/reports/<id>.json   # 저장된 실행
 - 채택: 재검증을 "원본 대비 위반 증가 없음"으로 판정하고 실패 사유를 피드백으로 넘겨 재시도(최대 3회)하게 했다. 접근성과 무관한 기능 회귀를 막기 위해 `react-hooks/rules-of-hooks`를 **재검증 전용 규칙**으로 추가했다.
 - 남은 한계: Hooks 외의 기능 회귀(로직 변경, 스타일 누락 등)는 정적 분석으로 잡지 못한다. 테스트 실행·브라우저 검증은 ROADMAP V0.6에서 다룬다.
 
+**3. "문제를 많이 찾을수록 좋다"는 진단 방향**
+- 시도: 진단 LLM에게 APG 문서를 근거로 주고, 근거를 인용한 `suspected` Finding 중 범위가 `local`이면 자동으로 수정하게 했다.
+- 실패 이유: 1차 평가에서 문제 없는 코드 5개 중 4개를 "개선"했다. Home/End 키, `aria-disabled` 선호처럼 APG의 선택 권장 사항이나 다른 유효한 구현을 위반처럼 보고했고, 근거 문서가 붙어 있어 가드레일도 통과했다.
+- 채택: 자동 수정 대상은 "WCAG 실패 또는 APG 필수 사항"으로 좁히고, 선택 권장·대안 구현·가정에 기반한 지적은 수동 확인 항목으로 보냈다. no-change 비율이 20%에서 60%로 올랐다.
+- 남은 한계: 무엇이 필수인지는 여전히 LLM 판단이다. 평가 2건이 아직 미달이다. 근거 문서의 "optional" 표기를 메타데이터로 만들거나, 수정 전에 `suspected` Finding을 한 번 더 검증하는 단계를 두는 방안을 V0.3에서 검토한다.
+
 ## 출처와 라이선스
 
 `knowledge/official/`의 WCAG 2.2, Understanding WCAG, Techniques for WCAG, WAI-ARIA Authoring Practices Guide 문서는 W3C의 저작물이며 [W3C Software and Document License](https://www.w3.org/copyright/software-license/)에 따라 포함했다. 수집한 원본 URL과 GitHub 커밋 해시(`w3c/wcag`, `w3c/aria-practices`)는 [knowledge/manifests/sources.yaml](knowledge/manifests/sources.yaml)에 기록되어 있다. 진단 보고서는 인용한 문서마다 W3C 원문 URL을 함께 표시한다.
 
 ## 핵심 코드 위치
 
-> 현재 Phase 2 완료(M2 달성), Phase 3 진행 전이며 진행에 따라 바뀐다. ✅ 구현됨 · ⏳ 예정(괄호 안은 담당 Task, 최신 상태는 [TASKS.md](TASKS.md) 참조)
+> 현재 MVP(Phase 0~3, T01~T19) 완료 기준이며, 이후 버전에서 바뀔 수 있다. ✅ 구현됨 (Task별 내역은 [TASKS.md](TASKS.md) 참조)
 
 ```text
 mini-project/

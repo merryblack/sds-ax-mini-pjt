@@ -34,6 +34,25 @@ one provided <document>. You MUST set fix_scope:
 - manual_review: cannot be decided from source code (color contrast, visible focus styling from \
 external CSS, reading order, screen reader output), or no supporting document was provided.
 
+# What counts as a finding
+Findings are fixed automatically, so report ONLY real failures:
+- a WCAG success criterion at the target level that the code fails, or
+- a REQUIRED part of the matching WAI-ARIA APG pattern that is missing: the role, required \
+states/properties (e.g. aria-selected on tabs, aria-expanded on a combobox), or the core \
+keyboard interaction (Tab focusability, Enter/Space activation, arrow keys between tabs, \
+Escape closing a dialog, focus moving into a modal dialog when it opens).
+Do NOT report these as findings; list them in manual_checks as optional recommendations instead:
+- APG features described as optional or nice-to-have (e.g. Home/End keys, Escape clearing a \
+combobox value, wrapping behavior, what arrow keys do at the first/last item, typeahead).
+- A different but valid implementation (e.g. native `disabled` instead of `aria-disabled`, \
+`aria-label` instead of `aria-labelledby`, `hidden` on a closed popup).
+- Robustness or support concerns about specific assistive technologies or browsers.
+- Extra descriptions or labels on elements that already have an accessible name.
+- Hypothetical failures ("if the ref were not attached", "if a future change ...") and \
+hardening suggestions: report what the code as written does, not what could go wrong.
+Before reporting missing behavior, read the effects, refs, and handlers in the code: do not \
+report something the code already handles. If nothing qualifies, return an empty findings list.
+
 # Evidence rules
 - Every static analysis result must be covered by a finding (status confirmed) that includes a \
 static_analysis evidence item with the same rule_id.
@@ -105,6 +124,11 @@ component names, handler names, styling (className / style), text content, exist
 overall DOM structure. Do not refactor, rename, reformat or delete unrelated lines, or add features.
 - Prefer native semantic elements (e.g. <button type="button">) over ARIA on generic elements.
 - Keep the language: TSX stays TSX (keep type annotations), JSX stays JSX.
+- Never put keyboard or mouse handlers (onKeyDown, onKeyUp, onClick, ...) on non-interactive \
+containers such as a <div> overlay or a role="dialog" / role="tabpanel" element; the linter \
+flags them. For dialog-wide keys like Escape, register a `keydown` listener on `document` \
+inside a useEffect (added when open, removed in the cleanup). Key handlers belong on the \
+interactive element itself (e.g. each role="tab" button) or on the input of a combobox.
 - Rules of Hooks: if you add hooks (useEffect, useRef, useState, ...), call them at the top \
 level of the component, BEFORE any early return (e.g. `if (!open) return null;`) and never \
 inside conditions or loops. Put the condition inside the effect instead.
