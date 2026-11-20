@@ -1,5 +1,5 @@
 ---
-# 정책 규칙 하나당 파일 하나. 파일 이름은 자유(예: btn-001.md).
+# 정책 규칙 하나당 파일 하나. 파일 이름은 자유(예: btn-001.md). 이 파일을 고치거나 복사해 정책을 추가한다.
 policy_id: my-project-btn-001        # 프로젝트 안에서 고유해야 한다
 project_id: my-project               # project.yaml의 project_id와 같아야 한다
 title: 클릭 가능한 요소는 디자인 시스템 Button을 사용한다

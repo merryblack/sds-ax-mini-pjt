@@ -1,4 +1,4 @@
-"""CLI: `a11y-investigator analyze` and `a11y-investigator policies check` (SERVICE_MVP.md 2.2, 6.2).
+"""CLI: `analyze`, `policies check`, `policies init` (SERVICE_MVP.md 2.2, 6.2).
 
 Exit codes for `analyze`: 0 = analysis completed (any outcome except analysis_failed),
 1 = analysis_failed, 2 = bad command-line input.
@@ -93,6 +93,34 @@ def analyze(
     typer.echo(report.model_dump_json(indent=2) if json_output else render_markdown(report))
     if report.outcome == "analysis_failed":
         raise typer.Exit(code=1)
+
+
+@policies_app.command("init")
+def policies_init(
+    project_id: str = typer.Argument(..., help="새 프로젝트 ID (영문 소문자·숫자·하이픈)."),
+    policies_dir: Optional[Path] = typer.Option(None, "--policies-dir", help="정책 루트 폴더 (기본 knowledge/project-policies)."),
+) -> None:
+    """템플릿으로 새 프로젝트 지침 폴더를 만들고 바로 검증한다. 이미 있는 폴더는 덮어쓰지 않는다."""
+    _utf8_stdout()
+    from a11y_investigator.tools.policy_lookup import PolicyError, init_project
+
+    root = policies_dir or settings.policies_dir
+    try:
+        created = init_project(project_id, root)
+    except PolicyError as e:
+        typer.echo(f"✗ {e}", err=True)
+        raise typer.Exit(code=2)
+    typer.echo(f"✓ 프로젝트 지침 폴더를 만들었습니다: {created[0].parent}")
+    for path in created:
+        typer.echo(f"  - {path.name}")
+    typer.echo("")
+    policies_check(project_id, policies_dir)
+    typer.echo("")
+    typer.echo("다음 단계")
+    typer.echo("  1. project.yaml: 목표 레벨과 디자인 시스템 컴포넌트 매핑을 고친다.")
+    typer.echo("  2. btn-001.md: 예시 정책을 실제 규칙으로 고치거나, 규칙마다 .md 파일을 추가한다.")
+    typer.echo(f"  3. 검증: python a11y.py policies check {project_id}")
+    typer.echo(f"  4. 분석: python a11y.py analyze --file <컴포넌트 파일> --project {project_id}")
 
 
 @policies_app.command("check")

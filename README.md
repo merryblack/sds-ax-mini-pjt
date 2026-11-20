@@ -140,7 +140,8 @@ python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 팀의 디자인 시스템 규칙이나 접근성 지침을 `knowledge/project-policies/<project_id>/`에 정책 파일(규칙 하나당 Markdown 하나)로 추가하면, Agent가 WCAG와 **별도로** 정책 적합성을 평가하고 수정 코드에도 반영한다. WCAG와 충돌하는 정책은 WCAG를 우선하고 충돌을 보고한다.
 
 ```text
-python a11y.py policies check my-project            # 형식 검증 (LLM 호출 없음)
+python a11y.py policies init my-project             # 템플릿으로 새 프로젝트 폴더 생성 + 검증
+python a11y.py policies check my-project            # 정책을 고친 뒤 형식 검증 (LLM 호출 없음)
 python a11y.py analyze --file Component.tsx --project my-project
 ```
 
@@ -204,7 +205,7 @@ python a11y.py analyze --file Component.tsx --project my-project
 
 ## 핵심 코드 위치
 
-> 현재 T01~T21 완료 기준이며 바뀔 수 있다. Task별 내역은 [TASKS.md](TASKS.md) 참조.
+> 현재 T01~T22 완료 기준이며 바뀔 수 있다. Task별 내역은 [TASKS.md](TASKS.md) 참조.
 
 ```text
 mini-project/
@@ -218,6 +219,7 @@ mini-project/
 │   ├── tools/                  입력 파싱, 정적 분석 호출, 규칙–WCAG 매핑, 문서 조회,
 │   │                           정책 로딩·검증, 수정 코드 재검증
 │   ├── rag/                    W3C 문서 수집·청킹, 임베딩·Chroma, 인덱싱, 검색(retriever.py)
+│   ├── templates/              새 프로젝트 지침 템플릿 (policies init)
 │   ├── schemas/                정적 분석·근거·진단·보고서 스키마
 │   └── middleware/safety.py    인용 검증·강등, 린트 우회 주석 차단
 ├── setup_env.py                설치 스크립트 (모든 OS·셸 공통)
@@ -228,7 +230,7 @@ mini-project/
 │   ├── project-policies/       프로젝트 정책 (예제: demo-ds)
 │   └── manifests/              규칙–WCAG 매핑, 문서 출처·커밋 해시
 ├── evals/                      인-아웃 세트(datasets/), 실행기·지표·RAGAS, 리포트(reports/)
-├── docs/                       사용 가이드, 평가 리포트, 결정 기록, 정책 템플릿
+├── docs/                       사용 가이드, 평가 리포트, 결정 기록
 ├── examples/                   실행 예시 컴포넌트
 ├── tests/                      pytest (기본: LLM 호출 없음)
 └── data/                       생성물, 커밋하지 않음 (chroma/ 인덱스, traces/ 실행 기록)

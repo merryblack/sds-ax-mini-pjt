@@ -324,7 +324,7 @@ related_wcag: ["4.1.2", "2.1.1"]
 
 사용자는 위 형식대로 자기 프로젝트 폴더를 만들기만 하면 된다. 별도 입력 방식(`--policy-file` 등)은 MVP 범위가 아니다(ROADMAP V0.3 후보).
 
-1. `docs/policy-template/`의 `project.yaml`, `policy-example.md`를 `knowledge/project-policies/<project_id>/`로 복사해 작성한다. 템플릿은 `knowledge/` 밖에 두어 실제 프로젝트로 인식되지 않게 한다.
+1. `a11y-investigator policies init <project_id>`(T22)로 템플릿에서 `knowledge/project-policies/<project_id>/`를 만든 뒤 작성한다. 템플릿은 패키지 안(`src/a11y_investigator/templates/project-policy/`)에 둔다. `knowledge/project-policies/` 아래에 두면 `project.yaml`이 있는 폴더라 실제 프로젝트로 인식되기 때문이다.
 2. `a11y-investigator policies check <project_id>`로 검증한다(T16). 형식, `project_id`와 폴더 이름 일치, `policy_id` 중복, `applies_to` 값, `related_wcag`가 인덱스에 있는 SC인지 확인한다.
 3. `a11y-investigator analyze --project <project_id>`로 분석한다.
 

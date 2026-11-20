@@ -161,15 +161,22 @@ knowledge/project-policies/<project_id>/
 └── ...
 ```
 
-예제는 시연용 `knowledge/project-policies/demo-ds/`이고, 템플릿은 `docs/policy-template/`에 있다.
+예제는 시연용 `knowledge/project-policies/demo-ds/`이다.
 
-새 프로젝트를 만들 때는 다음 명령으로 템플릿을 복사한다.
+새 프로젝트는 다음 명령으로 만든다.
 
-```powershell
-mkdir knowledge\project-policies\my-project
-copy docs\policy-template\project.yaml knowledge\project-policies\my-project\
-copy docs\policy-template\policy-example.md knowledge\project-policies\my-project\btn-001.md
+```text
+python a11y.py policies init my-project
 ```
+
+이 명령은 다음을 한 번에 처리한다.
+1. `knowledge/project-policies/my-project/`에 `project.yaml`과 예시 정책 `btn-001.md`를 만든다.
+2. 두 파일의 `project_id`와 `policy_id`를 `my-project`에 맞게 채운다.
+3. 바로 검증(3.3)한 결과와 다음 단계를 보여 준다.
+
+- **프로젝트 ID:** 영문 소문자·숫자·하이픈만 쓸 수 있다.
+- **기존 폴더 보호:** 이미 있는 폴더는 덮어쓰지 않는다.
+- **템플릿 위치:** 원본은 `src/a11y_investigator/templates/project-policy/`에 있다. 템플릿을 고치면 `tests/test_policy_init.py`가 생성 결과가 검증을 통과하는지 확인한다.
 
 ### 3.2. 정책 작성·수정
 

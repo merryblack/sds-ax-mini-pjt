@@ -37,11 +37,13 @@ python a11y.py test -m eval     # 평가 실행기 1케이스, 비용 발생
 python a11y.py eval             # 인-아웃 세트 30개 + RAGAS, 약 10분, 약 $1.6
 python a11y.py eval --case <접두어> --no-ragas   # 일부 케이스만
 python a11y.py policies check demo-ds            # 정책 형식 검증 (LLM 없음)
+python a11y.py policies init <id>                # 템플릿으로 새 프로젝트 지침 폴더 생성
 ```
 
 - `a11y.py`는 `.venv`의 Python으로 실행하는 런처다(`test`=pytest, `eval`=evals.evaluate, `index`=rag.ingest, `fetch`=rag.fetch, 그 외는 CLI). 문서의 사용자용 명령은 이 형식으로 쓴다(셸·OS 공통, 경로는 `/`).
 - 도구로 직접 실행할 때는 `.venv/Scripts/python -m ...`도 된다. `evals` 패키지는 저장소 폴더에서 `-m`으로 실행해야 import된다.
 - `setup_env.py`는 표준 라이브러리만 쓴다(시스템 Python으로 실행되므로 외부 패키지 import 금지).
+- 프로젝트 지침 템플릿은 `src/a11y_investigator/templates/project-policy/`에 있다. `knowledge/project-policies/` 아래에는 템플릿을 두지 않는다(`project.yaml`이 있으면 프로젝트로 인덱싱된다).
 
 ## 비용·외부 호출
 - **Bedrock을 호출하는 작업은 시작 전에 예상 시간과 비용을 사용자에게 알린다.** 대상은 `-m llm`, `-m eval`, `evals.evaluate`, CLI `analyze`다.

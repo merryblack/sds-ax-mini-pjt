@@ -15,6 +15,9 @@ a11y-investigator = "a11y_investigator.cli:app"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+a11y_investigator = ["templates/**/*"]  # policies init 템플릿 (T22)
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]  # makes the top-level `evals` package importable

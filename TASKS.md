@@ -4,7 +4,7 @@
 
 ## 한눈에 보기
 
-**5단계 · 21개 Task**
+**5단계 · 22개 Task**
 
 | 단계 | Task | 개수 | 끝나면 할 수 있는 것 | 상태 |
 |---|---|---|---|---|
@@ -12,7 +12,7 @@
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
 | Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | ✅ 완료 (M3, M4) |
-| Phase 4. 사용성 | T21 | 1 | 어떤 OS·셸에서도 같은 명령 두 개로 설치하고 실행할 수 있음 | ✅ 완료 |
+| Phase 4. 사용성 | T21–T22 | 2 | 어떤 OS·셸에서도 같은 명령으로 설치·실행하고, 새 프로젝트 지침을 명령 하나로 만들 수 있음 | ✅ 완료 |
 
 ### 중간 점검 (Milestone)
 
@@ -306,3 +306,20 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   - README "실행 방법"을 `python setup_env.py` → `python a11y.py ...` 흐름으로 바꾸고, 예시 경로는 `/`로 통일한다. 기존 가상환경 방식은 대안으로 남긴다
   - 설치 스크립트의 판단 로직(경로, 건너뛰기 조건, `.env` 검사) 오프라인 테스트
 - **완료 조건:** 새 터미널에서 가상환경 활성화 없이 README 명령 그대로 설치·실행이 된다. Windows PowerShell과 Git Bash에서 직접 확인하고, 확인하지 못한 환경(macOS·Linux, cmd)은 그대로 기록한다.
+
+### T22. 프로젝트 지침 템플릿 정리와 생성 명령 ✅ 완료 (2026-11-20)
+- [x] **참조:** 6.2, [docs/guide.md](docs/guide.md) 3장 — 결과: 템플릿을 `git mv`로 `src/a11y_investigator/templates/project-policy/`에 옮기고 `pyproject.toml` package-data에 등록. `policies init <id>`(ID 형식 검사, 기존 폴더 보호, 생성 후 바로 검증·다음 단계 안내) 추가. guide 3.1의 Windows 전용 `copy` 절차를 명령 한 줄로 대체, SERVICE_MVP 6.2·README·CLAUDE.md 갱신. 테스트: `tests/test_policy_init.py` 10개
+- **의존:** T21
+- **배경**
+  - 템플릿이 `docs/policy-template/`에 있다. `docs/`의 다른 문서(설명 문서)와 성격이 다르다.
+  - 사용법이 Windows 전용 `copy` 명령과 수동 수정(`project_id`, `policy_id`)이다.
+  - `knowledge/project-policies/` 아래에는 둘 수 없다. `project.yaml`이 있는 폴더를 모두 프로젝트로 인식해 인덱싱되기 때문이다.
+- **작업**
+  - 템플릿을 `src/a11y_investigator/templates/project-policy/`로 옮긴다(패키지 데이터로 등록).
+  - CLI `policies init <project_id>` 추가
+    - 템플릿을 `knowledge/project-policies/<project_id>/`로 복사하고 `project_id`·`policy_id`를 채운다.
+    - 이미 있는 폴더는 덮어쓰지 않는다. 프로젝트 ID 형식을 검사한다.
+    - 만든 뒤 `policies check` 결과를 보여 준다.
+  - 테스트: 생성한 프로젝트가 `check_project`를 통과하는지(템플릿이 스키마와 어긋나지 않는지), 기존 폴더를 보호하는지, 잘못된 ID를 거부하는지
+  - 문서: guide 3.1, SERVICE_MVP 6.2, README 6절·코드 위치, CLAUDE.md
+- **완료 조건:** `python a11y.py policies init <id>` 한 번으로 검증을 통과하는 프로젝트 폴더가 만들어지고, 문서에 수동 복사 절차가 남아 있지 않다.

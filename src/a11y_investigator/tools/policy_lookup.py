@@ -17,6 +17,9 @@ from a11y_investigator.rag.metadata import Chunk, ChunkMetadata
 from a11y_investigator.schemas.analyzer import TargetLevel
 
 _FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n(.*)\Z", re.DOTALL)
+_PROJECT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+TEMPLATE_DIR = Path(__file__).resolve().parents[1] / "templates" / "project-policy"
+TEMPLATE_PLACEHOLDER = "my-project"
 COMPONENTS = {"button", "dialog", "tabs", "combobox"}
 
 
@@ -147,6 +150,26 @@ def check_project(
             problems.append(f"{name}: policy_id '{policy.policy_id}'가 {seen[policy.policy_id]}와 중복됩니다.")
         seen.setdefault(policy.policy_id, name)
     return policies, problems
+
+
+def init_project(project_id: str, root: Path | None = None, template_dir: Path = TEMPLATE_DIR) -> list[Path]:
+    """Create knowledge/project-policies/<project_id>/ from the template (T22). Never overwrites."""
+    if not _PROJECT_ID_RE.match(project_id):
+        raise PolicyError(
+            f"프로젝트 ID는 영문 소문자·숫자·하이픈만 쓸 수 있습니다(예: my-team-ds): {project_id!r}"
+        )
+    folder = _project_dir(project_id, root)
+    if folder.exists():
+        raise PolicyError(f"이미 있는 폴더입니다. 덮어쓰지 않습니다: {folder}")
+    folder.mkdir(parents=True)
+    created = []
+    for source, name in ((template_dir / "project.yaml", "project.yaml"),
+                         (template_dir / "policy-example.md", "btn-001.md")):
+        text = source.read_text(encoding="utf-8").replace(TEMPLATE_PLACEHOLDER, project_id)
+        target = folder / name
+        target.write_text(text, encoding="utf-8", newline="\n")
+        created.append(target)
+    return created
 
 
 def policy_chunks(root: Path | None = None) -> list[Chunk]:
