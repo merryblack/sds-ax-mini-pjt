@@ -1,9 +1,9 @@
 # SERVICE · A11y Investigator
 
-> 근거 기반 React 접근성 진단·개선 Agent. MVP 구현 상세는 [SERVICE_MVP.md](SERVICE_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md) 참조.
+> 근거 기반 웹(React DOM) 접근성 진단·개선 Agent. React Native·모바일 네이티브 앱은 범위 밖이다. MVP 구현 상세는 [SERVICE_MVP.md](SERVICE_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md) 참조.
 
 ## 1. 사용자·문제·가치
-- **사용자:** 접근성 전담 인력이 없는 팀에서 디자인 시스템을 쓰며 React 컴포넌트를 만드는 프론트엔드 개발자
+- **사용자:** 접근성 전담 인력이 없는 팀에서 디자인 시스템을 쓰며 웹 React 컴포넌트를 만드는 프론트엔드 개발자
 - **문제:** 접근성 위반을 찾아도 WCAG 근거와 올바른 수정 방법을 확인하는 데 시간이 오래 걸리고, 결과가 사람마다 다르다.
 - **지금은 어떻게 해결하나**
   - ESLint(jsx-a11y) 경고만 보고 감으로 수정하거나, WCAG·APG 문서를 직접 찾아본다.

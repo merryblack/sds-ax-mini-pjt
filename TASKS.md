@@ -1,10 +1,10 @@
 # A11y Investigator — MVP Tasks
 
-[SERVICE_MVP.md](SERVICE_MVP.md)를 순서대로 구현하기 위한 작업 목록이다. 각 Task의 "참조"는 SERVICE_MVP.md의 절 번호이다. MVP는 **React(JSX / TSX)만** 지원한다.
+[SERVICE_MVP.md](SERVICE_MVP.md)를 순서대로 구현하기 위한 작업 목록이다. 각 Task의 "참조"는 SERVICE_MVP.md의 절 번호이다. MVP는 **웹(React DOM)의 React(JSX / TSX)만** 지원한다.
 
 ## 한눈에 보기
 
-**5단계 · 22개 Task**
+**5단계 · 23개 Task**
 
 | 단계 | Task | 개수 | 끝나면 할 수 있는 것 | 상태 |
 |---|---|---|---|---|
@@ -12,7 +12,7 @@
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
 | Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | ✅ 완료 (M3, M4) |
-| Phase 4. 사용성 | T21–T22 | 2 | 어떤 OS·셸에서도 같은 명령으로 설치·실행하고, 새 프로젝트 지침을 명령 하나로 만들 수 있음. 문서가 코드와 일치함 | ✅ 완료 |
+| Phase 4. 사용성 | T21–T23 | 3 | 어떤 OS·셸에서도 같은 명령으로 설치·실행하고, 새 프로젝트 지침을 명령 하나로 만들 수 있음. 문서가 코드와 일치함. 다양한 예시로 바로 시험해 볼 수 있음 | ✅ 완료 |
 
 ### 중간 점검 (Milestone)
 
@@ -318,3 +318,15 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
     1. 코드와 다른 사실 오류 수정 (노드 구현 이름, 상태·스키마, 디렉터리, 메타데이터 예시, guardrail 목록 등)
     2. 중복되거나 과하게 설명된 내용 축약 (SERVICE_MVP 9.2·12·14, decisions D3·합격선, evaluation RAGAS·측정 기록, TASKS T18–T22, ROADMAP 개정 이력)
 - **완료 조건:** `python a11y.py policies init <id>` 한 번으로 검증을 통과하는 프로젝트 폴더가 만들어지고, 문서에 수동 복사 절차가 남아 있지 않다.
+
+### T23. 실행 예시 컴포넌트 추가 ✅ 완료 (2026-11-20)
+- [x] **참조:** 3.3, [docs/guide.md](docs/guide.md) 1장 — 결과: 예시 7개 추가(JSX 3, TSX 4). `--project demo-ds`로 실행해 6개 `improved`(모두 1회 통과), `login_form.tsx`는 정책 위반만 있어 `no_change_needed`. MVP 범위를 웹(React DOM)으로 문서에 명시. 확인 중 발견: `modal.tsx` 한 번의 실행에서 정책 판정이 빠짐(LLM 누락, 가드레일 미감지)
+- **의존:** T22
+- **배경:** `examples/`에 `save_button.jsx` 하나뿐이라 처음 쓰는 사람이 다양한 경우를 시험해 보기 어렵다. 인터넷 코드는 라이선스 문제가 있어, 실무에서 흔한 구현 패턴을 재현해 직접 작성한다.
+- **작업**
+  1. 흔한 접근성 실수가 담긴 평범한 컴포넌트를 JSX·TSX로 작성한다 (드롭다운, 모달, 상품 카드, 탭, 검색 자동완성, 아이콘 툴바, 문제 없는 대조 예시)
+  2. 평가 데이터셋(`evals/datasets/`)과 겹치지 않는 컴포넌트로 만든다
+  3. 각 예시를 정적 분석기로 돌려 의도한 규칙이 잡히는지 확인한다
+  4. 예시 목록을 guide 1장에 추가하고 README에서 연결한다
+  5. MVP 범위가 웹(React DOM)임을 문서에 명시한다 (SERVICE_MVP 1장, README, SERVICE, ROADMAP, CLAUDE.md). 예시도 모두 웹 컴포넌트로 작성한다 (React Native·모바일 네이티브 앱은 범위 밖)
+- **완료 조건:** 예시마다 정적 분석 결과가 의도와 일치하고, 문서에 목록과 실행 명령이 있다.

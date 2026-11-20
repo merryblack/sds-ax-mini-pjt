@@ -32,6 +32,26 @@ python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 - 코드는 300줄 또는 약 8,000 토큰까지 받는다.
 - 코드 블록은 한 번에 하나만 받는다. 넘으면 분석하지 않고 사유를 안내한다.
 
+### 예시 컴포넌트
+
+`examples/`에 실무에서 흔한 구현 패턴을 재현한 웹(React DOM) 컴포넌트가 있다. 파일 이름만 바꿔 위 명령으로 실행해 본다(1회 약 $0.06).
+
+| 파일 | 패턴 | 정적 분석이 잡는 문제 | 실행 결과 (`--project demo-ds`) |
+|---|---|---|---|
+| `save_button.jsx` | `onClick`만 있는 div 버튼 | 키보드 조작 불가 | `improved` |
+| `dropdown_menu.jsx` | div 트리거와 li 항목으로 만든 사용자 메뉴 | 키보드 조작 불가 | `improved` (`aria-expanded` 누락도 LLM이 진단) |
+| `modal.tsx` | 오버레이 클릭으로 닫는 모달, × 글자 닫기 | 키보드 조작 불가 | `improved` (dialog 역할 누락은 LLM이 진단, 포커스 관리는 권장사항) |
+| `product_card.jsx` | 카드 전체를 클릭하는 상품 카드 | 키보드 조작 불가, 이미지 대체 텍스트 없음 | `improved` |
+| `tabs.tsx` | li로 만든 탭 | 키보드 조작 불가 | `improved` (탭 역할·선택 상태는 LLM이 진단) |
+| `search_autocomplete.jsx` | placeholder만 있는 검색창, 클릭으로 고르는 추천 목록 | 키보드 조작 불가 | `improved` (레이블 없음은 LLM이 진단) |
+| `icon_toolbar.tsx` | 아이콘만 있는 에디터 툴바 버튼 | 없음 | `improved` (버튼 이름 없음을 LLM만 잡음) |
+| `login_form.tsx` | 레이블·오류 안내를 갖춘 로그인 폼 (대조 예시) | 없음 | `no_change_needed` (접근성 문제는 없음. `demo-ds` 정책상 네이티브 `<button>`이 정책 위반으로 보고됨) |
+
+- "정적 분석이 잡는 문제"는 분석기로 확인한 결과다.
+- "실행 결과"는 2026-11-20 실행 기준이다. 모든 `improved`는 1회 시도로 재검증을 통과했다.
+- LLM 판단이라 실행마다 다를 수 있다. 예를 들어 `modal.tsx`는 한 번의 실행에서 정책 판정이 빠지기도 했다.
+- 정책 없이(`--project` 생략) 실행하면 `login_form.tsx`는 `no_issue_detected`가 기대 결과다.
+
 ### 출력
 
 **보고서:** Markdown 9개 항목으로 나온다.

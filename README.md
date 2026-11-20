@@ -1,7 +1,7 @@
 # 미니 PJT: A11y Investigator
 
 ## 무엇을 푸나
-React 컴포넌트의 접근성 위반을 찾아도 WCAG 근거와 올바른 수정 방법을 확인하는 데 시간이 오래 걸리고 결과가 사람마다 다르다. A11y Investigator는 정적 분석과 WCAG·APG 근거 검색으로 문제를 진단하고, 재검증된 개선 코드를 돌려준다.
+웹 React 컴포넌트의 접근성 위반을 찾아도 WCAG 근거와 올바른 수정 방법을 확인하는 데 시간이 오래 걸리고 결과가 사람마다 다르다. A11y Investigator는 정적 분석과 WCAG·APG 근거 검색으로 문제를 진단하고, 재검증된 개선 코드를 돌려준다. 대상은 **웹(React DOM)**이며, React Native와 모바일 네이티브 앱은 다루지 않는다.
 
 | 문서 | 내용 |
 |---|---|
@@ -133,7 +133,7 @@ python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 - Bedrock을 호출한다. 1회 약 25초, 약 $0.06이다(현재 기준).
 - `a11y.py`는 가상환경의 CLI를 대신 실행하는 런처다. 가상환경을 활성화했다면 `a11y-investigator analyze ...`로 바로 써도 된다.
 
-옵션 전체, 출력 예시, outcome 종류, Python에서 실행하는 방법은 [사용 가이드 1장](docs/guide.md#1-분석-실행)을 참고한다.
+옵션 전체, 출력 예시, outcome 종류, Python에서 실행하는 방법은 [사용 가이드 1장](docs/guide.md#1-분석-실행)을 참고한다. `examples/`에는 드롭다운, 모달, 상품 카드, 탭, 검색 자동완성, 아이콘 툴바, 로그인 폼 예시가 더 있다(목록은 [사용 가이드 1장](docs/guide.md#예시-컴포넌트)).
 
 ### 6. 내 프로젝트 지침 추가하기
 

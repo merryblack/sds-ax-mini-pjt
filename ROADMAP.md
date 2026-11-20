@@ -8,7 +8,7 @@
 | 상태 | MVP(V0.2) 완료, 다음 단계 계획에 사용 |
 | 프로젝트 유형 | Agentic RAG · Developer Tool |
 | 개발 형태 | 개인 프로젝트 |
-| 입력 언어 | React(JSX/TSX) — HTML + JavaScript는 V0.3부터 |
+| 입력 언어 | 웹 React(JSX/TSX) — HTML + JavaScript는 V0.3부터, React Native·모바일 네이티브 앱은 미정 |
 | Agent Framework | LangChain, LangGraph |
 | RAG 저장소 | Chroma |
 | 주요 언어 | Python + JavaScript/TypeScript |

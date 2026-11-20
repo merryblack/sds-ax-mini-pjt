@@ -20,6 +20,7 @@
 
 - 로컬 프로젝트 파일은 읽거나 수정하지 않는다. 사용자가 입력한 코드만 분석한다.
 - 입력 규모는 단일 React 컴포넌트이다.
+- 대상은 **웹(React DOM) 접근성**이다. 기준 문서는 WCAG 2.2와 WAI-ARIA APG이고, 정적 분석과 수정 코드는 HTML 요소와 ARIA 속성을 전제로 한다.
 - HTML 및 HTML + JavaScript 입력은 일정상 MVP에서 제외하고 V0.3에서 지원한다([ROADMAP.md](ROADMAP.md)).
 - 지원 컴포넌트: Button, Dialog, Tabs, Combobox
 
@@ -38,7 +39,7 @@
 | 구분 | 항목 |
 |---|---|
 | P1 stretch (시간이 남으면) | ReAct 추가 조사, MCP 서버, LLM-as-Judge, FastAPI, 민감정보 마스킹, Hybrid Retrieval / Reranking |
-| MVP 제외 | HTML / HTML + JS 입력, 로컬 파일 수정, 브라우저·동적 분석, 스크린리더 테스트, Multi-Agent, 장기 메모리, 문서 동기화 자동화 |
+| MVP 제외 | React Native·모바일 네이티브 앱(iOS / Android), HTML / HTML + JS 입력, 로컬 파일 수정, 브라우저·동적 분석, 스크린리더 테스트, Multi-Agent, 장기 메모리, 문서 동기화 자동화 |
 
 ---
 

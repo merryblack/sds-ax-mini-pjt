@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-A11y Investigator: React(JSX/TSX) 접근성 진단·개선 Agent (LangGraph + Bedrock + Chroma). MVP와 T21~T22까지 완료 상태다.
+A11y Investigator: 웹(React DOM) JSX/TSX 접근성 진단·개선 Agent (LangGraph + Bedrock + Chroma). MVP와 T21~T22까지 완료 상태다.
 구조와 사용법은 [README.md](README.md), [docs/guide.md](docs/guide.md), 평가는 [docs/evaluation.md](docs/evaluation.md)를 본다. 이 파일에는 문서에 없는 작업 규칙만 둔다.
 
 ## 작업 방식
