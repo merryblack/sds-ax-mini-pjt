@@ -1,4 +1,4 @@
-"""T10: retriever (SERVICE_MVP.md 6.5).
+"""T10: retriever (SPEC_MVP.md 6.5).
 
 Most tests use an in-memory fake store (no Chroma, no Bedrock).
 `-m llm` runs the M1 milestone check against the real index.

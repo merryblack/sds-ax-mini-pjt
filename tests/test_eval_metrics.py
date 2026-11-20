@@ -1,4 +1,4 @@
-"""T18: evaluation scoring (SERVICE_MVP.md 9.3). Offline, no Bedrock."""
+"""T18: evaluation scoring (SPEC_MVP.md 9.3). Offline, no Bedrock."""
 from __future__ import annotations
 
 import pytest

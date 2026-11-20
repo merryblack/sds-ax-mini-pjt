@@ -1,4 +1,4 @@
-"""T04: input parser (SERVICE_MVP.md 2장)."""
+"""T04: input parser (SPEC_MVP.md 2장)."""
 from __future__ import annotations
 
 import pytest

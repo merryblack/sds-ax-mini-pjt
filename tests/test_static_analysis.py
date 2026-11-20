@@ -1,4 +1,4 @@
-"""T06: Python <-> Node analyzer bridge (SERVICE_MVP.md 5.1).
+"""T06: Python <-> Node analyzer bridge (SPEC_MVP.md 5.1).
 
 These tests run the real Node analyzer (~1.2 s each, no network, no cost).
 """

@@ -1,4 +1,4 @@
-"""Document-type-aware chunking for official sources (SERVICE_MVP.md 6.4).
+"""Document-type-aware chunking for official sources (SPEC_MVP.md 6.4).
 
 | Source        | Unit                                                         |
 |---------------|--------------------------------------------------------------|

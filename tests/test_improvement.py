@@ -1,4 +1,4 @@
-"""T13: fix chain (SERVICE_MVP.md 4.2, 1.2 minimal modification, 8장).
+"""T13: fix chain (SPEC_MVP.md 4.2, 1.2 minimal modification, 8장).
 
 Offline tests check prompt inputs and wiring with a fake model.
 `-m llm` runs analyze -> retrieve -> diagnose -> decide -> fix on Bedrock and re-analyzes the result.

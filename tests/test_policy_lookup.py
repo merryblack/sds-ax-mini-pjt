@@ -1,4 +1,4 @@
-"""T09: example project policies (SERVICE_MVP.md 6.2, Scenario C)."""
+"""T09: example project policies (SPEC_MVP.md 6.2, Scenario C)."""
 from __future__ import annotations
 
 import pytest

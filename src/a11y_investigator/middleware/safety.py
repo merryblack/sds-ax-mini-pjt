@@ -1,4 +1,4 @@
-"""Output guardrails applied in plain code (SERVICE_MVP.md 8장).
+"""Output guardrails applied in plain code (SPEC_MVP.md 8장).
 
 T12 — citation checks on the diagnosis:
 - drop document evidence whose ID was not provided to the model
@@ -29,7 +29,7 @@ from a11y_investigator.schemas.diagnosis import (
 
 ANALYZER_TOOL = "eslint-jsx-a11y"
 
-# Lint-bypass comments (SERVICE_MVP.md 8장). Matched in // and /* */ comments.
+# Lint-bypass comments (SPEC_MVP.md 8장). Matched in // and /* */ comments.
 BLOCKED_PATTERNS: dict[str, re.Pattern[str]] = {
     "eslint-disable": re.compile(r"eslint-disable(?:-next-line|-line)?\b"),
     "eslint-enable": re.compile(r"eslint-enable\b"),

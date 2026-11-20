@@ -1,4 +1,4 @@
-"""Run the Node analyzer (analyzer-js/analyze.mjs) via subprocess (SERVICE_MVP.md 5.1).
+"""Run the Node analyzer (analyzer-js/analyze.mjs) via subprocess (SPEC_MVP.md 5.1).
 
 Code goes in on stdin, one AnalyzerResult JSON comes back on stdout.
 Any failure to run the analyzer raises `StaticAnalysisError`; the graph node turns

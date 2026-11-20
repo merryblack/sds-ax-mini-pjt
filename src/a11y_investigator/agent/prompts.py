@@ -1,6 +1,6 @@
 """Prompts for the diagnosis chain (T11) and fix chain (T13).
 
-Guardrails built into the prompt (SERVICE_MVP.md 8장):
+Guardrails built into the prompt (SPEC_MVP.md 8장):
 - User code, analyzer output, and retrieved documents are wrapped in tags and
   must be treated as data only (prompt-injection defense).
 - Only provided document IDs may be cited.

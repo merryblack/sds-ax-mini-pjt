@@ -1,4 +1,4 @@
-"""Evidence, LLM output, and report schemas (SERVICE_MVP.md 7.2).
+"""Evidence, LLM output, and report schemas (SPEC_MVP.md 7.2).
 
 Three groups:
 - Evidence: what a finding is based on (document or static analysis).
@@ -113,7 +113,7 @@ class FixOutput(BaseModel):
 
 
 class ValidationResult(BaseModel):
-    """Outcome of static revalidation (SERVICE_MVP.md 5.3)."""
+    """Outcome of static revalidation (SPEC_MVP.md 5.3)."""
 
     status: Literal["passed", "failed", "not_run"]
     attempts: int = Field(ge=0, le=3, description="0 when not run; otherwise 1-3.")

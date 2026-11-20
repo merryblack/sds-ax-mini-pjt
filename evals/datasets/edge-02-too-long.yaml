@@ -4,7 +4,7 @@ kind: rejected
 component: other
 code_type: jsx
 request: 이 목록 컴포넌트 전체를 검토해 줘.
-note: 입력 제한(300줄) 초과. 분석하지 않고 줄 수와 한도를 안내해야 한다(SERVICE_MVP.md 2.3). 코드는 313줄.
+note: 입력 제한(300줄) 초과. 분석하지 않고 줄 수와 한도를 안내해야 한다(SPEC_MVP.md 2.3). 코드는 313줄.
 code: |
   export function LongList() {
     return (

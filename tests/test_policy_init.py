@@ -1,4 +1,4 @@
-"""T22: project policy template and `policies init` (SERVICE_MVP.md 6.2). Offline."""
+"""T22: project policy template and `policies init` (SPEC_MVP.md 6.2). Offline."""
 from __future__ import annotations
 
 import pytest

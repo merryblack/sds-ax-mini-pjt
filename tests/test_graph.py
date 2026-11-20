@@ -1,4 +1,4 @@
-"""T15: graph routing, report, level resolution, policy auto-reindex (SERVICE_MVP.md 4장, 6.2).
+"""T15: graph routing, report, level resolution, policy auto-reindex (SPEC_MVP.md 4장, 6.2).
 
 Offline tests replace the analyzer, retriever, and LLM chains with fakes.
 `-m llm` runs the M2 milestone on the real pipeline.

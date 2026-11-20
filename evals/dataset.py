@@ -1,4 +1,4 @@
-"""Evaluation dataset (in-out set) schema and loader (SERVICE_MVP.md 9.2, TASKS.md T20).
+"""Evaluation dataset (in-out set) schema and loader (SPEC_MVP.md 9.2, TASKS.md T20).
 
 One YAML file per case in `evals/datasets/`. Labels describe what a correct run
 should produce; `evals/evaluate.py` compares them with the real report.
@@ -45,7 +45,7 @@ class ExpectedFinding(BaseModel):
     @model_validator(mode="after")
     def _scope_for_suspected(self) -> ExpectedFinding:
         if self.status == "suspected" and self.fix_scope is None:
-            raise ValueError("suspected findings need fix_scope (decide rule, SERVICE_MVP.md 5.2)")
+            raise ValueError("suspected findings need fix_scope (decide rule, SPEC_MVP.md 5.2)")
         return self
 
 

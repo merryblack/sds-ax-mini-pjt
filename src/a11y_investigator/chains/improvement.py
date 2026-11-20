@@ -1,4 +1,4 @@
-"""Fix chain: prompt | Claude (structured output) -> FixOutput (SERVICE_MVP.md 4.2).
+"""Fix chain: prompt | Claude (structured output) -> FixOutput (SPEC_MVP.md 4.2).
 
 Only findings with `will_fix=True` are sent as fix targets. On a retry the
 previous attempt and why it failed (from revalidation, T14) are included.

@@ -1,4 +1,4 @@
-"""Chroma metadata normalization (SERVICE_MVP.md 6.4).
+"""Chroma metadata normalization (SPEC_MVP.md 6.4).
 
 Chroma metadata values must be scalars (str / int / float / bool) and cannot be
 None. Lists are stored as comma-separated strings and None as "".

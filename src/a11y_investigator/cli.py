@@ -1,4 +1,4 @@
-"""CLI: `analyze`, `policies check`, `policies init` (SERVICE_MVP.md 2.2, 6.2).
+"""CLI: `analyze`, `policies check`, `policies init` (SPEC_MVP.md 2.2, 6.2).
 
 Exit codes for `analyze`: 0 = analysis completed (any outcome except analysis_failed),
 1 = analysis_failed, 2 = bad command-line input.

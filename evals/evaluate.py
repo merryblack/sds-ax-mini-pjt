@@ -1,4 +1,4 @@
-"""Evaluation runner (SERVICE_MVP.md 9장).
+"""Evaluation runner (SPEC_MVP.md 9장).
 
     python -m evals.evaluate                       # all 19 cases + RAGAS
     python -m evals.evaluate --case button-01 --no-ragas
@@ -94,7 +94,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
         f"- 모델: `{summary['model']}` / RAGAS 평가 모델: `{ragas.get('judge_model') or '—'}`",
         f"- 인덱스: `{summary['index_version']}` / 케이스: {summary['cases']}개",
         "",
-        "## 지표 (SERVICE_MVP.md 9.3)",
+        "## 지표 (SPEC_MVP.md 9.3)",
         "",
         "| 지표 | 결과 | 목표 | 통과 |",
         "|---|---|---|---|",

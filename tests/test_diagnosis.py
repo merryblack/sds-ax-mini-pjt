@@ -1,4 +1,4 @@
-"""T11: diagnosis chain (SERVICE_MVP.md 4.2, 5.2, 8장).
+"""T11: diagnosis chain (SPEC_MVP.md 4.2, 5.2, 8장).
 
 Offline tests check prompt inputs and chain wiring with a fake model.
 `-m llm` runs the real pipeline (analyzer -> retrieval -> Claude) on three samples.

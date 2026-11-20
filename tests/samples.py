@@ -1,4 +1,4 @@
-"""Code samples shared by several test files (SERVICE_MVP.md 1.4 scenarios)."""
+"""Code samples shared by several test files (SPEC_MVP.md 1.4 scenarios)."""
 from __future__ import annotations
 
 # Scenario A: clickable div (keyboard inaccessible).

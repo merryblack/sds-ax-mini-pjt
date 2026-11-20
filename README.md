@@ -8,7 +8,7 @@
 | [docs/guide.md](docs/guide.md) | 사용 가이드: 분석 실행 상세, 인덱스 관리, 프로젝트 지침 관리 |
 | [docs/evaluation.md](docs/evaluation.md) | 평가 리포트: 인-아웃 세트, 결과, RAGAS, 측정 기록 |
 | [docs/decisions.md](docs/decisions.md) | 모델·Trace 방식 등 결정 기록, 사용량 |
-| [SERVICE.md](SERVICE.md) · [SERVICE_MVP.md](SERVICE_MVP.md) | 서비스 정의 · MVP 구현 명세 |
+| [SERVICE.md](SERVICE.md) · [SPEC_MVP.md](SPEC_MVP.md) | 서비스 정의 · MVP 구현 명세 |
 | [TASKS.md](TASKS.md) · [ROADMAP.md](ROADMAP.md) | 작업 목록 · 장기 계획 |
 
 ## 기술 스택
@@ -167,7 +167,7 @@ python a11y.py analyze --file Component.tsx --project my-project
 
 합격 기준은 전체 80% 이상, guardrail 100%다(SERVICE.md).
 
-| 지표 (SERVICE_MVP.md 9.3) | 결과 | 목표 |
+| 지표 (SPEC_MVP.md 9.3) | 결과 | 목표 |
 |---|---|---|
 | `confirmed` Finding 재현율 | 100% | ≥ 90% |
 | 문제 없는 코드를 그대로 두는 비율 | 83% | ≥ 80% |

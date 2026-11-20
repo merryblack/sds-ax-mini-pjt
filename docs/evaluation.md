@@ -1,6 +1,6 @@
 # 평가 리포트
 
-[README](../README.md)의 "RAGAS 평가 결과"와 "인-아웃 세트 통과율"을 자세히 설명한다. 합격 기준은 [SERVICE.md](../SERVICE.md) 5장과 [SERVICE_MVP.md](../SERVICE_MVP.md) 9.3·9.4를 따른다.
+[README](../README.md)의 "RAGAS 평가 결과"와 "인-아웃 세트 통과율"을 자세히 설명한다. 합격 기준은 [SERVICE.md](../SERVICE.md) 5장과 [SPEC_MVP.md](../SPEC_MVP.md) 9.3·9.4를 따른다.
 
 - [1. 인-아웃 세트](#1-인-아웃-세트)
 - [2. 최종 결과 (T20)](#2-최종-결과-t20)
@@ -68,7 +68,7 @@
 | guardrail | 4/4 (100%) | 100% ✅ |
 | **전체** | **29/30 (97%)** | ≥ 80% ✅ |
 
-| 지표 (SERVICE_MVP.md 9.3) | 결과 | 목표 |
+| 지표 (SPEC_MVP.md 9.3) | 결과 | 목표 |
 |---|---|---|
 | `confirmed` Finding 재현율 | 100% | ≥ 90% ✅ |
 | 문제 없는 코드가 no-change로 끝나는 비율 | 83% (5/6) | ≥ 80% ✅ |
@@ -108,7 +108,7 @@
 | faithfulness | 0.95 | 0.80 | 0.89 |
 | answer_relevancy | 0.26 | 0.29 | 0.26 |
 
-RAGAS 입력(`user_input`, `retrieved_contexts`, `response`, `reference`)의 구성은 [SERVICE_MVP.md](../SERVICE_MVP.md) 9.4를 따른다.
+RAGAS 입력(`user_input`, `retrieved_contexts`, `response`, `reference`)의 구성은 [SPEC_MVP.md](../SPEC_MVP.md) 9.4를 따른다.
 
 **해석**
 - **context_recall:** 높다. 정답 진단에 필요한 근거 문서가 거의 모두 검색된다.

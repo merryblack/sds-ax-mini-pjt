@@ -1,4 +1,4 @@
-"""T17, T20: evaluation dataset / in-out set (SERVICE_MVP.md 9.2).
+"""T17, T20: evaluation dataset / in-out set (SPEC_MVP.md 9.2).
 
 Schema and reference checks run offline. The `node` test re-runs the real
 analyzer to keep `static_rule_ids` labels in sync with what the analyzer reports.

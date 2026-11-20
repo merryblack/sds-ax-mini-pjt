@@ -1,4 +1,4 @@
-"""T07: rule -> WCAG mapping (SERVICE_MVP.md 6.3)."""
+"""T07: rule -> WCAG mapping (SPEC_MVP.md 6.3)."""
 from __future__ import annotations
 
 import json

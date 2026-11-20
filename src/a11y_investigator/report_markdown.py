@@ -1,4 +1,4 @@
-"""Markdown rendering of DiagnosisReport for the CLI (SERVICE_MVP.md 3.1).
+"""Markdown rendering of DiagnosisReport for the CLI (SPEC_MVP.md 3.1).
 
 Sections follow the nine report items:
 1 요약 · 2 발견된 문제 · 3 근거 · 4 프로젝트 정책 · 5 개선 필요 여부 ·

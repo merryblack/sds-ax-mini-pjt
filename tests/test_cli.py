@@ -1,4 +1,4 @@
-"""T16: CLI, Markdown report, trace, policies check (SERVICE_MVP.md 2.2, 3.1, 9.1, 6.2).
+"""T16: CLI, Markdown report, trace, policies check (SPEC_MVP.md 2.2, 3.1, 9.1, 6.2).
 
 Offline: the analyzer, retriever, and LLM chains are replaced with the fakes in fakes.py.
 """

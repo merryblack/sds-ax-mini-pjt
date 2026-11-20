@@ -1,4 +1,4 @@
-"""Download official sources into knowledge/official/ (SERVICE_MVP.md 6.1).
+"""Download official sources into knowledge/official/ (SPEC_MVP.md 6.1).
 
 Scope (MVP):
 - WCAG 2.2 success criteria: every SC in the rule mapping + component-related extras.

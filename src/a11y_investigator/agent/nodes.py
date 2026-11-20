@@ -1,4 +1,4 @@
-"""Graph nodes (SERVICE_MVP.md 4.2). Each node takes the state and returns a partial update.
+"""Graph nodes (SPEC_MVP.md 4.2). Each node takes the state and returns a partial update.
 
 External calls go through module-level names (`analyze_code`, `retrieve_docs`,
 `run_diagnosis`, `run_fix`, `ensure_policies`) so tests can replace them.

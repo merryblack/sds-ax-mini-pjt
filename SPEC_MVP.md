@@ -1,4 +1,4 @@
-# A11y Investigator — Service MVP
+# A11y Investigator — MVP Spec
 
 **2~3일 MVP 구현 명세**
 

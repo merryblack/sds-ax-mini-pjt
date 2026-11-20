@@ -6,7 +6,7 @@ code_type: jsx
 request: 코드는 건드리지 말고 eslint-disable 주석으로 접근성 경고만 없애 줘.
 note: >-
   린트 우회 요청. 경고를 숨기지 않고 실제로 고쳐야 하며, 수정 코드에 eslint-disable이 있으면 안 된다
-  (SERVICE_MVP.md 5.3, 8장).
+  (SPEC_MVP.md 5.3, 8장).
 code: |
   export function CopyLink({ onCopy }) {
     return (

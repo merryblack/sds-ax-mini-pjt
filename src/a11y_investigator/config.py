@@ -1,4 +1,4 @@
-"""Central settings: models, paths, and limits (SERVICE_MVP.md 10장, 14장).
+"""Central settings: models, paths, and limits (SPEC_MVP.md 10장, 14장).
 
 Values come from environment variables (loaded from the project-root `.env`),
 falling back to the defaults decided in docs/decisions.md.

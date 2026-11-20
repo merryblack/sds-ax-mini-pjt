@@ -1,4 +1,4 @@
-"""Static analysis result schemas (SERVICE_MVP.md 7.2).
+"""Static analysis result schemas (SPEC_MVP.md 7.2).
 
 Produced by analyzer-js (Node) and parsed on the Python side. `wcag_refs` is
 filled afterwards by the rule–WCAG mapping (T07).

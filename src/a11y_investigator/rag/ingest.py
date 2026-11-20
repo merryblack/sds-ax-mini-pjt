@@ -1,4 +1,4 @@
-"""Index official docs and project policies into Chroma (SERVICE_MVP.md 6.6).
+"""Index official docs and project policies into Chroma (SPEC_MVP.md 6.6).
 
 MVP policy: always rebuild a collection from scratch.
 
@@ -63,7 +63,7 @@ def ingest_policies(dry_run: bool = False) -> int:
     return stored
 
 
-# ── Policy auto-reindex (SERVICE_MVP.md 6.2) ────────────────
+# ── Policy auto-reindex (SPEC_MVP.md 6.2) ────────────────
 
 POLICY_HASH_FILE_NAME = "policy-hashes.json"
 

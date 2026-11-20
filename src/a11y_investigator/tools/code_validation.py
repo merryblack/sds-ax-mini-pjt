@@ -1,4 +1,4 @@
-"""Revalidation of generated code (SERVICE_MVP.md 5.3). No LLM.
+"""Revalidation of generated code (SPEC_MVP.md 5.3). No LLM.
 
 Pass criteria (all must hold):
 1. The improved code parses.

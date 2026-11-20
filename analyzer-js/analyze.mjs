@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Static accessibility analyzer for React JSX/TSX (SERVICE_MVP.md 5.1).
+ * Static accessibility analyzer for React JSX/TSX (SPEC_MVP.md 5.1).
  *
  * Usage:
  *   node analyze.mjs --type jsx|tsx [--components '{"Button":"button"}'] < Component.jsx

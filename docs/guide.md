@@ -27,7 +27,7 @@ python a11y.py analyze --file examples/save_button.jsx --project demo-ds
 | `--json` | 사람이 읽는 Markdown 보고서 대신 `DiagnosisReport` JSON 출력 |
 | `--no-trace` | Trace 파일을 남기지 않음 |
 
-입력 규칙(SERVICE_MVP.md 2장)
+입력 규칙(SPEC_MVP.md 2장)
 - 지원 입력은 React JSX / TSX이다. HTML 등은 `analysis_failed`로 거절한다.
 - 코드는 300줄 또는 약 8,000 토큰까지 받는다.
 - 코드 블록은 한 번에 하나만 받는다. 넘으면 분석하지 않고 사유를 안내한다.

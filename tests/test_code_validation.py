@@ -1,4 +1,4 @@
-"""T14: revalidation (SERVICE_MVP.md 5.3, 8장). No LLM.
+"""T14: revalidation (SPEC_MVP.md 5.3, 8장). No LLM.
 
 Logic tests use a fake analyzer; a few tests run the real Node analyzer.
 """

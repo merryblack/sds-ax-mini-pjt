@@ -21,9 +21,9 @@
 | 문서 | 역할 | 언제 보는가 |
 |---|---|---|
 | **ROADMAP.md** (이 문서) | 프로젝트가 왜 필요하고 어디로 가는가. 배경, 목적, 설계 원칙, 제품 범위, 우선순위, 버전별 장기 계획 | MVP 이후 다음 단계를 계획하거나, 판단 기준이 필요할 때 |
-| [SERVICE_MVP.md](SERVICE_MVP.md) | 2~3일 MVP(P0)를 어떻게 구현하는가. 입출력, 그래프, 판단 규칙, 스키마, 일정, 인수 기준 | MVP를 구현할 때 |
+| [SPEC_MVP.md](SPEC_MVP.md) | 2~3일 MVP(P0)를 어떻게 구현하는가. 입출력, 그래프, 판단 규칙, 스키마, 일정, 인수 기준 | MVP를 구현할 때 |
 
-두 문서가 충돌하면 설계 원칙은 이 문서, MVP 구현 상세는 SERVICE_MVP.md를 따른다.
+두 문서가 충돌하면 설계 원칙은 이 문서, MVP 구현 상세는 SPEC_MVP.md를 따른다.
 
 ---
 
@@ -155,7 +155,7 @@ LLM은 문맥 해석, 추가 조사, 개선 방법 판단 및 코드 생성에 �
 
 ## 3.3. MVP 범위
 
-MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐름 전체를 구현한다. 범위와 구현 상세는 [SERVICE_MVP.md](SERVICE_MVP.md)를 따른다.
+MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐름 전체를 구현한다. 범위와 구현 상세는 [SPEC_MVP.md](SPEC_MVP.md)를 따른다.
 
 ---
 
@@ -163,7 +163,7 @@ MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐�
 
 | 단계 | 내용 | 버전 |
 |---|---|---|
-| **P0 — MVP 필수** | LCEL / Pydantic 구조화 출력, LangGraph 고정 Workflow, Chroma RAG, 규칙–WCAG 매핑, 정적 분석(React JSX / TSX), 개선 필요성 판단, 개선 코드 생성, 정적 재검증, 최소 Guardrails, Trace, 평가 데이터셋, RAGAS | V0.2 ([SERVICE_MVP.md](SERVICE_MVP.md)) |
+| **P0 — MVP 필수** | LCEL / Pydantic 구조화 출력, LangGraph 고정 Workflow, Chroma RAG, 규칙–WCAG 매핑, 정적 분석(React JSX / TSX), 개선 필요성 판단, 개선 코드 생성, 정적 재검증, 최소 Guardrails, Trace, 평가 데이터셋, RAGAS | V0.2 ([SPEC_MVP.md](SPEC_MVP.md)) |
 | **P1 — Stretch** | HTML / HTML + JS 입력 지원, ReAct 추가 조사, MCP 서버, 민감정보 Guardrails, Middleware, FastAPI, LLM-as-Judge, Hybrid Retrieval, Reranking | MVP 기간에 시간이 남으면 시작, V0.3에서 완성 (6장) |
 | **P2 — 장기 확장** | Multi-Agent, Plan-Execute, Long-term Memory, HITL, 로컬 파일 접근·수정, 동적 분석, 코딩 Agent·CI 연동 | V0.4 이후 (7장) |
 
@@ -173,7 +173,7 @@ MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐�
 
 | 버전 | 이름 | 내용 |
 |---|---|---|
-| V0.2 | Prompt-based Analysis & Improvement | **MVP.** 프롬프트로 입력한 React 코드의 정적 분석, Chroma RAG, 접근성 판단, 개선 코드 출력 ([SERVICE_MVP.md](SERVICE_MVP.md)) |
+| V0.2 | Prompt-based Analysis & Improvement | **MVP.** 프롬프트로 입력한 React 코드의 정적 분석, Chroma RAG, 접근성 판단, 개선 코드 출력 ([SPEC_MVP.md](SPEC_MVP.md)) |
 | V0.3 | Advanced Agent Workflow | HTML / HTML + JS 입력 지원. MVP에서 stretch로 남은 ReAct, MCP 완성. 민감정보 Guardrails, Middleware, Hybrid Retrieval, Reranking, Query Expansion |
 | V0.4 | Local Project Integration | 로컬 React 프로젝트 탐색, 관련 파일 읽기, 프로젝트 지침 자동 수집 후보 생성 |
 | V0.5 | Automated Code Modification | 개선 코드 Diff 생성, 사용자 승인(HITL), 실제 파일 변경, 테스트 및 롤백 |
@@ -182,7 +182,7 @@ MVP(제품 V0.2)는 프롬프트로 입력한 코드를 대상으로 3.1의 흐�
 | V0.8 | Coding Agent Integration | MCP를 통해 Codex, Claude Code 등 범용 코딩 Agent에 접근성 진단 기능 제공 |
 | V1.0 | Accessibility Engineering Platform | 다중 프로젝트 정책 관리, PR 리뷰, CI 연동, 검증 이력 및 접근성 품질 관리 |
 
-MVP가 끝나면 SERVICE_MVP.md의 평가 결과와 미결정 사항 기록(`docs/decisions.md`)을 바탕으로 V0.3 범위를 확정한다.
+MVP가 끝나면 SPEC_MVP.md의 평가 결과와 미결정 사항 기록(`docs/decisions.md`)을 바탕으로 V0.3 범위를 확정한다.
 
 ---
 
@@ -241,11 +241,11 @@ MVP에서 구현 비용 때문에 제외한 검사이다.
 ### 인터페이스
 
 - FastAPI 기반 HTTP API
-- 지침 직접 입력 (`--policy-file my-guide.md`): 프로젝트 폴더를 만들지 않고 한 번만 쓰는 지침을 분석에 함께 넘긴다. 분석 시 임시 인덱싱, 프로젝트 없는 정책의 `component_mapping` 처리 방식을 함께 정해야 한다. MVP는 폴더 방식 + 자동 재인덱싱으로 대신한다(SERVICE_MVP.md 6.2).
+- 지침 직접 입력 (`--policy-file my-guide.md`): 프로젝트 폴더를 만들지 않고 한 번만 쓰는 지침을 분석에 함께 넘긴다. 분석 시 임시 인덱싱, 프로젝트 없는 정책의 `component_mapping` 처리 방식을 함께 정해야 한다. MVP는 폴더 방식 + 자동 재인덱싱으로 대신한다(SPEC_MVP.md 6.2).
 
 ### 평가
 
-- RAGAS: MVP(P0)로 승격됨 — SERVICE_MVP.md 9.4 참조. V0.3에서는 측정 대상 확대(정책 근거 등)를 검토
+- RAGAS: MVP(P0)로 승격됨 — SPEC_MVP.md 9.4 참조. V0.3에서는 측정 대상 확대(정책 근거 등)를 검토
 - LLM-as-Judge: 진단 설명의 정확성, 개선 제안의 타당성, 코드 변경의 최소성, 출력의 이해 가능성
 - 기능 유지 여부 검증: 정적 분석만으로는 한계가 있어 테스트 실행과 브라우저 자동화로 보완 (V0.6)
 
@@ -319,4 +319,4 @@ MVP에서 구현 비용 때문에 제외한 검사이다.
 | 동적 분석 | Playwright, axe-core | V0.6 |
 | UI | React | 미정 |
 
-MVP의 버전, 구성, 모델 선택 등 구체적인 결정은 [SERVICE_MVP.md](SERVICE_MVP.md) 10장과 14장을 따른다.
+MVP의 버전, 구성, 모델 선택 등 구체적인 결정은 [SPEC_MVP.md](SPEC_MVP.md) 10장과 14장을 따른다.

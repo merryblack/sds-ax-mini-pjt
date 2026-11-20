@@ -1,4 +1,4 @@
-"""Project policies and project.yaml loading (SERVICE_MVP.md 6.2).
+"""Project policies and project.yaml loading (SPEC_MVP.md 6.2).
 
 Layout:
     knowledge/project-policies/<project_id>/project.yaml   # target_level, component_mapping

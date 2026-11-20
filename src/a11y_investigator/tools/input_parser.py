@@ -1,4 +1,4 @@
-"""Input parsing: code extraction, code_type, input limits, component hints (SERVICE_MVP.md 2장).
+"""Input parsing: code extraction, code_type, input limits, component hints (SPEC_MVP.md 2장).
 
 Everything here is deterministic — no LLM calls.
 """

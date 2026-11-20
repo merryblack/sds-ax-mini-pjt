@@ -10,5 +10,5 @@ def test_settings_defaults() -> None:
 
 
 def test_paths_point_into_project() -> None:
-    assert (settings.project_root / "SERVICE_MVP.md").exists()
+    assert (settings.project_root / "SPEC_MVP.md").exists()
     assert settings.knowledge_dir.is_dir()

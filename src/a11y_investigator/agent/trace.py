@@ -1,4 +1,4 @@
-"""Local JSON trace of one analysis run (SERVICE_MVP.md 9.1, docs/decisions.md D4).
+"""Local JSON trace of one analysis run (SPEC_MVP.md 9.1, docs/decisions.md D4).
 
 Written to data/traces/<trace_id>.json. Records node timings, LLM calls with
 token usage and estimated cost, retrieval queries and documents, every

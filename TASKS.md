@@ -1,6 +1,6 @@
 # A11y Investigator — MVP Tasks
 
-[SERVICE_MVP.md](SERVICE_MVP.md)를 순서대로 구현하기 위한 작업 목록이다. 각 Task의 "참조"는 SERVICE_MVP.md의 절 번호이다. MVP는 **웹(React DOM)의 React(JSX / TSX)만** 지원한다.
+[SPEC_MVP.md](SPEC_MVP.md)를 순서대로 구현하기 위한 작업 목록이다. 각 Task의 "참조"는 SPEC_MVP.md의 절 번호이다. MVP는 **웹(React DOM)의 React(JSX / TSX)만** 지원한다.
 
 ## 한눈에 보기
 
@@ -313,10 +313,10 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
     - 이미 있는 폴더는 덮어쓰지 않는다. 프로젝트 ID 형식을 검사한다.
     - 만든 뒤 `policies check` 결과를 보여 준다.
   - 테스트: 생성한 프로젝트가 `check_project`를 통과하는지(템플릿이 스키마와 어긋나지 않는지), 기존 폴더를 보호하는지, 잘못된 ID를 거부하는지
-  - 문서: guide 3.1, SERVICE_MVP 6.2, README 6절·코드 위치, CLAUDE.md
+  - 문서: guide 3.1, SPEC_MVP 6.2, README 6절·코드 위치, CLAUDE.md
   - 후속: 전체 문서 정리 (구조·넘버링·목록 형식은 유지)
     1. 코드와 다른 사실 오류 수정 (노드 구현 이름, 상태·스키마, 디렉터리, 메타데이터 예시, guardrail 목록 등)
-    2. 중복되거나 과하게 설명된 내용 축약 (SERVICE_MVP 9.2·12·14, decisions D3·합격선, evaluation RAGAS·측정 기록, TASKS T18–T22, ROADMAP 개정 이력)
+    2. 중복되거나 과하게 설명된 내용 축약 (SPEC_MVP 9.2·12·14, decisions D3·합격선, evaluation RAGAS·측정 기록, TASKS T18–T22, ROADMAP 개정 이력)
 - **완료 조건:** `python a11y.py policies init <id>` 한 번으로 검증을 통과하는 프로젝트 폴더가 만들어지고, 문서에 수동 복사 절차가 남아 있지 않다.
 
 ### T23. 실행 예시 컴포넌트 추가 ✅ 완료 (2026-11-20)
@@ -328,5 +328,6 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
   2. 평가 데이터셋(`evals/datasets/`)과 겹치지 않는 컴포넌트로 만든다
   3. 각 예시를 정적 분석기로 돌려 의도한 규칙이 잡히는지 확인한다
   4. 예시 목록을 guide 1장에 추가하고 README에서 연결한다
-  5. MVP 범위가 웹(React DOM)임을 문서에 명시한다 (SERVICE_MVP 1장, README, SERVICE, ROADMAP, CLAUDE.md). 예시도 모두 웹 컴포넌트로 작성한다 (React Native·모바일 네이티브 앱은 범위 밖)
+  5. MVP 범위가 웹(React DOM)임을 문서에 명시한다 (SPEC_MVP 1장, README, SERVICE, ROADMAP, CLAUDE.md). 예시도 모두 웹 컴포넌트로 작성한다 (React Native·모바일 네이티브 앱은 범위 밖)
+  6. 명세 문서 이름 변경: `SERVICE_MVP.md` → `SPEC_MVP.md` (`SERVICE.md`와 역할이 헷갈리지 않게). 문서·코드·테스트·평가 케이스의 참조를 모두 고친다. 당시 생성된 평가 리포트(`evals/reports/`)는 그대로 둔다
 - **완료 조건:** 예시마다 정적 분석 결과가 의도와 일치하고, 문서에 목록과 실행 명령이 있다.

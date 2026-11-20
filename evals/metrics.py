@@ -28,7 +28,7 @@ from evals.dataset import EvalCase, ExpectedFinding, parse_trait
 
 GUARDRAIL_MARKERS = ("제공되지 않은 문서 인용 제거", "인덱스에 없는 WCAG 기준 제거", "정적 분석에 없는 규칙 근거 제거")
 
-# SERVICE_MVP.md 9.3: metric -> (target, higher_is_better)
+# SPEC_MVP.md 9.3: metric -> (target, higher_is_better)
 TARGETS: dict[str, tuple[float, bool]] = {
     "confirmed_recall": (0.90, True),
     "clean_no_change_rate": (0.80, True),

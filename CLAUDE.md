@@ -9,7 +9,7 @@ A11y Investigator: 웹(React DOM) JSX/TSX 접근성 진단·개선 Agent (LangGr
   - 한눈에 보기 표와 마일스톤도 함께 고친다.
 - 새 작업은 TASKS.md에 Task를 먼저 추가한 뒤 진행한다(예: T20).
 - 결정과 그 이유(모델, 방식, 합격선 조정, 보류 사항)는 [docs/decisions.md](docs/decisions.md)에 기록한다. 사용량(시간, 토큰, 비용)도 여기의 D3 표에 쌓는다.
-- 명세는 [SERVICE_MVP.md](SERVICE_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md)다. MVP 범위를 넘는 일은 ROADMAP에 적는다.
+- 명세는 [SPEC_MVP.md](SPEC_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md)다. MVP 범위를 넘는 일은 ROADMAP에 적는다.
 - 사용자가 "코드나 문서는 수정하지 말고 보여만 줘"라고 하면 파일을 고치지 않는다.
 
 ## 커밋

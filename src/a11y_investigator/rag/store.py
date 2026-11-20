@@ -1,4 +1,4 @@
-"""Embeddings and Chroma collections (SERVICE_MVP.md 6.4, docs/decisions.md D2)."""
+"""Embeddings and Chroma collections (SPEC_MVP.md 6.4, docs/decisions.md D2)."""
 from __future__ import annotations
 
 import threading

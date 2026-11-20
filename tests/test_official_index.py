@@ -1,4 +1,4 @@
-"""T08: official document chunking and the Chroma index (SERVICE_MVP.md 6.1, 6.4, 6.6).
+"""T08: official document chunking and the Chroma index (SPEC_MVP.md 6.1, 6.4, 6.6).
 
 Chunk tests run offline on the committed knowledge/official files.
 Index tests read the local Chroma store (no embedding calls) and are skipped if

@@ -1,4 +1,4 @@
-"""Diagnosis chain: prompt | Claude (structured output) -> DiagnosisOutput (SERVICE_MVP.md 4.2).
+"""Diagnosis chain: prompt | Claude (structured output) -> DiagnosisOutput (SPEC_MVP.md 4.2).
 
 This chain only produces the LLM's diagnosis. Citation checks, demotion of
 unsupported findings, and the fix decision happen afterwards in plain code (T12).

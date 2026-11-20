@@ -1,1 +1,1 @@
-"""Evaluation dataset and runner (SERVICE_MVP.md 9장)."""
+"""Evaluation dataset and runner (SPEC_MVP.md 9장)."""

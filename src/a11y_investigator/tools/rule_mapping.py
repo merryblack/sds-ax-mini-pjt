@@ -1,4 +1,4 @@
-"""Rule ID -> WCAG SC / APG pattern mapping (SERVICE_MVP.md 6.3).
+"""Rule ID -> WCAG SC / APG pattern mapping (SPEC_MVP.md 6.3).
 
 Static analysis rules carry no WCAG information, so a hand-curated YAML table
 (`knowledge/manifests/rule-wcag-map.yaml`) fills `StaticFinding.wcag_refs`.

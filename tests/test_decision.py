@@ -1,4 +1,4 @@
-"""T12: citation checks and the decide step (SERVICE_MVP.md 5.2, 8장). No LLM."""
+"""T12: citation checks and the decide step (SPEC_MVP.md 5.2, 8장). No LLM."""
 from __future__ import annotations
 
 import pytest

@@ -7,7 +7,7 @@ request: 디자인 시스템 지침대로 포커스 아웃라인을 없앴는데
 project_id: demo-ds
 note: >-
   코드가 프로젝트 정책(focus-001: outline 제거)을 따르지만 WCAG 2.4.7과 충돌한다.
-  WCAG를 우선해 수정하고, 정책은 conflict_with_wcag로 보고해야 한다(SERVICE_MVP.md 6.2).
+  WCAG를 우선해 수정하고, 정책은 conflict_with_wcag로 보고해야 한다(SPEC_MVP.md 6.2).
 code: |
   import { Button } from "@demo-ds/ui";
 

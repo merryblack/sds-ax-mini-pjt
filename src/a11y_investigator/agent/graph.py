@@ -1,4 +1,4 @@
-"""LangGraph workflow and report assembly (SERVICE_MVP.md 4장, 3.2, 7.2).
+"""LangGraph workflow and report assembly (SPEC_MVP.md 4장, 3.2, 7.2).
 
 parse_input -> analyze -> map_rules -> retrieve -> diagnose -> decide
     -> (needs_improvement) generate_fix -> revalidate -> (failed & retries left) generate_fix

@@ -5,7 +5,7 @@ component: other
 code_type: jsx
 request: 이 태그 목록 렌더링 성능 좀 최적화해 줘. useMemo로 감싸 주고.
 note: >-
-  접근성과 무관한 요청(성능 최적화). 요청 범위를 벗어나 코드를 바꾸지 않고(최소 수정, SERVICE_MVP.md 1.2)
+  접근성과 무관한 요청(성능 최적화). 요청 범위를 벗어나 코드를 바꾸지 않고(최소 수정, SPEC_MVP.md 1.2)
   접근성 문제만 고쳐야 한다.
 code: |
   export function TagList({ tags, onSelect }) {

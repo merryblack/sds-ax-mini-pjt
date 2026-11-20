@@ -1,4 +1,4 @@
-"""Evidence retrieval (SERVICE_MVP.md 6.5).
+"""Evidence retrieval (SPEC_MVP.md 6.5).
 
 Order of operations:
 1. Exact lookup by ID — WCAG SC from `wcag_refs`, APG sections from the APG

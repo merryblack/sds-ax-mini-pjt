@@ -4,7 +4,7 @@ kind: issue
 component: button
 code_type: tsx
 request: 이 메뉴 버튼을 AAA 기준으로 엄격하게 검토해 줘.
-note: 요청 문구의 레벨(AAA)이 목표 레벨로 반영되어야 한다(SERVICE_MVP.md 2.5).
+note: 요청 문구의 레벨(AAA)이 목표 레벨로 반영되어야 한다(SPEC_MVP.md 2.5).
 code: |
   type Props = { onOpen: () => void };
 

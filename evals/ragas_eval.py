@@ -1,4 +1,4 @@
-"""RAGAS on the diagnosis step (SERVICE_MVP.md 9.4).
+"""RAGAS on the diagnosis step (SPEC_MVP.md 9.4).
 
 Inputs come from the saved graph state, so no extra diagnosis calls are made.
 Uses the ragas 0.4 `evaluate()` API with LangChain wrappers around Bedrock

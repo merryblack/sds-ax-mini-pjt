@@ -1,4 +1,4 @@
-# Rule → WCAG mapping (SERVICE_MVP.md 6.3)
+# Rule → WCAG mapping (SPEC_MVP.md 6.3)
 #
 # Covers all 31 rules enabled in eslint-plugin-jsx-a11y 6.10.2 `recommended`.
 # Hand-curated from each rule's documentation and the WCAG 2.2 success criteria.

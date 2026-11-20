@@ -1,4 +1,4 @@
-"""Guideline lookup tools (SERVICE_MVP.md 6.5, 4.2).
+"""Guideline lookup tools (SPEC_MVP.md 6.5, 4.2).
 
 Plain functions used by the `retrieve` node; in P1 they are also exposed as
 ReAct agent tools.

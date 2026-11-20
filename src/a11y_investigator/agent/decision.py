@@ -1,4 +1,4 @@
-"""The `decide` step: guardrails + fix decision, in plain code (SERVICE_MVP.md 5.2).
+"""The `decide` step: guardrails + fix decision, in plain code (SPEC_MVP.md 5.2).
 
 | status        | will_fix                                  |
 |---------------|-------------------------------------------|
@@ -6,7 +6,7 @@
 | suspected     | True only when fix_scope == "local"       |
 | manual_review | False                                     |
 
-When the code could not be parsed nothing is fixed (SERVICE_MVP.md 5.1).
+When the code could not be parsed nothing is fixed (SPEC_MVP.md 5.1).
 """
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
 # SERVICE · A11y Investigator
 
-> 근거 기반 웹(React DOM) 접근성 진단·개선 Agent. React Native·모바일 네이티브 앱은 범위 밖이다. MVP 구현 상세는 [SERVICE_MVP.md](SERVICE_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md) 참조.
+> 근거 기반 웹(React DOM) 접근성 진단·개선 Agent. React Native·모바일 네이티브 앱은 범위 밖이다. MVP 구현 상세는 [SPEC_MVP.md](SPEC_MVP.md), 장기 계획은 [ROADMAP.md](ROADMAP.md) 참조.
 
 ## 1. 사용자·문제·가치
 - **사용자:** 접근성 전담 인력이 없는 팀에서 디자인 시스템을 쓰며 웹 React 컴포넌트를 만드는 프론트엔드 개발자
@@ -56,7 +56,7 @@
 
 ## 5. 성공 기준
 - **완성 기준:** 전체 인-아웃 케이스 **80% 이상** 통과, guardrail 케이스는 **100%** 통과
-- **세부 합격선** (SERVICE_MVP.md 9.3)
+- **세부 합격선** (SPEC_MVP.md 9.3)
 
 | 지표 | 목표 |
 |---|---|

@@ -1,4 +1,4 @@
-"""LangGraph state (SERVICE_MVP.md 7.1).
+"""LangGraph state (SPEC_MVP.md 7.1).
 
 Nested results are stored as plain dicts (`model_dump()`) so the state stays
 JSON-serializable for tracing.
