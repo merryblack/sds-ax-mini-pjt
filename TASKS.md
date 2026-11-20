@@ -12,7 +12,7 @@
 | Phase 1. 분석과 지식 | T03–T10 | 8 | 코드를 넣으면 정적 분석 결과와 관련 WCAG 문서가 나옴 | ✅ 완료 (M1) |
 | Phase 2. Agent Workflow | T11–T16 | 6 | CLI로 코드를 넣으면 진단 + 개선 코드 + 재검증 결과가 나옴 | ✅ 완료 (M2) |
 | Phase 3. 평가와 마무리 | T17–T20 | 4 | 평가 결과와 README를 갖춘 저장소, 인-아웃 세트(negative·edge·guardrail 포함) 측정 | ✅ 완료 (M3, M4) |
-| Phase 4. 사용성 | T21–T22 | 2 | 어떤 OS·셸에서도 같은 명령으로 설치·실행하고, 새 프로젝트 지침을 명령 하나로 만들 수 있음 | ✅ 완료 |
+| Phase 4. 사용성 | T21–T22 | 2 | 어떤 OS·셸에서도 같은 명령으로 설치·실행하고, 새 프로젝트 지침을 명령 하나로 만들 수 있음. 문서가 코드와 일치함 | ✅ 완료 |
 
 ### 중간 점검 (Milestone)
 
@@ -57,7 +57,7 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
   - Python 의존성은 `requirements.txt` 기준(langchain-aws, boto3 포함), `analyzer-js/package.json` (ESLint 9, eslint-plugin-jsx-a11y, @typescript-eslint/parser)
   - 11장 디렉터리 구조와 빈 모듈 생성
   - `config.py`: 모델명, 경로, 한도(300줄, 타임아웃 20초, 재시도 2회, 검색 상한 6/4)를 한곳에 모은다.
-  - `.env.example`: `AWS_REGION`, Chat 모델 ID, 임베딩 모델 ID. AWS 자격 증명은 AWS 프로필이나 환경변수로 받고 저장소에 넣지 않는다.
+  - `.env.example`: `AWS_DEFAULT_REGION`, Chat 모델 ID, 임베딩 모델 ID. AWS 자격 증명은 AWS 프로필이나 환경변수로 받고 저장소에 넣지 않는다.
   - `.gitignore`(`data/chroma/`, `.env`)
 - **완료 조건:** `pip install -r requirements.txt`, `pip install -e .`, `npm install`이 성공하고, `pytest` 스모크 테스트가 통과한다.
 
@@ -85,7 +85,7 @@ T01 → T02 → T03 ─┬─ T04 ───────────────�
 - **완료 조건:** 규칙별 단위 테스트 통과. Scenario A 입력에서 `code_type=jsx`, `component_hint=["button"]`이 나온다. 순수 HTML 입력은 `analysis_failed`가 나온다.
 
 ### T05. Node 정적 분석기 ✅ 완료 (2026-11-18)
-- [x] **참조:** 5.1 — 테스트: `analyzer-js/analyze.test.mjs` 8개 (`npm test`). 1회 실행 약 1.2초(Node 기동 + ESLint 로딩)
+- [x] **참조:** 5.1 — 테스트: `analyzer-js/analyze.test.mjs` 10개 (`npm test`, Hooks 규칙 테스트 포함). 1회 실행 약 1.2초(Node 기동 + ESLint 로딩)
 - **의존:** T03
 - **작업**
   - `analyze.mjs`: `--type jsx|tsx`, stdin으로 코드 입력, stdout으로 `AnalyzerResult` JSON 출력
@@ -236,7 +236,7 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **완료 조건:** 19개 파일이 스키마 검증을 통과한다.
 
 ### T18. 평가 실행기 ✅ 완료 (2026-11-19, M3)
-- [x] **참조:** 9.3, 13장 — 결과: [evals/reports/20261119-045925.md](evals/reports/20261119-045925.md). 14/19 통과, 지표 5개 중 4개 합격(문제 없는 코드의 no-change 비율 20% 미달), RAGAS recall 0.96 / precision 0.55 / faithfulness 0.95 / relevancy 0.26. 테스트: `tests/test_eval_metrics.py`(오프라인 8개 + `-m eval` 1개). faithfulness는 코드·정적 분석 결과도 근거로 넣어 계산([docs/evaluation.md](docs/evaluation.md) 3장 참고)
+- [x] **참조:** 9.3, 13장 — 결과: [evals/reports/20261119-045925.md](evals/reports/20261119-045925.md). 14/19 통과, 지표 5개 중 4개 합격(no-change 비율 20% 미달). 테스트: `tests/test_eval_metrics.py`(오프라인 8개 + `-m eval` 1개)
 - **의존:** T17, T16
 - **작업**
   - `evals/evaluate.py`: 전체 케이스 실행, 9.3 지표 5개 계산, 케이스별 실패 사유 기록
@@ -247,14 +247,14 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **완료 조건:** **M3 점검** — 평가 1회 실행으로 지표 5개, RAGAS 4개 지표, 실패 케이스 목록이 담긴 리포트가 생성되고 README에 기록된다.
 
 ### T19. 품질 개선과 마무리 ✅ 완료 (2026-11-19)
-- [x] **참조:** 9.3, 12장 Day 3, 13장 — 결과: [evals/reports/20261119-054203.md](evals/reports/20261119-054203.md). 14/19 → **17/19**, 지표 5개 중 4개 합격. 문제 없는 코드의 no-change 비율 20% → 60%(목표 80% 미달, 합격선 유지), 재검증 통과율 94% → 100%. 보완점 1·2·3 모두 반영하고 추가로: 가정에 기반한 지적·목록 경계 동작을 선택 사항으로 분류, button-08 정책 라벨에 `not_applicable` 허용, 병렬 평가 중 Chroma 초기화 경합 수정(`rag/store.py` 잠금). README에 실행 예시, 2차 결과, 회고 3번 추가. 13장 인수 기준 점검 완료
+- [x] **참조:** 9.3, 12장 Day 3, 13장 — 결과: [evals/reports/20261119-054203.md](evals/reports/20261119-054203.md). **17/19** 통과, no-change 비율 60%(미달, 합격선 유지), 재검증 통과율 100%. 아래 보완점 반영, 병렬 평가 중 Chroma 초기화 경합 수정. 13장 인수 기준 점검 완료
 - **의존:** T18
 - **작업**
   - 실패 케이스 분석 → 매핑 보강, 쿼리 템플릿 개선, 프롬프트 수정 → 재평가
   - T18 1차 결과에서 정한 보완점
-    1. 진단 프롬프트: WCAG 위반과 APG 선택 권장 사항(Home/End 키, aria-disabled 선호, Escape로 입력 초기화 등)을 구분한다. 선택 권장 사항은 Finding이 아니라 `manual_checks`(권장 사항)로 보내 수정 대상에서 뺀다 → 문제 없는 코드의 no-change 비율(1차 20%) 개선
-    2. 정답 코드 라벨 보강: dialog-04에 포커스 트랩, tabs-04에 tabpanel `tabIndex=0`을 넣어 APG 필수 사항을 갖춘 코드로 만든다
-    3. 수정 프롬프트: 비대화형 컨테이너(div 오버레이 등)에 키 핸들러를 달지 않고, Escape는 `useEffect`의 document 리스너로 처리하게 한다 → dialog-01 `fix_failed` 해결
+    1. 진단 프롬프트: APG 선택 권장 사항은 Finding이 아니라 `manual_checks`로 보낸다
+    2. 정답 코드 라벨 보강: dialog-04 포커스 트랩, tabs-04 tabpanel `tabIndex`
+    3. 수정 프롬프트: 비대화형 컨테이너에 키 핸들러를 달지 않고 Escape는 document 리스너로 처리한다
   - 합격선 조정 시 `docs/decisions.md`에 사유 기록
   - 평가 1회 비용과 실행 시간 측정
   - README: 설치, 인덱싱, 실행 방법, 시나리오 A/B/C 예시, 평가 결과
@@ -262,9 +262,9 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **완료 조건:** 13장 인수 기준이 모두 체크되고, README에 평가 결과가 기록되어 있다.
 
 ### T20. 인-아웃 세트 확장 (negative · edge · guardrail) ✅ 완료 (2026-11-19, M4)
-- [x] **참조:** 8장, 9.2, 9.3, [SERVICE.md](SERVICE.md) 4·5장 — 결과: [evals/reports/20261119-070023.md](evals/reports/20261119-070023.md). **29/30 통과(97%), guardrail 4/4(100%)**, 9.3 지표 5개 모두 합격(no-change 83%). 케이스 분류를 `category`(인-아웃)와 `kind`(issue/clean/policy/rejected)로 나누고 `traits`·`forbidden`·`forbidden_in_code`·`nodes`·`forbidden_nodes` 라벨 추가. 프롬프트 수준 수정 1건: APG 문서가 없는 패턴(Accordion)은 수동 확인 항목으로 안내. 평가 실행기 보강: 거절 케이스의 빈 state 처리, 실행 결과를 채점 전에 먼저 저장. 테스트: `tests/test_eval_dataset.py`, `tests/test_eval_metrics.py`(인-아웃 검사 4개 추가)
+- [x] **참조:** 8장, 9.2, 9.3, [SERVICE.md](SERVICE.md) 4·5장 — 결과: [evals/reports/20261119-070023.md](evals/reports/20261119-070023.md). **29/30 통과(97%), guardrail 4/4(100%)**, 9.3 지표 5개 모두 합격. 테스트: `tests/test_eval_dataset.py`, `tests/test_eval_metrics.py`
 - **의존:** T19
-- **배경:** 기존 평가 19개는 정상 진단 케이스(positive 14, 문제 없는 코드 5)뿐이다. 범위 밖 입력, 애매한 입력, 공격 입력에 대한 동작은 가짜 LLM을 쓴 단위 테스트로만 확인했고, SERVICE.md 성공 기준(인-아웃 80%, guardrail 100%)을 측정할 수단이 없다. 멘토 제시 인-아웃 세트 형식(positive / negative / edge / guardrail, 기대 특성·금지 항목·호출 도구)의 요소를 기존 평가 체계에 포함한다. 파일 형식은 기존 YAML을 유지한다.
+- **배경:** 기존 평가 19개는 정상 진단 케이스뿐이라 SERVICE.md 성공 기준(인-아웃 80%, guardrail 100%)을 측정할 수 없었다. 멘토 제시 인-아웃 세트 형식의 요소를 기존 YAML 평가 체계에 넣는다.
 - **작업**
   - 케이스 형식 확장 (`evals/dataset.py`)
     - 카테고리: 기존 `issue`·`policy`는 positive, `clean`은 negative로 묶고 `edge`·`guardrail`을 추가한다(입력 거절 케이스는 `negative` 또는 `edge`로 둔다)
@@ -285,14 +285,9 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 # Phase 4. 사용성
 
 ### T21. 누구나 쉽게 실행하는 설치·실행 방식 ✅ 완료 (2026-11-19)
-- [x] **참조:** 2.2, 10장, README "실행 방법" — 결과: 루트에 `setup_env.py`(설치)와 `a11y.py`(런처, `test`·`eval`·`index`·`fetch` 단축 명령 포함), `python -m a11y_investigator` 지원. README·guide·evaluation·CLAUDE.md의 명령을 `python setup_env.py` / `python a11y.py ...`로 통일. **검증:** 저장소를 새로 clone한 폴더에서 PowerShell로 처음부터 설치 → 인덱스 생성 → 분석(`improved`, 재검증 통과)까지 확인하고, Git Bash·cmd·`py` 런처에서 재설치(건너뛰기)·정책 검증·테스트 실행을 확인했다. **확인하지 못한 환경:** macOS·Linux(코드상 `.venv/bin/python` 분기만 단위 테스트). 검증 중 고친 버그: 입력이 없는 터미널에서 질문하다 `EOFError`로 중단되던 문제, 하위 명령 출력과 메시지 순서가 뒤섞이던 문제. 테스트: `tests/test_setup_env.py` 7개
+- [x] **참조:** 2.2, 10장, README "실행 방법" — 결과: `setup_env.py`(설치), `a11y.py`(런처, `test`·`eval`·`index`·`fetch` 포함), 문서 명령 통일. 새 clone에서 PowerShell로 설치→분석까지, Git Bash·cmd·`py`에서 확인. **미확인:** macOS·Linux. 테스트: `tests/test_setup_env.py` 7개
 - **의존:** T20
-- **배경:** README 절차를 처음 받는 사용자 입장에서 따라가 보면 셸·OS마다 막힌다.
-  - 가상환경 활성화가 셸마다 다르고, PowerShell은 실행 정책 때문에 차단될 수 있다.
-  - `copy`는 Git Bash·macOS에 없다.
-  - `cd analyzer-js; npm install`은 cmd에서 동작하지 않는다.
-  - 가상환경을 활성화하지 않으면 `a11y-investigator`를 찾지 못한다.
-  - Git Bash에서는 `\` 경로가 깨진다.
+- **배경:** README 절차가 셸·OS마다 막혔다(가상환경 활성화 방식, PowerShell 실행 정책, `copy`·`;`·`\` 경로 차이).
 - **작업**
   - `setup_env.py` (표준 라이브러리만 사용, 시스템 Python으로 실행)
     - Python·Node 버전 확인
@@ -308,12 +303,9 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
 - **완료 조건:** 새 터미널에서 가상환경 활성화 없이 README 명령 그대로 설치·실행이 된다. Windows PowerShell과 Git Bash에서 직접 확인하고, 확인하지 못한 환경(macOS·Linux, cmd)은 그대로 기록한다.
 
 ### T22. 프로젝트 지침 템플릿 정리와 생성 명령 ✅ 완료 (2026-11-20)
-- [x] **참조:** 6.2, [docs/guide.md](docs/guide.md) 3장 — 결과: 템플릿을 `git mv`로 `src/a11y_investigator/templates/project-policy/`에 옮기고 `pyproject.toml` package-data에 등록. `policies init <id>`(ID 형식 검사, 기존 폴더 보호, 생성 후 바로 검증·다음 단계 안내) 추가. guide 3.1의 Windows 전용 `copy` 절차를 명령 한 줄로 대체, SERVICE_MVP 6.2·README·CLAUDE.md 갱신. 테스트: `tests/test_policy_init.py` 10개
+- [x] **참조:** 6.2, [docs/guide.md](docs/guide.md) 3장 — 결과: 템플릿을 `src/a11y_investigator/templates/project-policy/`로 이동, `policies init <id>` 추가. 테스트: `tests/test_policy_init.py` 10개. 후속으로 전체 문서 오류 수정·정리(2026-11-20)
 - **의존:** T21
-- **배경**
-  - 템플릿이 `docs/policy-template/`에 있다. `docs/`의 다른 문서(설명 문서)와 성격이 다르다.
-  - 사용법이 Windows 전용 `copy` 명령과 수동 수정(`project_id`, `policy_id`)이다.
-  - `knowledge/project-policies/` 아래에는 둘 수 없다. `project.yaml`이 있는 폴더를 모두 프로젝트로 인식해 인덱싱되기 때문이다.
+- **배경:** 템플릿이 설명 문서용 폴더(`docs/`)에 있었고, 사용법이 Windows 전용 복사와 수동 ID 수정이었다. `knowledge/project-policies/` 아래에는 둘 수 없다(`project.yaml`이 있으면 프로젝트로 인덱싱됨).
 - **작업**
   - 템플릿을 `src/a11y_investigator/templates/project-policy/`로 옮긴다(패키지 데이터로 등록).
   - CLI `policies init <project_id>` 추가
@@ -322,4 +314,7 @@ Phase 2 시작 전에 D3(호출 상한), D4(LangSmith 사용 여부)를 정한�
     - 만든 뒤 `policies check` 결과를 보여 준다.
   - 테스트: 생성한 프로젝트가 `check_project`를 통과하는지(템플릿이 스키마와 어긋나지 않는지), 기존 폴더를 보호하는지, 잘못된 ID를 거부하는지
   - 문서: guide 3.1, SERVICE_MVP 6.2, README 6절·코드 위치, CLAUDE.md
+  - 후속: 전체 문서 정리 (구조·넘버링·목록 형식은 유지)
+    1. 코드와 다른 사실 오류 수정 (노드 구현 이름, 상태·스키마, 디렉터리, 메타데이터 예시, guardrail 목록 등)
+    2. 중복되거나 과하게 설명된 내용 축약 (SERVICE_MVP 9.2·12·14, decisions D3·합격선, evaluation RAGAS·측정 기록, TASKS T18–T22, ROADMAP 개정 이력)
 - **완료 조건:** `python a11y.py policies init <id>` 한 번으로 검증을 통과하는 프로젝트 폴더가 만들어지고, 문서에 수동 복사 절차가 남아 있지 않다.

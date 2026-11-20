@@ -239,7 +239,7 @@ python a11y.py analyze --file test/violating.jsx --project my-project
    - 파일을 고친 직후 첫 실행이면 `retrieval.policies_reindexed`가 `true`다.
 2. **판정:** 보고서 **4. 프로젝트 정책 적합성** 표의 결과와 설명
 3. **수정 반영:** **6. 개선 코드**가 정책을 따르는지, **8. 재검증 결과**가 통과인지
-4. **판단 근거:** **3. 근거** 표에 정책 ID(`project_policy`)가 인용됐는지
+4. **판단 근거:** **3. 근거** 표에 정책 ID(예: `my-project-btn-002`)가 "문서" 근거로 인용됐는지
 
 `--json`을 붙이면 `policy_assessments`를 스크립트로 바로 확인할 수 있다.
 

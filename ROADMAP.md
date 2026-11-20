@@ -5,7 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 버전 | v0.5 |
-| 상태 | MVP 개발 전 (MVP 이후 장기 계획 수립에 사용) |
+| 상태 | MVP(V0.2) 완료, 다음 단계 계획에 사용 |
 | 프로젝트 유형 | Agentic RAG · Developer Tool |
 | 개발 형태 | 개인 프로젝트 |
 | 입력 언어 | React(JSX/TSX) — HTML + JavaScript는 V0.3부터 |
@@ -320,15 +320,3 @@ MVP에서 구현 비용 때문에 제외한 검사이다.
 | UI | React | 미정 |
 
 MVP의 버전, 구성, 모델 선택 등 구체적인 결정은 [SERVICE_MVP.md](SERVICE_MVP.md) 10장과 14장을 따른다.
-
----
-
-## Revision History
-
-| 버전 | 변경 사항 |
-|---|---|
-| v0.1 | 최초 요구사항 및 아키텍처 정의 (SPEC.md) |
-| v0.2 | React 및 HTML+JS 직접 입력 명시, 개선 코드 생성 P0 승격, 개선 후 재검증 추가, Chroma 확정, MVP Workflow 및 인수 기준 개정 |
-| v0.3 | 입력·출력 사양 구체화, 정적 분석기와 Python↔Node 인터페이스 확정, 판단 규칙·재검증 기준·노드/Tool 구분 추가, 규칙–WCAG 매핑 P0 추가, 스키마 재설계, 평가 합격선 정의, 장기 계획을 ROADMAP.md로 분리 |
-| v0.4 | MVP 구현 상세를 SERVICE_MVP.md로 분리하고 SPEC.md를 개요·원칙 문서로 축소 |
-| **v0.5** | SPEC.md를 ROADMAP.md에 통합. 문서를 ROADMAP.md(개요·원칙·장기 계획)와 SERVICE_MVP.md(MVP 구현) 두 개로 정리. P1에 ReAct·MCP·FastAPI 설명 보강, P2 항목에 목표 버전 표시. 일정상 MVP를 React 전용으로 줄이고 HTML / HTML + JS 지원을 V0.3(6장)으로 이동 |

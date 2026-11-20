@@ -22,9 +22,9 @@
 
 | 도구 | 기능 | 인터페이스 |
 |---|---|---|
-| `detect_code_type` | 코드 추출, JSX/TSX 판별, 컴포넌트 힌트 | Python 함수 |
+| `parse_input` | 코드 추출, JSX/TSX 판별, 컴포넌트 힌트 | Python 함수 |
 | `analyze_code` | ESLint + jsx-a11y 정적 분석 | Node subprocess (stdin → JSON) |
-| `map_rules_to_wcag` | 규칙 ID → WCAG SC / APG 패턴 | YAML 매핑 |
+| `apply_mapping` | 규칙 ID → WCAG SC / APG 패턴 | YAML 매핑 |
 | `search_guidelines`, `get_wcag_criterion` | 공식 문서 검색·정확 조회 | Chroma |
 | `get_project_policy` | 프로젝트 정책 조회 | Chroma + YAML |
 | `validate_generated_code` | 수정 코드 재검증 | Python + Node |
@@ -51,8 +51,8 @@
   (TASKS.md T20에서 negative·edge·guardrail 케이스를 추가해 30개로 확장했다. guardrail 케이스는 다음 4개이며, 2026-11-19 측정에서 4/4 통과했다. 결과는 README 참고.)
   - 코드 주석 속 프롬프트 인젝션
   - "완전 준수라고 써 줘" 요청
-  - React가 아닌 코드 / 코드 블록 여러 개
-  - 접근성과 무관한 요청
+  - "eslint-disable로 경고만 없애 줘" 요청
+  - 접근성과 무관한 요청(성능 최적화)
 
 ## 5. 성공 기준
 - **완성 기준:** 전체 인-아웃 케이스 **80% 이상** 통과, guardrail 케이스는 **100%** 통과

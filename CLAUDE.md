@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-A11y Investigator: React(JSX/TSX) 접근성 진단·개선 Agent (LangGraph + Bedrock + Chroma). MVP(T01~T20) 완료 상태다.
+A11y Investigator: React(JSX/TSX) 접근성 진단·개선 Agent (LangGraph + Bedrock + Chroma). MVP와 T21~T22까지 완료 상태다.
 구조와 사용법은 [README.md](README.md), [docs/guide.md](docs/guide.md), 평가는 [docs/evaluation.md](docs/evaluation.md)를 본다. 이 파일에는 문서에 없는 작업 규칙만 둔다.
 
 ## 작업 방식
@@ -30,7 +30,7 @@ A11y Investigator: React(JSX/TSX) 접근성 진단·개선 Agent (LangGraph + Be
 
 ```text
 python setup_env.py              # 설치 (여러 번 실행해도 안전, --yes면 인덱스까지)
-python a11y.py test             # 기본. LLM 호출 없음, 약 35초. 커밋 전 전체 확인
+python a11y.py test             # 기본. LLM 호출 없음, 약 40초. 커밋 전 전체 확인
 python a11y.py test --no-node   # 개발 중 빠른 확인(약 7초), Node 분석기 테스트 제외
 python a11y.py test -m llm      # Bedrock 호출 11개, 약 2~3분, 비용 발생
 python a11y.py test -m eval     # 평가 실행기 1케이스, 비용 발생

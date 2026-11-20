@@ -53,7 +53,7 @@ decide ─────── 인용 검증·강등, 수정 대상 결정
 generate_fix ─ [LLM] 전체 수정 코드 생성          │
   ▼                                             │
 revalidate ─── 정적 재분석으로 통과 판정          │
-  │ 실패 & 재시도 가능(최대 3회) → generate_fix   │
+  │ 실패 & 재시도 가능(최대 2회) → generate_fix   │
   ▼                                             ▼
 report ─────── outcome 결정, 근거 URL, 요약, 재현성 정보
 ```
@@ -190,14 +190,14 @@ python a11y.py analyze --file Component.tsx --project my-project
 **2. "린트 통과 = 올바른 수정"이라는 가정**
 - 시도: 수정 코드를 jsx-a11y로만 다시 검사했다.
 - 실패 이유: ① Dialog의 Escape 처리를 `role="dialog"` div에 `onKeyDown`으로 넣어 새 위반이 생겼고, ② 재시도 결과는 접근성 검사는 통과했지만 `useEffect`를 early return 뒤에 넣어 **React Hooks 규칙을 어긴 깨진 코드**였다.
-- 채택: 재검증을 "원본 대비 위반 증가 없음"으로 판정하고 실패 사유를 피드백으로 넘겨 재시도(최대 3회)하게 했다. 접근성과 무관한 기능 회귀를 막기 위해 `react-hooks/rules-of-hooks`를 **재검증 전용 규칙**으로 추가했다.
+- 채택: 재검증을 "원본 대비 위반 증가 없음"으로 판정하고 실패 사유를 피드백으로 넘겨 최대 2회 재시도(총 3회 시도)하게 했다. 접근성과 무관한 기능 회귀를 막기 위해 `react-hooks/rules-of-hooks`를 **재검증 전용 규칙**으로 추가했다.
 - 남은 한계: Hooks 외의 기능 회귀(로직 변경, 스타일 누락 등)는 정적 분석으로 잡지 못한다. 테스트 실행·브라우저 검증은 ROADMAP V0.6에서 다룬다.
 
 **3. "문제를 많이 찾을수록 좋다"는 진단 방향**
 - 시도: 진단 LLM에게 APG 문서를 근거로 주고, 근거를 인용한 `suspected` Finding 중 범위가 `local`이면 자동으로 수정하게 했다.
 - 실패 이유: 1차 평가에서 문제 없는 코드 5개 중 4개를 "개선"했다. Home/End 키, `aria-disabled` 선호처럼 APG의 선택 권장 사항이나 다른 유효한 구현을 위반처럼 보고했고, 근거 문서가 붙어 있어 가드레일도 통과했다.
-- 채택: 자동 수정 대상은 "WCAG 실패 또는 APG 필수 사항"으로 좁히고, 선택 권장·대안 구현·가정에 기반한 지적은 수동 확인 항목으로 보냈다. no-change 비율이 20%에서 60%로 올랐다.
-- 남은 한계: 무엇이 필수인지는 여전히 LLM 판단이다. 평가 2건이 아직 미달이다. 근거 문서의 "optional" 표기를 메타데이터로 만들거나, 수정 전에 `suspected` Finding을 한 번 더 검증하는 단계를 두는 방안을 V0.3에서 검토한다.
+- 채택: 자동 수정 대상은 "WCAG 실패 또는 APG 필수 사항"으로 좁히고, 선택 권장·대안 구현·가정에 기반한 지적은 수동 확인 항목으로 보냈다. no-change 비율이 20%에서 60%로 올랐고, 세트를 확장한 최종 측정에서는 83%로 합격선을 넘었다.
+- 남은 한계: 무엇이 필수인지는 여전히 LLM 판단이다. 최종 측정에서도 문제 없는 코드 1건(combobox-03)을 고쳤고, 경계 사례는 실행마다 판단이 흔들린다. 근거 문서의 "optional" 표기를 메타데이터로 만들거나, 수정 전에 `suspected` Finding을 한 번 더 검증하는 단계를 두는 방안을 V0.3에서 검토한다.
 
 ## 출처와 라이선스
 
@@ -210,7 +210,7 @@ python a11y.py analyze --file Component.tsx --project my-project
 ```text
 mini-project/
 ├── src/a11y_investigator/
-│   ├── cli.py                  CLI 진입점 `a11y-investigator` (analyze, policies check)
+│   ├── cli.py                  CLI 진입점 `a11y-investigator` (analyze, policies init, policies check)
 │   ├── config.py               모델 ID·경로·한도 설정
 │   ├── report_markdown.py      보고서 Markdown 렌더링
 │   ├── agent/                  그래프(graph.py), 노드(nodes.py), 수정 대상 결정(decision.py),
